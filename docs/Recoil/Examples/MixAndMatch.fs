@@ -1,21 +1,17 @@
-# Feliz.Recoil [![Nuget](https://img.shields.io/nuget/v/Feliz.Recoil.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz.Recoil)
+﻿[<RequireQualifiedAccess>]
+module Samples.MixAndMatch
 
-Fable bindings in Feliz style for Facebook's experimental state management library [recoil](https://github.com/facebookexperimental/Recoil).
-
-A great intro to the library can be found [here](https://www.youtube.com/watch?v=_ISAA_Jt9kI).
-
-A quick look:
-
-```fs
 open Feliz
 open Feliz.Recoil
 
 let textState = Recoil.atom("textState", "Hello world!")
 
+let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
+
 let textStateTransform =
     Recoil.selector("textStateSelector", fun get ->
         get(textState)
-        |> String.filter(fun c -> c <> 'o')
+        |> String.filter(fun v -> List.contains v vowels)
     )
 
 let inner = React.functionComponent(fun () ->
@@ -37,13 +33,12 @@ let otherInner = React.functionComponent(fun () ->
 
     Html.div [
         prop.text (sprintf "Atom current value: %s" textAtom)
-    ])
+    ]
+)
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
        inner()
        otherInner()
     ])
-```
 
-Full documentation with live examples can be found [here](https://shmew.github.io/Feliz.Recoil/).

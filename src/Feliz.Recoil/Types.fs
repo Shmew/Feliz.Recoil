@@ -10,29 +10,33 @@ type RecoilValueTag =
     | Writeable
     | Readonly
 
+type ReadOnly = interface end
+type ReadWrite = interface end
+
 [<Erase>]
-type RecoilValue<'T> =
+type RecoilValue<'T,'ReadPerm> =
     [<Emit("$0.key")>]
     member _.key : string = jsNative
     [<Emit("$0.tag"); EditorBrowsable(EditorBrowsableState.Never)>]
     member _.tag : RecoilValueTag = jsNative
 
+[<EditorBrowsable(EditorBrowsableState.Never)>]
 type DefaultValue = interface end
 
 [<Erase>]
-type SelectorMethods<'T> =
+type SelectorMethods =
     [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T>) : 'Return = jsNative
+    member _.get (recoilValue: RecoilValue<'T,_>) : 'Return = jsNative
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T>, newValue: 'T) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T) : unit = jsNative
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T>, newValue: DefaultValue) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: DefaultValue) : unit = jsNative
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T>, newValue: 'T -> 'T) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T -> 'T) : unit = jsNative
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T>, newValue: 'T -> DefaultValue) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T -> DefaultValue) : unit = jsNative
     [<Emit("$0.set($1)")>]
-    member _.reset (recoilValue: RecoilValue<'T>) : unit = jsNative
+    member _.reset (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
 
 [<StringEnum;RequireQualifiedAccess>]
 type LoadableState =
@@ -104,3 +108,26 @@ module LoadableMagic =
         [<Emit("$0.map($1)")>]
         member _.map (mapping: 'T -> 'U) : Loadable<'U> = jsNative
 
+[<EditorBrowsable(EditorBrowsableState.Never)>]
+type RootInitializer =
+    abstract set<'T> : RecoilValue<'T,ReadWrite> -> 'T -> unit
+    abstract setUnvalidatedAtomValues : JS.Map<string,obj> -> unit
+
+[<Erase>]
+type CallbackMethods =
+    member inline this.getAsync<'T,'Mode> (recoilValue: RecoilValue<'T,'Mode>) = 
+        this.getPromise<'T,'Mode>(recoilValue) |> Async.AwaitPromise
+
+    [<Emit("$0.getLoadable($1)")>]
+    member _.getLoadable<'T,'Mode> (recoilValue: RecoilValue<'T,'Mode>) : Loadable<'T> = jsNative
+
+    [<Emit("$0.getPromise($1)")>]
+    member _.getPromise<'T,'Mode> (recoilValue: RecoilValue<'T,'Mode>) : JS.Promise<'T> = jsNative
+
+    [<Emit("$0.reset($1)")>]
+    member _.reset<'T> (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
+
+    [<Emit("$0.set($1, $2)")>]
+    member _.set<'T> (recoilValue: RecoilValue<'T,ReadWrite>, updater: 'T -> 'T) : unit = jsNative
+    [<Emit("$0.set($1, $2)")>]
+    member _.set<'T> (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T) : unit = jsNative

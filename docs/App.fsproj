@@ -5,6 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Recoil\Examples\Basic.fs" />
+    <Compile Include="Recoil\Examples\MixAndMatch.fs" />
+    <Compile Include="Recoil\Examples\BidirectionalSelectors.fs" />
+    <Compile Include="Recoil\Examples\Reset.fs" />
+    <Compile Include="Recoil\Examples\Async.fs" />
+    <Compile Include="Recoil\Examples\Callback.fs" />
     <Compile Include="..\paket-files\docs\Zaid-Ajaj\Feliz\Feliz.Markdown\Markdown.fs">
       <Paket>True</Paket>
       <Link>Feliz.Markdown/Markdown.fs</Link>

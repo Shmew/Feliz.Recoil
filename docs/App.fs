@@ -70,7 +70,12 @@ let centeredSpinner =
     ]
 
 let samples = 
-    [ "recoil-basic", Samples.Basic.render() ]
+    [ "recoil-basic", Samples.Basic.render()
+      "recoil-mixandmatch", Samples.MixAndMatch.render()
+      "recoil-bidirectionalselectors", Samples.BidirectionalSelectors.render()
+      "recoil-reset", Samples.Reset.render()
+      "recoil-async", Samples.Async.render()
+      "recoil-callback", Samples.Callback.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -302,6 +307,11 @@ let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Ms
                 menuItem "Contributing" [ Urls.Recoil; Urls.Contributing ]
                 menuLabel "Examples"
                 menuItem "Basic" [ Urls.Recoil; Urls.Examples; Urls.Basic ]
+                menuItem "Mix and Match" [ Urls.Recoil; Urls.Examples; Urls.MixAndMatch ]
+                menuItem "Bi-directional Selectors" [ Urls.Recoil; Urls.Examples; Urls.BidirectionalSelectors ]
+                menuItem "Reset" [ Urls.Recoil; Urls.Examples; Urls.Reset ]
+                menuItem "Asynchronous Selectors" [ Urls.Recoil; Urls.Examples; Urls.Async ]
+                menuItem "Callbacks" [ Urls.Recoil; Urls.Examples; Urls.Callback ]
             ]
         ]
     ])
@@ -340,6 +350,11 @@ let content = React.functionComponent(fun (input: {| state: State; dispatch: Msg
     | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
         match res with
         | [ Urls.Basic ] -> [ "Basic.md" ]
+        | [ Urls.MixAndMatch ] -> [ "MixAndMatch.md" ]
+        | [ Urls.BidirectionalSelectors ] -> [ "BidirectionalSelectors.md" ]
+        | [ Urls.Reset ] -> [ "Reset.md" ]
+        | [ Urls.Async ] -> [ "Async.md" ]
+        | [ Urls.Callback ] -> [ "Callback.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path |> lazyView MarkdownLoader.load
     | _ -> lazyView MarkdownLoader.load [ "Recoil"; "README.md" ])
