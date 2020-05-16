@@ -48,4 +48,4 @@ let render = React.functionComponent(fun () ->
     ])
 ```
 
-Full documentation with live examples can be found [here](https://shmew.github.io/Feliz.Recoil).
+Full documentation with live examples can be found [here](https://shmew.github.io/Feliz.Recoil/).
