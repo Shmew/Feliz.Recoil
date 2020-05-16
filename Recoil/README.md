@@ -13,11 +13,9 @@ open Feliz.Recoil
 let textState = Recoil.atom("textState", "Hello world!")
 
 let textStateTransform =
-    Recoil.selector(
-        "textStateSelector",
-        (fun get ->
-            get(textState)
-            |> String.filter(fun c -> c <> 'o'))
+    Recoil.selector("textStateSelector", fun get ->
+        get(textState)
+        |> String.filter(fun c -> c <> 'o')
     )
 
 let inner = React.functionComponent(fun () ->
@@ -39,8 +37,7 @@ let otherInner = React.functionComponent(fun () ->
 
     Html.div [
         prop.text (sprintf "Atom current value: %s" textAtom)
-    ]
-)
+    ])
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
@@ -49,4 +46,4 @@ let render = React.functionComponent(fun () ->
     ])
 ```
 
-Full documentation with live examples can be found [here](https://shmew.github.io/Feliz.Recoil).
+Full documentation with live examples can be found [here](https://shmew.github.io/Feliz.Recoil/).
