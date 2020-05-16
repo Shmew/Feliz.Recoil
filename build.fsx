@@ -28,7 +28,7 @@ let project = "Feliz.Recoil"
 
 // Short summary of the project
 // (used as description in AssemblyInfo and as a short summary for NuGet package)
-let summary = "Fable bindings written in the Feliz-style for Facebook's recoil."
+let summary = "Fable bindings in Feliz style for Facebook's experimental state management library recoil."
 
 // Author(s) of the project
 let author = "Cody Johnson"
