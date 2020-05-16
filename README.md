@@ -39,8 +39,7 @@ let otherInner = React.functionComponent(fun () ->
 
     Html.div [
         prop.text (sprintf "Atom current value: %s" textAtom)
-    ]
-)
+    ])
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
