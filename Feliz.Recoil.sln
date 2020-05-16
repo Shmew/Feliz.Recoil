@@ -1,0 +1,100 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget.Config = Nuget.Config
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
+		paket.references = paket.references
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.github\ISSUE_TEMPLATE\BUG_REPORT.md = .github\ISSUE_TEMPLATE\BUG_REPORT.md
+		.github\ISSUE_TEMPLATE\FEATURE_REQUEST.md = .github\ISSUE_TEMPLATE\FEATURE_REQUEST.md
+		.github\PULL_REQUEST_TEMPLATE.md = .github\PULL_REQUEST_TEMPLATE.md
+		README.md = README.md
+		RELEASE_NOTES.md = RELEASE_NOTES.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "git", "git", "{078A9C52-DDC1-46F4-9235-9E6C89C87AFD}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{7C6D08E7-3EAC-4335-8F4B-252C193C27C9}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		build.fsx = build.fsx
+		build.proj = build.proj
+		build.sh = build.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{55637037-300B-4FA5-8D14-B2CECCCD4B0D}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "tools", "tools\tools.fsproj", "{E03A3045-EEAB-4616-B0D8-A50A1B75F72B}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "App", "docs\App.fsproj", "{0A840E11-9EE5-4088-ADA9-D01DABCBF57B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "public", "public", "{CABBED80-2F75-4DFE-8F77-7F7FDFDC8008}"
+	ProjectSection(SolutionItems) = preProject
+		public\github-gist.css = public\github-gist.css
+		public\index.html = public\index.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{7F29BFE8-02B3-4763-838C-3D8228334B4B}"
+	ProjectSection(SolutionItems) = preProject
+		.yarnrc = .yarnrc
+		package.json = package.json
+		publish.js = publish.js
+		splitter.config.js = splitter.config.js
+		webpack.config.js = webpack.config.js
+	EndProjectSection
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Feliz.Recoil", "src\Feliz.Recoil\Feliz.Recoil.fsproj", "{47B7B8EC-FA10-4FA2-882F-9830467BB22D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Recoil", "Recoil", "{64222420-D7C5-4807-A840-0BBD5D22B97D}"
+	ProjectSection(SolutionItems) = preProject
+		public\Recoil\Installation.md = public\Recoil\Installation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC9553AA-0DEF-48E7-B581-F249164D0B8D}"
+	ProjectSection(SolutionItems) = preProject
+		public\Recoil\Examples\Basic.md = public\Recoil\Examples\Basic.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A840E11-9EE5-4088-ADA9-D01DABCBF57B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A840E11-9EE5-4088-ADA9-D01DABCBF57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A840E11-9EE5-4088-ADA9-D01DABCBF57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A840E11-9EE5-4088-ADA9-D01DABCBF57B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B7B8EC-FA10-4FA2-882F-9830467BB22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B7B8EC-FA10-4FA2-882F-9830467BB22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B7B8EC-FA10-4FA2-882F-9830467BB22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B7B8EC-FA10-4FA2-882F-9830467BB22D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B} = {55637037-300B-4FA5-8D14-B2CECCCD4B0D}
+		{64222420-D7C5-4807-A840-0BBD5D22B97D} = {CABBED80-2F75-4DFE-8F77-7F7FDFDC8008}
+		{BC9553AA-0DEF-48E7-B581-F249164D0B8D} = {64222420-D7C5-4807-A840-0BBD5D22B97D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96DAE6A9-B1CC-4FF7-B08C-D5FBFD55B385}
+	EndGlobalSection
+EndGlobal

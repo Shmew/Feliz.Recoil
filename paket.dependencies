@@ -1,0 +1,60 @@
+version 5.241.2
+
+framework: auto-detect
+
+group Recoil
+	source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+    nuget Fable.Core ~> 3
+    nuget Fable.Promise ~> 2
+    nuget Feliz ~> 0
+    nuget FSharp.Core ~> 4.7 lowest_matching: true
+
+group Docs
+    source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+    nuget Fable.Core ~> 3
+    nuget Fable.Elmish.React ~> 3
+    nuget Fable.Promise ~> 2
+    nuget Fable.SimpleHttp ~> 2
+    nuget Fable.SimpleJson ~> 3
+    nuget Feliz ~> 0
+    nuget Feliz.ElmishComponents ~> 0
+    nuget Feliz.Router ~> 1
+    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget Zanaptak.TypedCssClasses ~> 0
+
+    github Zaid-Ajaj/Feliz Feliz.Markdown/Markdown.fs
+
+group Tooling
+	source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+	nuget Fake.IO.FileSystem ~> 5
+	nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Json ~> 0
+	nuget FSharpLint.Core ~> 0
+    nuget Yarnpkg.Yarn ~> 1
+
+	clitool dotnet-fable ~> 2
+	clitool dotnet-fake ~> 5
+
+group FakeBuild
+	source https://api.nuget.org/v3/index.json
+
+	nuget Fake.Core.Target ~> 5
+	nuget Fake.Core.ReleaseNotes ~> 5
+	nuget Fake.DotNet.AssemblyInfoFile ~> 5
+	nuget Fake.DotNet.Cli ~> 5
+	nuget Fake.DotNet.FSFormatting ~> 5
+	nuget Fake.DotNet.MSBuild ~> 5
+	nuget Fake.DotNet.Paket ~> 5
+	nuget Fake.IO.FileSystem ~> 5
+    nuget Fake.JavaScript.Yarn ~> 5
+	nuget Fake.JavaScript.Npm ~> 5
+	nuget Fake.Tools.Git ~> 5
+    nuget FSharp.Json ~> 0
+	nuget FSharpLint.Core ~> 0
+    nuget Fantomas ~> 3
