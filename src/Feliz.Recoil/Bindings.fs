@@ -1,8 +1,9 @@
 namespace Feliz.Recoil
 
 open Fable.Core
+open System.ComponentModel
 
-[<RequireQualifiedAccess>]
+[<EditorBrowsable(EditorBrowsableState.Never);RequireQualifiedAccess>]
 module Bindings =
     open Fable.Core.JsInterop
     open Feliz

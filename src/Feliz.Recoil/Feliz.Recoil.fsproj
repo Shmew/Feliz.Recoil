@@ -8,6 +8,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Bindings.fs" />
     <Compile Include="Recoil.fs" />
+    <Compile Include="CE.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>

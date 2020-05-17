@@ -77,7 +77,8 @@ let samples =
       "recoil-async", Samples.Async.render()
       "recoil-callback", Samples.Callback.render()
       "recoil-loadable", Samples.Loadable.render()
-      "recoil-previous", Samples.Previous.render() ]
+      "recoil-previous", Samples.Previous.render()
+      "recoil-computationexpressions", Samples.ComputationExpressions.render() ]
       //"recoil-atomfamily", Samples.AtomFamily.render() 
 
 let githubPath (rawPath: string) =
@@ -317,6 +318,7 @@ let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Ms
                 menuItem "Callbacks" [ Urls.Recoil; Urls.Examples; Urls.Callback ]
                 menuItem "Loadables" [ Urls.Recoil; Urls.Examples; Urls.Loadable ]
                 menuItem "Previous" [ Urls.Recoil; Urls.Examples; Urls.Previous ]
+                menuItem "Computation Expressions" [ Urls.Recoil; Urls.Examples; Urls.ComputationExpressions ]
                 //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]
@@ -363,6 +365,7 @@ let content = React.functionComponent(fun (input: {| state: State; dispatch: Msg
         | [ Urls.Callback ] -> [ "Callback.md" ]
         | [ Urls.Loadable ] -> [ "Loadable.md" ]
         | [ Urls.Previous ] -> [ "Previous.md" ]
+        | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []

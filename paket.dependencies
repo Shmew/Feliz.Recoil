@@ -24,6 +24,7 @@ group Docs
     nuget Feliz.ElmishComponents ~> 0
     nuget Feliz.Router ~> 1
     nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharpPlus ~> 1
     nuget Zanaptak.TypedCssClasses ~> 0
 
     github Zaid-Ajaj/Feliz Feliz.Markdown/Markdown.fs
