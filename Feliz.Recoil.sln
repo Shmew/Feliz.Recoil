@@ -65,9 +65,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC9553AA-0DEF-48E7-B581-F249164D0B8D}"
 	ProjectSection(SolutionItems) = preProject
 		public\Recoil\Examples\Async.md = public\Recoil\Examples\Async.md
+		public\Recoil\Examples\AtomFamily.md = public\Recoil\Examples\AtomFamily.md
 		public\Recoil\Examples\Basic.md = public\Recoil\Examples\Basic.md
 		public\Recoil\Examples\BidirectionalSelectors.md = public\Recoil\Examples\BidirectionalSelectors.md
 		public\Recoil\Examples\Callback.md = public\Recoil\Examples\Callback.md
+		public\Recoil\Examples\Loadable.md = public\Recoil\Examples\Loadable.md
 		public\Recoil\Examples\MixAndMatch.md = public\Recoil\Examples\MixAndMatch.md
 		public\Recoil\Examples\Reset.md = public\Recoil\Examples\Reset.md
 	EndProjectSection

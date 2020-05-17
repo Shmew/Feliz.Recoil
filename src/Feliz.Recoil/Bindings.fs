@@ -11,6 +11,7 @@ module Bindings =
         static member RecoilRoot (props: obj) : ReactElement = import "RecoilRoot" "recoil"
         static member defaultValue : DefaultValue = import "DefaultValue" "recoil"
         static member atom<'T> (options: obj) : RecoilValue<'T,ReadWrite> = import "atom" "recoil"
+        //static member atomFamily<'T,'P> (options: obj) : 'P -> RecoilValue<'T,ReadWrite> = import "atomFamily" "recoil"
         static member selector<'T,'Permissions> (options: obj) : RecoilValue<'T,'Permissions> = import "selector" "recoil"
         static member useRecoilValue<'T,'Permissions> (recoilValue: RecoilValue<'T,'Permissions>) : 'T = import "useRecoilValue" "recoil"
         static member useRecoilValueLoadable<'T,'Permissions> (recoilValue: RecoilValue<'T,'Permissions>) : Loadable<'T> = import "useRecoilValueLoadable" "recoil"

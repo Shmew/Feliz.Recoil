@@ -38,11 +38,16 @@ type SelectorMethods =
     [<Emit("$0.set($1)")>]
     member _.reset (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
 
-[<StringEnum;RequireQualifiedAccess>]
-type LoadableState =
+[<StringEnum;RequireQualifiedAccess;EditorBrowsable(EditorBrowsableState.Never)>]
+type LoadableStateStr =
     | HasValue
     | HasError
     | Loading
+
+type LoadableState<'T> =
+    | HasValue of 'T
+    | HasError of exn
+    | Loading of JS.Promise<'T>
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 type ResolvedLoadablePromiseInfo<'T> =
@@ -62,8 +67,11 @@ type Loadable<'T> =
     [<Emit("$0.errorOrThrow()")>]
     member _.errorOrThrow () : exn = jsNative
 
-    [<Emit("$0.getValue()")>]
-    member _.getValue () : 'T = jsNative
+    [<Emit("$0.getValue()");EditorBrowsable(EditorBrowsableState.Never)>]
+    member _.getValue' () : 'T = jsNative
+    member inline this.getValue () = 
+        try this.getValue'() |> Ok
+        with e -> Error e
 
     [<Emit("$0.map($1)")>]
     member _.map (mapping: 'T -> JS.Promise<'U>) : Loadable<'U> = jsNative
@@ -77,8 +85,18 @@ type Loadable<'T> =
     [<Emit("$0.promiseOrThrow()")>]
     member _.promiseOrThrow () : JS.Promise<'T> = jsNative
 
-    [<Emit("$0.state")>]
-    member _.state : LoadableState = jsNative
+    [<Emit("$0.state");EditorBrowsable(EditorBrowsableState.Never)>]
+    member _.state' : LoadableStateStr = jsNative
+    member inline this.state () =
+        match this.state' with
+        | LoadableStateStr.Loading ->
+            unbox<JS.Promise<ResolvedLoadablePromiseInfo<'T>>> this.contents
+            |> Promise.map (fun o -> o.value)
+            |> LoadableState.Loading 
+        | LoadableStateStr.HasError ->
+            LoadableState.HasError (unbox<exn> this.contents)
+        | LoadableStateStr.HasValue ->
+            LoadableState.HasValue (unbox<'T> this.contents)
 
     [<Emit("$0.contents");EditorBrowsable(EditorBrowsableState.Never)>]
     member _.contents : U3<'T,exn,JS.Promise<ResolvedLoadablePromiseInfo<'T>>> = jsNative
@@ -107,6 +125,7 @@ module LoadableMagic =
     type Loadable<'T> with
         [<Emit("$0.map($1)")>]
         member _.map (mapping: 'T -> 'U) : Loadable<'U> = jsNative
+    
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 type RootInitializer =

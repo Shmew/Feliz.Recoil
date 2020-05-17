@@ -75,7 +75,9 @@ let samples =
       "recoil-bidirectionalselectors", Samples.BidirectionalSelectors.render()
       "recoil-reset", Samples.Reset.render()
       "recoil-async", Samples.Async.render()
-      "recoil-callback", Samples.Callback.render() ]
+      "recoil-callback", Samples.Callback.render()
+      "recoil-loadable", Samples.Loadable.render() ]
+      //"recoil-atomfamily", Samples.AtomFamily.render() 
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -312,6 +314,8 @@ let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Ms
                 menuItem "Reset" [ Urls.Recoil; Urls.Examples; Urls.Reset ]
                 menuItem "Asynchronous Selectors" [ Urls.Recoil; Urls.Examples; Urls.Async ]
                 menuItem "Callbacks" [ Urls.Recoil; Urls.Examples; Urls.Callback ]
+                menuItem "Loadables" [ Urls.Recoil; Urls.Examples; Urls.Loadable ]
+                //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]
     ])
@@ -355,6 +359,8 @@ let content = React.functionComponent(fun (input: {| state: State; dispatch: Msg
         | [ Urls.Reset ] -> [ "Reset.md" ]
         | [ Urls.Async ] -> [ "Async.md" ]
         | [ Urls.Callback ] -> [ "Callback.md" ]
+        | [ Urls.Loadable ] -> [ "Loadable.md" ]
+        | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path |> lazyView MarkdownLoader.load
     | _ -> lazyView MarkdownLoader.load [ "Recoil"; "README.md" ])
