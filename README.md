@@ -12,10 +12,12 @@ open Feliz.Recoil
 
 let textState = Recoil.atom("textState", "Hello world!")
 
+let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
+
 let textStateTransform =
     Recoil.selector("textStateSelector", fun get ->
         get(textState)
-        |> String.filter(fun c -> c <> 'o')
+        |> String.filter(fun v -> List.contains v vowels)
     )
 
 let inner = React.functionComponent(fun () ->
@@ -37,7 +39,8 @@ let otherInner = React.functionComponent(fun () ->
 
     Html.div [
         prop.text (sprintf "Atom current value: %s" textAtom)
-    ])
+    ]
+)
 
 let render = React.functionComponent(fun () ->
     Recoil.root [

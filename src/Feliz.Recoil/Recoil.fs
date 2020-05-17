@@ -180,7 +180,7 @@ type Recoil =
 
     static member inline useStatePrev<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilState<'T>(recoilValue)
-        |> unbox<'T * ('T -> 'T -> unit)>
+        |> unbox<'T * (('T -> 'T) -> unit)>
 
     static member inline useStateLoadable<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilStateLoadable<'T>(recoilValue)
@@ -188,7 +188,7 @@ type Recoil =
 
     static member inline useStateLoadablePrev<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilStateLoadable<'T>(recoilValue)
-        |> unbox<Loadable<'T> * ('T -> 'T -> unit)>
+        |> unbox<Loadable<'T> * (('T -> 'T) -> unit)>
 
     static member inline useSetState<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
@@ -196,7 +196,7 @@ type Recoil =
 
     static member inline useSetStatePrev<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
-        |> unbox<'T -> 'T -> unit>
+        |> unbox<('T -> 'T) -> unit>
 
     static member inline useResetState<'T> (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useResetRecoilState<'T>(recoilValue)

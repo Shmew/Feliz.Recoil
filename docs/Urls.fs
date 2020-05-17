@@ -16,4 +16,7 @@ let [<Literal>] Reset = "Reset"
 let [<Literal>] Async = "Async"
 let [<Literal>] Callback = "Callback"
 let [<Literal>] Loadable = "Loadable"
+let [<Literal>] Previous = "Previous"
+
+// Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"
