@@ -5,6 +5,7 @@ open Elmish
 open Elmish.React
 open Feliz
 open Feliz.Markdown
+open Feliz.Recoil
 open Fable.SimpleHttp
 open Feliz.Router
 open Fable.Core.JsInterop
@@ -17,37 +18,26 @@ type Highlight =
     static member inline highlight (properties: IReactProperty list) =
         Interop.reactApi.createElement(importDefault "react-highlight", createObj !!properties)
 
-type State = 
-    { CurrentPath : string list
-      CurrentTab: string list }
+let currentPath = 
+    atom { 
+        def []
+    }
 
-let init () =
-    let path = 
-        match document.URL.Split('#') with
-        | [| _ |] -> []
-        | [| _; path |] -> path.Split('/') |> List.ofArray |> List.tail
-        | _ -> []
-    { CurrentPath = path
-      CurrentTab = path }, Cmd.none
+let currentTab = 
+    atom { 
+        def []
+    }
 
-type Msg =
-    | TabToggled of string list
-    | UrlChanged of string list
+let currentPathSelector =
+    selector {
+        get (fun getter -> getter.get(currentPath))
+        set (fun setter (segments: string list) ->
+            setter.set(currentTab, segments)
+            setter.set(currentPath, segments) 
+        )
+    }
 
-let update msg state =
-    match msg with
-    | UrlChanged segments -> 
-        { state with CurrentPath = segments }, 
-        match state.CurrentTab with
-        | [ ] when segments.Length > 2 -> 
-            segments
-            |> TabToggled
-            |> Cmd.ofMsg
-        | _ -> Cmd.none
-    | TabToggled tabs ->
-        match tabs with
-        | [ ] -> { state with CurrentTab = [ ] }, Cmd.none
-        | _ -> { state with CurrentTab = tabs }, Cmd.none
+let testAtom = atom { def "" }
 
 let centeredSpinner =
     Html.div [
@@ -116,7 +106,76 @@ let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markd
 
 let codeBlockRenderer (codeProps: Markdown.ICodeProperties) = codeBlockRenderer' {| codeProps = codeProps |}
 
-let renderMarkdown = React.functionComponent(fun (input: {| path: string; content: string |}) ->
+let contentPath =
+    atom {
+        def [ "Recoil"; "README.md" ]
+    }
+
+let readme = sprintf "https://raw.githubusercontent.com/%s/%s/master/README.md"
+let contributing = sprintf "https://raw.githubusercontent.com/Zaid-Ajaj/Feliz/master/public/Feliz/Contributing.md"
+
+let (|PathPrefix|) (segments: string list) (path: string list) =
+    if path.Length > segments.Length then
+        match List.splitAt segments.Length path with
+        | start,end' when start = segments -> Some end'
+        | _ -> None
+    else None
+
+let contentSelector =
+    selector {
+        get (fun getter -> getter.get(contentPath))
+        set (fun setter (newValue: string list) ->
+            setter.set(currentPathSelector, newValue)
+
+            match newValue with
+            | [ Urls.Recoil; Urls.Overview; ] -> [ "Recoil"; "README.md" ]
+            | [ Urls.Recoil; Urls.Installation ] -> [ "Recoil"; "Installation.md" ]
+            | [ Urls.Recoil; Urls.API ] -> [ "Recoil"; "API.md" ]
+            | [ Urls.Recoil; Urls.ReleaseNotes ] -> [ "Recoil"; "RELEASE_NOTES.md" ]
+            | [ Urls.Recoil; Urls.Contributing ] -> [ contributing ]
+            | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
+                match res with
+                | [ Urls.Basic ] -> [ "Basic.md" ]
+                | [ Urls.MixAndMatch ] -> [ "MixAndMatch.md" ]
+                | [ Urls.BidirectionalSelectors ] -> [ "BidirectionalSelectors.md" ]
+                | [ Urls.Reset ] -> [ "Reset.md" ]
+                | [ Urls.Async ] -> [ "Async.md" ]
+                | [ Urls.Callback ] -> [ "Callback.md" ]
+                | [ Urls.Loadable ] -> [ "Loadable.md" ]
+                | [ Urls.Previous ] -> [ "Previous.md" ]
+                | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
+                // Utils - not implemented
+                | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
+                | _ -> []
+                |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
+            | _ -> [ "Recoil"; "README.md" ]
+            |> fun res -> setter.set(contentPath, res)
+        )
+    }
+
+let currentMarkdownPath =
+    selector {
+        get (fun getter ->
+            match getter.get(contentSelector) with
+            | [ one: string ] when one.StartsWith "http" -> one
+            | segments -> String.concat "/" segments
+        )
+    }
+
+let markdownSelector =
+    selector {
+        get (fun getter ->
+            async {
+                let! (statusCode, responseText) = Http.get (getter.get(currentMarkdownPath))
+                if statusCode = 200 then return Ok responseText
+                else return Error responseText
+            }
+        )
+    }
+
+let renderMarkdown = React.functionComponent(fun (input: {| content: string |}) ->
+    let path = Recoil.useValue(currentMarkdownPath)
+
     Html.div [
         prop.className [ Bulma.Content; "scrollbar" ]
         prop.style [ 
@@ -124,12 +183,12 @@ let renderMarkdown = React.functionComponent(fun (input: {| path: string; conten
             style.padding (0,20)
         ]
         prop.children [
-            if input.path.StartsWith "https://raw.githubusercontent.com" then
+            if path.StartsWith "https://raw.githubusercontent.com" then
                 Html.h2 [
                     Html.i [ prop.className [ FA.Fa; FA.FaGithub ] ]
                     Html.anchor [
                         prop.style [ style.marginLeft 10; style.color.lightGreen ]
-                        prop.href (githubPath input.path)
+                        prop.href (githubPath path)
                         prop.text "View on Github"
                     ]
                 ]
@@ -145,66 +204,30 @@ let renderMarkdown = React.functionComponent(fun (input: {| path: string; conten
     ])
 
 module MarkdownLoader =
-    open Feliz.ElmishComponents
+    let render = React.memo(fun () ->
+        let content = Recoil.useValue(markdownSelector)
 
-    type State =
-        | Initial
-        | Loading
-        | Errored of string
-        | LoadedMarkdown of content: string
-
-    type Msg =
-        | StartLoading of path: string list
-        | Loaded of Result<string, int * string>
-
-    let init (path: string list) = Initial, Cmd.ofMsg (StartLoading path)
-
-    let resolvePath = function
-    | [ one: string ] when one.StartsWith "http" -> one
-    | segments -> String.concat "/" segments
-
-    let update (msg: Msg) (state: State) =
-        match msg with
-        | StartLoading path ->
-            let loadMarkdownAsync() = async {
-                let! (statusCode, responseText) = Http.get (resolvePath path)
-                if statusCode = 200
-                then return Loaded (Ok responseText)
-                else return Loaded (Error (statusCode, responseText))
-            }
-
-            Loading, Cmd.OfAsync.perform loadMarkdownAsync () id
-
-        | Loaded (Ok content) ->
-            State.LoadedMarkdown content, Cmd.none
-
-        | Loaded (Error (status, _)) ->
-            State.LoadedMarkdown (sprintf "Status %d: could not load markdown" status), Cmd.none
-
-    let render path (state: State) dispatch =
-        match state with
-        | Initial -> Html.none
-        | Loading -> centeredSpinner
-        | LoadedMarkdown content -> renderMarkdown {| path = (resolvePath path); content = content |}
-        | Errored error ->
+        match content with
+        | Ok content -> renderMarkdown {| content = content |}
+        | Error error ->
             Html.h1 [
                 prop.style [ style.color.crimson ]
                 prop.text error
-            ]
-
-    let load (path: string list) = React.elmishComponent("LoadMarkdown", init path, update, render path, key = resolvePath path)
+            ])
 
 // A collapsable nested menu for the sidebar
 // keeps internal state on whether the items should be visible or not based on the collapsed state
-let nestedMenuList' = React.functionComponent(fun (input: {| state: State; name: string; basePath: string list; elems: (string list -> Fable.React.ReactElement) list; dispatch: Msg -> unit |}) ->
+let nestedMenuList' = React.functionComponent(fun (input: {| name: string; basePath: string list; elems: (string list -> Fable.React.ReactElement) list |}) ->
+    let tab,setTab = Recoil.useState(currentTab)
+
     let collapsed = 
-        match input.state.CurrentTab with
+        match tab with
         | [ ] -> false
         | _ -> 
             input.basePath 
             |> List.indexed 
             |> List.forall (fun (i, segment) -> 
-                List.tryItem i input.state.CurrentTab 
+                List.tryItem i tab
                 |> Option.map ((=) segment) 
                 |> Option.defaultValue false) 
 
@@ -213,8 +236,8 @@ let nestedMenuList' = React.functionComponent(fun (input: {| state: State; name:
             prop.className Bulma.IsUnselectable
             prop.onClick <| fun _ -> 
                 match collapsed with
-                | true -> input.dispatch <| TabToggled (input.basePath |> List.rev |> List.tail |> List.rev)
-                | false -> input.dispatch <| TabToggled input.basePath
+                | true -> setTab(input.basePath |> List.rev |> List.tail |> List.rev)
+                | false -> setTab(input.basePath)
             prop.children [
                 Html.i [
                     prop.style [ style.marginRight 10 ]
@@ -251,12 +274,14 @@ let menuList' = React.functionComponent(fun (input: {| items: Fable.React.ReactE
         prop.children input.items
     ])
 
-let menuItem' = React.functionComponent(fun (input: {| currentPath: string list; name: string; path: string list |}) ->
+let menuItem' = React.functionComponent(fun (input: {| name: string; path: string list |}) ->
+    let path = Recoil.useValue(currentTab)
+
     Html.li [
         Html.anchor [
             prop.className [
-                if input.currentPath = input.path then Bulma.IsActive
-                if input.currentPath = input.path then Bulma.HasBackgroundPrimary
+                if path = input.path then Bulma.IsActive
+                if path = input.path then Bulma.HasBackgroundPrimary
             ]
             prop.text input.name
             prop.href (sprintf "#/%s" (String.concat "/" input.path))
@@ -269,38 +294,30 @@ let menuLabel (content: string) =
 let menuList (items: Fable.React.ReactElement list) =
     menuList' {| items = items |}
 
-let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Msg -> unit |} ) ->
-    let dispatch = React.useCallback(input.dispatch, [||])
+let nestedMenuItem (name: string) (extendedPath: string list) (basePath: string list) =
+    let path = basePath @ extendedPath
+    menuItem' 
+        {| name = name
+           path = path |}
 
-    let menuItem (name: string) (basePath: string list) =
-        menuItem' 
-            {| currentPath = input.state.CurrentPath
-               name = name
-               path = basePath |}
-    
-    let nestedMenuItem (name: string) (extendedPath: string list) (basePath: string list) =
-        let path = basePath @ extendedPath
-        menuItem' 
-            {| currentPath = input.state.CurrentPath
-               name = name
-               path = path |}
+let nestedMenuList (name: string) (basePath: string list) (items: (string list -> Fable.React.ReactElement) list) =
+    nestedMenuList' 
+        {| name = name
+           basePath = basePath
+           elems = items |}
 
-    let nestedMenuList (name: string) (basePath: string list) (items: (string list -> Fable.React.ReactElement) list) =
-        nestedMenuList' 
-            {| state = input.state
-               name = name
-               basePath = basePath
-               elems = items
-               dispatch = dispatch |}
-    
-    let subNestedMenuList (name: string) (basePath: string list) (items: (string list -> Fable.React.ReactElement) list) (addedBasePath: string list) =
-        nestedMenuList' 
-            {| state = input.state
-               name = name
-               basePath = (addedBasePath @ basePath)
-               elems = items
-               dispatch = dispatch |}
+let subNestedMenuList (name: string) (basePath: string list) (items: (string list -> Fable.React.ReactElement) list) (addedBasePath: string list) =
+    nestedMenuList' 
+        {| name = name
+           basePath = (addedBasePath @ basePath)
+           elems = items |}
 
+let menuItem (name: string) (basePath: string list) =
+    menuItem' 
+        {| name = name
+           path = basePath |}
+
+let allItems = React.memo(fun () ->
     Html.div [
         prop.className "scrollbar"
         prop.children [
@@ -325,9 +342,7 @@ let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Ms
         ]
     ])
 
-let sidebar = React.functionComponent(fun (input: {| state: State; dispatch: Msg -> unit |}) ->
-    let dispatch = React.useCallback(input.dispatch, [||])
-
+let sidebar = React.memo(fun () ->
     // the actual nav bar
     Html.aside [
         prop.className Bulma.Menu
@@ -336,80 +351,65 @@ let sidebar = React.functionComponent(fun (input: {| state: State; dispatch: Msg
         ]
         prop.children [ 
             menuLabel "Feliz.Recoil"
-            allItems {| state = input.state; dispatch = dispatch |} 
+            allItems() 
         ]
     ])
 
-let readme = sprintf "https://raw.githubusercontent.com/%s/%s/master/README.md"
-let contributing = sprintf "https://raw.githubusercontent.com/Zaid-Ajaj/Feliz/master/public/Feliz/Contributing.md"
-
-let (|PathPrefix|) (segments: string list) (path: string list) =
-    if path.Length > segments.Length then
-        match List.splitAt segments.Length path with
-        | start,end' when start = segments -> Some end'
-        | _ -> None
-    else None
-
-let content = React.functionComponent(fun (input: {| state: State; dispatch: Msg -> unit |}) ->
-    match input.state.CurrentPath with
-    | [ Urls.Recoil; Urls.Overview; ] -> lazyView MarkdownLoader.load [ "Recoil"; "README.md" ]
-    | [ Urls.Recoil; Urls.Installation ] -> lazyView MarkdownLoader.load [ "Recoil"; "Installation.md" ]
-    | [ Urls.Recoil; Urls.API ] -> lazyView MarkdownLoader.load [ "Recoil"; "API.md" ]
-    | [ Urls.Recoil; Urls.ReleaseNotes ] -> lazyView MarkdownLoader.load [ "Recoil"; "RELEASE_NOTES.md" ]
-    | [ Urls.Recoil; Urls.Contributing ] -> lazyView MarkdownLoader.load [ contributing ]
-    | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
-        match res with
-        | [ Urls.Basic ] -> [ "Basic.md" ]
-        | [ Urls.MixAndMatch ] -> [ "MixAndMatch.md" ]
-        | [ Urls.BidirectionalSelectors ] -> [ "BidirectionalSelectors.md" ]
-        | [ Urls.Reset ] -> [ "Reset.md" ]
-        | [ Urls.Async ] -> [ "Async.md" ]
-        | [ Urls.Callback ] -> [ "Callback.md" ]
-        | [ Urls.Loadable ] -> [ "Loadable.md" ]
-        | [ Urls.Previous ] -> [ "Previous.md" ]
-        | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
-        // Utils - not implemented
-        | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
-        | _ -> []
-        |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path |> lazyView MarkdownLoader.load
-    | _ -> lazyView MarkdownLoader.load [ "Recoil"; "README.md" ])
-
-let main = React.functionComponent(fun (input: {| state: State; dispatch: Msg -> unit |}) ->
-    let dispatch = React.useCallback(input.dispatch, [||])
-    
+let main = React.memo(fun () ->
     Html.div [
         prop.className [ Bulma.Tile; Bulma.IsAncestor ]
         prop.children [
             Html.div [
                 prop.className [ Bulma.Tile; Bulma.Is2 ]
-                prop.children [ sidebar {| state = input.state; dispatch = dispatch |} ]
+                prop.children [ sidebar() ]
             ]
 
             Html.div [
                 prop.className Bulma.Tile
                 prop.style [ style.paddingTop 30 ]
-                prop.children [ content {| state = input.state; dispatch = dispatch |} ]
+                prop.children [
+                    React.suspense ([
+                        MarkdownLoader.render() 
+                    ], Html.none)
+                ]
             ]
         ]
     ])
 
-let render' = React.functionComponent(fun (input: {| state: State; dispatch: Msg -> unit |}) ->
-    let dispatch = React.useCallback(input.dispatch, [||])
-    
+let render' = React.memo(fun () ->
+    let setPath = Recoil.useSetState(contentSelector)
+
     let application =
         Html.div [
             prop.style [ 
                 style.padding 30
             ]
-            prop.children [ main {| state = input.state; dispatch = dispatch |} ]
+            prop.children [ main() ]
         ]
 
     Router.router [
-        Router.onUrlChanged (UrlChanged >> dispatch)
+        Router.onUrlChanged setPath
         Router.application application
     ])
 
-let render (state: State) dispatch = render' {| state = state; dispatch = dispatch |}
+let appMain = React.memo(fun () ->
+    Recoil.root [
+        render'()
+    ])
+
+let render _ _ = appMain()
+    
+
+type StateStub = int
+
+let init () = 
+    0, Router.navigate(Router.currentUrl() |> Array.ofList)
+
+type Msg =
+    | DoNothing
+
+let update msg state =
+    state, Cmd.none
 
 Program.mkProgram init update render
 |> Program.withReactSynchronous "root"

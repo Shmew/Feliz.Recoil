@@ -88,17 +88,17 @@ type Recoil =
     /// Derives state and returns a RecoilValue via the provided get function.
     /// 
     /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>) =
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> JS.Promise<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> System.Guid.NewGuid()
-              "get" ==> fun o -> o?get |> get ]
+              "get" ==> get ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>) =
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> JS.Promise<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> key
-              "get" ==> fun o -> o?get |> get ]
+              "get" ==> get ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
@@ -106,75 +106,37 @@ type Recoil =
     /// Applies state changes via the provided set function.
     /// 
     /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) =
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> System.Guid.NewGuid()
-              "get" ==> fun o -> o?get |> get
+              "get" ==> get
               "set" ==> System.Func<_,_,_>(set) ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     ///
     /// Applies state changes via the provided set function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) =
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> key
-              "get" ==> fun o -> o?get |> get
+              "get" ==> get
               "set" ==> System.Func<_,_,_>(set) ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     /// 
     /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>) =
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> Async<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> System.Guid.NewGuid()
-              "get" ==> ((fun o -> o?get |> get) >> Async.StartAsPromise) ]
+              "get" ==> (get >> Async.StartAsPromise) ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>) =
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> Async<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> key
-              "get" ==> ((fun o -> o?get |> get) >> Async.StartAsPromise) ]
-            |> createObj
-        )
-    /// Derives state and returns a RecoilValue via the provided get function.
-    ///
-    /// Applies state changes via the provided set function.
-    /// 
-    /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>, set: SelectorMethods -> 'T -> unit) =
-        Bindings.Recoil.selector<'U,ReadWrite> (
-            [ "key" ==> System.Guid.NewGuid()
-              "get" ==> ((fun o -> o?get |> get) >> Async.StartAsPromise)
-              "set" ==> System.Func<_,_,_>(set) ]
-            |> createObj
-        )
-    /// Derives state and returns a RecoilValue via the provided get function.
-    ///
-    /// Applies state changes via the provided set function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>, set: SelectorMethods -> 'T -> unit) =
-        Bindings.Recoil.selector<'U,ReadWrite> (
-            [ "key" ==> key
-              "get" ==> ((fun o -> o?get |> get) >> Async.StartAsPromise)
-              "set" ==> System.Func<_,_,_>(set) ]
-            |> createObj
-        )
-    /// Derives state and returns a RecoilValue via the provided get function.
-    /// 
-    /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>) =
-        Bindings.Recoil.selector<'U,ReadOnly> (
-            [ "key" ==> System.Guid.NewGuid()
-              "get" ==> (fun o -> o?get |> get) ]
-            |> createObj
-        )
-    /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>) =
-        Bindings.Recoil.selector<'U,ReadOnly> (
-            [ "key" ==> key
-              "get" ==> (fun o -> o?get |> get) ]
+              "get" ==> (get >> Async.StartAsPromise) ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
@@ -182,20 +144,58 @@ type Recoil =
     /// Applies state changes via the provided set function.
     /// 
     /// Uses a generated GUID for the key.
-    static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) =
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> System.Guid.NewGuid()
-              "get" ==> (fun o -> o?get |> get)
+              "get" ==> (get >> Async.StartAsPromise)
               "set" ==> System.Func<_,_,_>(set) ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     ///
     /// Applies state changes via the provided set function.
-    static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) =
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> key
-              "get" ==> (fun o -> o?get |> get)
+              "get" ==> (get >> Async.StartAsPromise)
+              "set" ==> System.Func<_,_,_>(set) ]
+            |> createObj
+        )
+    /// Derives state and returns a RecoilValue via the provided get function.
+    /// 
+    /// Uses a generated GUID for the key.
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> RecoilValue<'U,'Mode>) =
+        Bindings.Recoil.selector<'U,ReadOnly> (
+            [ "key" ==> System.Guid.NewGuid()
+              "get" ==> get ]
+            |> createObj
+        )
+    /// Derives state and returns a RecoilValue via the provided get function.
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> RecoilValue<'U,'Mode>) =
+        Bindings.Recoil.selector<'U,ReadOnly> (
+            [ "key" ==> key
+              "get" ==> get ]
+            |> createObj
+        )
+    /// Derives state and returns a RecoilValue via the provided get function.
+    ///
+    /// Applies state changes via the provided set function.
+    /// 
+    /// Uses a generated GUID for the key.
+    static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> RecoilValue<'U,'Mode>, set: SelectorMethods -> 'T -> unit) =
+        Bindings.Recoil.selector<'U,ReadWrite> (
+            [ "key" ==> System.Guid.NewGuid()
+              "get" ==> get
+              "set" ==> System.Func<_,_,_>(set) ]
+            |> createObj
+        )
+    /// Derives state and returns a RecoilValue via the provided get function.
+    ///
+    /// Applies state changes via the provided set function.
+    static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) =
+        Bindings.Recoil.selector<'U,ReadWrite> (
+            [ "key" ==> key
+              "get" ==> get
               "set" ==> System.Func<_,_,_>(set) ]
             |> createObj
         )
@@ -429,17 +429,17 @@ module RecoilMagic =
         /// Derives state and returns a RecoilValue via the provided get function.
         /// 
         /// Uses a generated GUID for the key.
-        static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> 'U) =
+        static member inline selector<'Mode,'U> (get: SelectorGetter -> 'U) =
             Bindings.Recoil.selector<'U,ReadOnly> (
                 [ "key" ==> System.Guid.NewGuid()
-                  "get" ==> fun o -> o?get |> get ]
+                  "get" ==> get ]
                 |> createObj
             )
         /// Derives state and returns a RecoilValue via the provided get function.
-        static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> 'U) =
+        static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> 'U) =
             Bindings.Recoil.selector<'U,ReadOnly> (
                 [ "key" ==> key
-                  "get" ==> fun o -> o?get |> get ]
+                  "get" ==> get ]
                 |> createObj
             )
         /// Derives state and returns a RecoilValue via the provided get function.
@@ -447,20 +447,20 @@ module RecoilMagic =
         /// Applies state changes via the provided set function.
         /// 
         /// Uses a generated GUID for the key.
-        static member inline selector<'T,'Mode,'U> (get: (RecoilValue<'T,'Mode> -> 'T) -> 'U, set: SelectorMethods -> 'T -> unit) =
+        static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) =
             Bindings.Recoil.selector<'U,ReadWrite> (
                 [ "key" ==> System.Guid.NewGuid()
-                  "get" ==> fun o -> o?get |> get
+                  "get" ==> get
                   "set" ==> System.Func<_,_,_>(set) ]
                 |> createObj
             )
         /// Derives state and returns a RecoilValue via the provided get function.
         ///
         /// Applies state changes via the provided set function.
-        static member inline selector<'T,'Mode,'U> (key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> 'U, set: SelectorMethods -> 'T -> unit) =
+        static member inline selector<'T,'Mode,'U> (key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) =
             Bindings.Recoil.selector<'U,ReadWrite> (
                 [ "key" ==> key
-                  "get" ==> fun o -> o?get |> get
+                  "get" ==> get
                   "set" ==> System.Func<_,_,_>(set) ]
                 |> createObj
             )

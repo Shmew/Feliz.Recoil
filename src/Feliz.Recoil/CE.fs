@@ -7,61 +7,80 @@ open System.ComponentModel
 module ComputationExpressions =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     [<NoEquality;NoComparison>]
-    type SelectorState<'T,'Mode,'U,'V> =
+    type SelectorState<'T,'Mode, 'V> =
         { Key: string option
-          Get: ((RecoilValue<'T,'V> -> 'T) -> 'U) option
-          Set: (SelectorMethods -> 'T -> unit) option }
+          Get: (SelectorGetter -> 'V) option
+          Set: (SelectorMethods -> 'T -> unit) option
+          Mode: 'Mode }
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    [<NoEquality;NoComparison>]
-    type AtomState<'T> =
-        { Key: string option
-          Get: 'T option }
+    type SelectorHelper =
+        static member Create () =
+            { Key = None
+              Get = None 
+              Set = None
+              Mode = unbox<ReadOnly>() }
+
+        static member setKey (state, key: string) =
+            { Key = Some key 
+              Get = state.Get
+              Set = state.Set
+              Mode = state.Mode }
+
+        static member setGet (state, get: SelectorGetter -> 'T) =
+            { Key = state.Key
+              Get = Some get
+              Set = state.Set
+              Mode = state.Mode }
+
+        static member setSet (state, set: SelectorMethods -> 'T -> unit) =
+            { Key = state.Key
+              Get = state.Get
+              Set = Some set
+              Mode = unbox<ReadWrite>() }
 
     type SelectorBuilder [<EditorBrowsable(EditorBrowsableState.Never)>] () =
-        member _.Yield (_) : SelectorState<_,ReadOnly,_,_> =
-            { Key = None
-              Get = None
-              Set = None }
+        member _.Yield (_) =
+            SelectorHelper.Create()
 
         [<CustomOperation("key")>]
-        member _.Key (state: SelectorState<_,_,_,_>, value: string) = 
-            { state with Key = Some value }
+        member _.Key (state, value: string) = 
+            SelectorHelper.setKey(state, value)
 
         [<CustomOperation("get")>]
-        member _.Get (state: SelectorState<_,_,_,_>, (f: ((RecoilValue<'T,_> -> 'T) -> 'U))) = 
-            { state with Get = Some f }
-            
-        [<CustomOperation("set")>]
-        member _.Set (state: SelectorState<_,ReadOnly,_,_>, f)  =
-            { state with Set = Some f }
+        member inline _.Get (state, (f: SelectorGetter -> 'U)) = 
+            SelectorHelper.setGet(state, f)
 
-        member inline _.Run (selector: SelectorState<_,ReadOnly,JS.Promise<'U>,_>) =
+        [<CustomOperation("set")>]
+        member inline _.Set (state, (f: SelectorMethods -> 'T -> unit)) =
+            SelectorHelper.setSet(state, f)
+            
+        member inline _.Run (selector: SelectorState<'T,ReadOnly,JS.Promise<'T>>) =
             match selector with
             | { Key = Some key; Get = Some getF } -> Recoil.selector(key, getF)
             | _ -> Recoil.selector(selector.Get.Value)
         
-        member inline _.Run (selector: SelectorState<_,ReadWrite,JS.Promise<'U>,_>) =
+        member inline _.Run (selector: SelectorState<'T,ReadWrite,JS.Promise<'T>>) =
             match selector with
             | { Key = Some key; Get = Some getF; Set = Some setF } -> Recoil.selector(key, getF, setF)
             | _ -> Recoil.selector(selector.Get.Value, selector.Set.Value)
         
-        member inline _.Run (selector: SelectorState<_,ReadOnly,Async<'U>,_>) =
+        member inline _.Run (selector: SelectorState<'T,ReadOnly,Async<'T>>) =
             match selector with
             | { Key = Some key; Get = Some getF } -> Recoil.selector(key, getF)
             | _ -> Recoil.selector(selector.Get.Value)
         
-        member inline _.Run (selector: SelectorState<_,ReadWrite,Async<'U>,_>) =
+        member inline _.Run (selector: SelectorState<'T,ReadWrite,Async<'T>>) =
             match selector with
             | { Key = Some key; Get = Some getF; Set = Some setF } -> Recoil.selector(key, getF, setF)
             | _ -> Recoil.selector(selector.Get.Value, selector.Set.Value)
         
-        member inline _.Run (selector: SelectorState<_,ReadOnly,RecoilValue<'U,_>,_>) =
+        member inline _.Run (selector: SelectorState<'T,ReadOnly,RecoilValue<'T,_>>) =
             match selector with
             | { Key = Some key; Get = Some getF } -> Recoil.selector(key, getF)
             | _ -> Recoil.selector(selector.Get.Value)
         
-        member inline _.Run (selector: SelectorState<_,ReadWrite,RecoilValue<'U,_>,_>) =
+        member inline _.Run (selector: SelectorState<'T,ReadWrite,RecoilValue<'T,_>>) =
             match selector with
             | { Key = Some key; Get = Some getF; Set = Some setF } -> Recoil.selector(key, getF, setF)
             | _ -> Recoil.selector(selector.Get.Value, selector.Set.Value)
@@ -69,17 +88,23 @@ module ComputationExpressions =
     [<AutoOpen>]
     module SelectorBuilderMagic =
         type SelectorBuilder with
-            member inline _.Run (selector: SelectorState<_,ReadOnly,'U,_>) =
+            member inline _.Run (selector: SelectorState<'T,ReadOnly,'T>) =
                 match selector with
-                | { Key = Some key; Get = Some getF } -> Recoil.selector(key, getF)
-                | _ -> Recoil.selector(selector.Get.Value)
+                | { Key = Some key; Get = Some getF } -> Recoil.selector(key, (unbox<SelectorGetter -> 'T> getF))
+                | _ -> Recoil.selector((unbox<SelectorGetter -> 'T> selector.Get.Value))
 
-            member inline _.Run (selector: SelectorState<_,ReadWrite,'U,_>) =
+            member inline _.Run (selector: SelectorState<'T,ReadWrite,'T>) =
                 match selector with
                 | { Key = Some key; Get = Some getF; Set = Some setF } -> Recoil.selector(key, getF, setF)
                 | _ -> Recoil.selector(selector.Get.Value, selector.Set.Value)
 
     let selector = SelectorBuilder()    
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<NoEquality;NoComparison>]
+    type AtomState<'T> =
+        { Key: string option
+          Get: 'T option }
 
     type AtomBuilder [<EditorBrowsable(EditorBrowsableState.Never)>] () =
         member _.Yield (_) =

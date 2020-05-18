@@ -13,8 +13,8 @@ let textState =
 let textStateAddition =
     selector {
         key "textStateSelector"
-        get (fun get ->
-            let text = get(textState)
+        get (fun getter ->
+            let text = getter.get(textState)
             text + " wow"
         )
     }
@@ -24,8 +24,8 @@ let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 let textStateTransform =
     selector {
         key "testing"
-        get (fun get ->
-            let addedText = get(textStateAddition)
+        get (fun getter ->
+            let addedText = getter.get(textStateAddition)
             
             addedText 
             |> String.filter(fun v -> 

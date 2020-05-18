@@ -9,8 +9,8 @@ let textState = Recoil.atom("textState", "Hello world!")
 let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
-    Recoil.selector("textStateSelector", fun get ->
-        get(textState)
+    Recoil.selector("textStateSelector", fun getter ->
+        getter.get(textState)
         |> String.filter(fun v -> List.contains v vowels)
     )
 

@@ -12,8 +12,8 @@ let textStateTransform =
     Recoil.selector (
         key = "textStateSelector", 
         get = 
-            (fun get ->
-                get(textState)
+            (fun getter ->
+                getter.get(textState)
                 |> String.filter(fun v -> List.contains v vowels)),
         set =
             (fun selector newValue ->

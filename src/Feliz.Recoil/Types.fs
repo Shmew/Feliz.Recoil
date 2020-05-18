@@ -23,15 +23,32 @@ type RecoilValue<'T,'ReadPerm> =
     [<Emit("$0.tag"); EditorBrowsable(EditorBrowsableState.Never)>]
     member _.tag : RecoilValueTag = jsNative
 
+
+module Testing =
+    let test (inp: RecoilValue<'T,_>) = ()
+
+    let readOnly = unbox<RecoilValue<int,ReadOnly>> ()
+    let readWrite = unbox<RecoilValue<string,ReadWrite>> ()
+    
+    test(readOnly)
+    test(readWrite)
+
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 type DefaultValue = interface end
+
+/// Methods provided in selectors for reading RecoilValues.
+[<Erase>]
+type SelectorGetter =
+    /// Gets the value of a RecoilValue.
+    [<Emit("$0.get($1)")>]
+    member _.get (recoilValue: RecoilValue<'T,_>) : 'T = jsNative
 
 /// Methods provided in selectors for composing new RecoilValues.
 [<Erase>]
 type SelectorMethods =
     /// Gets the value of a RecoilValue.
     [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T,_>) : 'Return = jsNative
+    member _.get (recoilValue: RecoilValue<'T,_>) : 'T = jsNative
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
     member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: DefaultValue) : unit = jsNative

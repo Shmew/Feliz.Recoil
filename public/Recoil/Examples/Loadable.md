@@ -16,8 +16,8 @@ type FA = CssClasses<"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0
 let pokemon = Recoil.atom("pokemon", "pikachu")
 
 let askIsPokemon = 
-    Recoil.selector("isPokemon", fun get ->
-        let pokemonQuery = get(pokemon)
+    Recoil.selector("isPokemon", fun getter ->
+        let pokemonQuery = getter.get(pokemon)
         async {
             do! Async.Sleep 400
             if pokemonQuery <> "" then
