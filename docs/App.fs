@@ -150,7 +150,7 @@ let contentSelector =
         set (fun setter (newValue: string list) ->
             setter.set(currentPathSelector, newValue)
 
-            resolveContent
+            resolveContent newValue
             |> fun res -> setter.set(contentPath, res)
         )
     }
