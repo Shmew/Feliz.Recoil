@@ -141,25 +141,25 @@ use hooks like `Recoil.useState` you will get compiler errors.
 
 Signature:
 ```fs
-(get: (RecoilValue<'T,'Mode> -> 'T) -> 'U) -> RecoilValue<'U,ReadOnly>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>) -> RecoilValue<'U,ReadOnly>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>)  -> RecoilValue<'U,ReadOnly>
+(get: SelectorGetter -> 'U) -> RecoilValue<'U,ReadOnly>
+(get: SelectorGetter -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
+(get: SelectorGetter -> Async<'U>) -> RecoilValue<'U,ReadOnly>
+(get: SelectorGetter -> RecoilValue<'U,_>)  -> RecoilValue<'U,ReadOnly>
 
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> 'U) -> RecoilValue<'U,ReadOnly>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>) -> RecoilValue<'U,ReadOnly>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> 'U) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> Async<'U>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> RecoilValue<'U,_>) -> RecoilValue<'U,ReadOnly>
 
-(get: (RecoilValue<'T,'Mode> -> 'T) -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
 
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: (RecoilValue<'T,'Mode> -> 'T) -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
 ```
 
 Usage:
