@@ -2,7 +2,6 @@ module App
 
 open Browser.Dom
 open Elmish
-open Elmish.React
 open Feliz
 open Feliz.Markdown
 open Feliz.Recoil
@@ -20,12 +19,12 @@ type Highlight =
 
 let currentPath = 
     atom { 
-        def []
+        def (Router.currentUrl())
     }
 
 let currentTab = 
     atom { 
-        def []
+        def (Router.currentUrl())
     }
 
 let currentPathSelector =
@@ -106,11 +105,6 @@ let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markd
 
 let codeBlockRenderer (codeProps: Markdown.ICodeProperties) = codeBlockRenderer' {| codeProps = codeProps |}
 
-let contentPath =
-    atom {
-        def [ "Recoil"; "README.md" ]
-    }
-
 let readme = sprintf "https://raw.githubusercontent.com/%s/%s/master/README.md"
 let contributing = sprintf "https://raw.githubusercontent.com/Zaid-Ajaj/Feliz/master/public/Feliz/Contributing.md"
 
@@ -121,34 +115,42 @@ let (|PathPrefix|) (segments: string list) (path: string list) =
         | _ -> None
     else None
 
+let resolveContent (path: string list) =
+    match path with
+    | [ Urls.Recoil; Urls.Overview; ] -> [ "Recoil"; "README.md" ]
+    | [ Urls.Recoil; Urls.Installation ] -> [ "Recoil"; "Installation.md" ]
+    | [ Urls.Recoil; Urls.API ] -> [ "Recoil"; "API.md" ]
+    | [ Urls.Recoil; Urls.ReleaseNotes ] -> [ "Recoil"; "RELEASE_NOTES.md" ]
+    | [ Urls.Recoil; Urls.Contributing ] -> [ contributing ]
+    | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
+        match res with
+        | [ Urls.Basic ] -> [ "Basic.md" ]
+        | [ Urls.MixAndMatch ] -> [ "MixAndMatch.md" ]
+        | [ Urls.BidirectionalSelectors ] -> [ "BidirectionalSelectors.md" ]
+        | [ Urls.Reset ] -> [ "Reset.md" ]
+        | [ Urls.Async ] -> [ "Async.md" ]
+        | [ Urls.Callback ] -> [ "Callback.md" ]
+        | [ Urls.Loadable ] -> [ "Loadable.md" ]
+        | [ Urls.Previous ] -> [ "Previous.md" ]
+        | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
+        // Utils - not implemented
+        | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
+        | _ -> []
+        |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
+    | _ -> [ "Recoil"; "README.md" ]
+
+let contentPath =
+    atom {
+        def (Router.currentUrl() |> resolveContent)
+    }
+
 let contentSelector =
     selector {
         get (fun getter -> getter.get(contentPath))
         set (fun setter (newValue: string list) ->
             setter.set(currentPathSelector, newValue)
 
-            match newValue with
-            | [ Urls.Recoil; Urls.Overview; ] -> [ "Recoil"; "README.md" ]
-            | [ Urls.Recoil; Urls.Installation ] -> [ "Recoil"; "Installation.md" ]
-            | [ Urls.Recoil; Urls.API ] -> [ "Recoil"; "API.md" ]
-            | [ Urls.Recoil; Urls.ReleaseNotes ] -> [ "Recoil"; "RELEASE_NOTES.md" ]
-            | [ Urls.Recoil; Urls.Contributing ] -> [ contributing ]
-            | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
-                match res with
-                | [ Urls.Basic ] -> [ "Basic.md" ]
-                | [ Urls.MixAndMatch ] -> [ "MixAndMatch.md" ]
-                | [ Urls.BidirectionalSelectors ] -> [ "BidirectionalSelectors.md" ]
-                | [ Urls.Reset ] -> [ "Reset.md" ]
-                | [ Urls.Async ] -> [ "Async.md" ]
-                | [ Urls.Callback ] -> [ "Callback.md" ]
-                | [ Urls.Loadable ] -> [ "Loadable.md" ]
-                | [ Urls.Previous ] -> [ "Previous.md" ]
-                | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
-                // Utils - not implemented
-                | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
-                | _ -> []
-                |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
-            | _ -> [ "Recoil"; "README.md" ]
+            resolveContent
             |> fun res -> setter.set(contentPath, res)
         )
     }
@@ -397,21 +399,4 @@ let appMain = React.memo(fun () ->
         render'()
     ])
 
-let render _ _ = appMain()
-    
-
-type StateStub = int
-
-let init () = 
-    0, Router.navigate(Router.currentUrl() |> Array.ofList)
-
-type Msg =
-    | DoNothing
-
-let update msg state =
-    state, Cmd.none
-
-Program.mkProgram init update render
-|> Program.withReactSynchronous "root"
-|> Program.withConsoleTrace
-|> Program.run
+ReactDOM.render(appMain(), document.getElementById "root")
