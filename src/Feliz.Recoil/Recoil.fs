@@ -52,7 +52,7 @@ type Recoil =
             |> createObj
         )
     /// Creates a RecoilValue with a default value the given RecoilValue.
-    static member inline atom<'T> (key: string, defaultValue: RecoilValue<'T,_>) =
+    static member inline atom<'T,'Mode> (key: string, defaultValue: RecoilValue<'T,'Mode>) =
         Bindings.Recoil.atom<'T> (
             [ "key" ==> key
               "default" ==> defaultValue ]
@@ -79,7 +79,7 @@ type Recoil =
     /// Multiple roots may co-exist; atoms will have distinct values 
     /// within each root. If they are nested, the innermost root will 
     /// completely mask any outer roots.
-    static member inline root (initializer: RecoilValue<'T,ReadWrite> -> 'T -> unit , children: ReactElement list) =
+    static member inline root (initializer: RecoilValue<'T,ReadWrite> -> 'T -> unit, children: ReactElement list) =
         Bindings.Recoil.RecoilRoot(createObj [
             "props" ==> (createObj [ "initializeState" ==> System.Func<_,_,_>(fun o _  -> o?set |> initializer) ])
             "children" ==> Interop.reactApi.Children.toArray children
@@ -204,7 +204,7 @@ type Recoil =
     /// 
     /// If the value is pending, it will throw a Promise to suspend the component.
     /// 
-    /// if the value is an error it will throw it for the nearest React error boundary.
+    /// If the value is an error, it will throw it for the nearest React error boundary.
     /// 
     /// This will also subscribe the component for any updates in the value.
     static member inline useValue<'T> (recoilValue: RecoilValue<'T,ReadOnly>) =
@@ -298,10 +298,12 @@ type Recoil =
 
     /// Creates a callback function that allows for fetching values of RecoilValue(s),
     /// but will always stay up-to-date with the required depencencies and reduce re-renders.
+    ///
+    /// This should *not* be used when the callback determines the result of the render.
     static member inline useCallbackRef<'T,'U> (f: (CallbackMethods -> 'T -> 'U)) =
         Bindings.Recoil.useRecoilCallback<'T,'U>(System.Func<_,_,_>(f))
         |> React.useCallbackRef
-
+        
 //[<Erase;RequireQualifiedAccess>]
 //module Recoil =
     //[<Erase>]

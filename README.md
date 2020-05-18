@@ -10,12 +10,12 @@ A quick look:
 open Feliz
 open Feliz.Recoil
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = Recoil.atom("Hello world!")
 
 let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
-    Recoil.selector("textStateSelector", fun get ->
+    Recoil.selector(fun get ->
         get(textState)
         |> String.filter(fun v -> List.contains v vowels)
     )

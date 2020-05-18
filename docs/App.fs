@@ -307,6 +307,7 @@ let allItems = React.functionComponent(fun (input: {| state: State; dispatch: Ms
             menuList [
                 menuItem "Overview" [ ]
                 menuItem "Installation" [ Urls.Recoil; Urls.Installation ]
+                menuItem "API Reference" [ Urls.Recoil; Urls.API ]
                 menuItem "Release Notes" [ Urls.Recoil; Urls.ReleaseNotes ]
                 menuItem "Contributing" [ Urls.Recoil; Urls.Contributing ]
                 menuLabel "Examples"
@@ -353,6 +354,7 @@ let content = React.functionComponent(fun (input: {| state: State; dispatch: Msg
     match input.state.CurrentPath with
     | [ Urls.Recoil; Urls.Overview; ] -> lazyView MarkdownLoader.load [ "Recoil"; "README.md" ]
     | [ Urls.Recoil; Urls.Installation ] -> lazyView MarkdownLoader.load [ "Recoil"; "Installation.md" ]
+    | [ Urls.Recoil; Urls.API ] -> lazyView MarkdownLoader.load [ "Recoil"; "API.md" ]
     | [ Urls.Recoil; Urls.ReleaseNotes ] -> lazyView MarkdownLoader.load [ "Recoil"; "RELEASE_NOTES.md" ]
     | [ Urls.Recoil; Urls.Contributing ] -> lazyView MarkdownLoader.load [ contributing ]
     | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->

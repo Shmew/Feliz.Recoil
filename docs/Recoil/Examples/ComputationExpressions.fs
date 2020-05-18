@@ -24,13 +24,13 @@ let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 let textStateTransform =
     selector {
         key "testing"
-        getter (Recoil.get {
-            let! addedText = textStateAddition
-            return 
-                addedText 
-                |> String.filter(fun v -> 
-                    List.contains v vowels)
-        })
+        get (fun get ->
+            let addedText = get(textStateAddition)
+            
+            addedText 
+            |> String.filter(fun v -> 
+                List.contains v vowels)
+        )
     }
 
 let transformer = React.functionComponent(fun () ->
