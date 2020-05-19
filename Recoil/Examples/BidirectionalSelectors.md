@@ -5,8 +5,10 @@ but also demonstrates that selectors can also have a
 setter pipeline.
 
 ```fsharp:recoil-bidirectionalselectors
+open Css
 open Feliz
 open Feliz.Recoil
+open Zanaptak.TypedCssClasses
 
 let textState = Recoil.atom("textState", "Hello world!")
 
@@ -14,7 +16,7 @@ let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
     Recoil.selector (
-        key = "textStateSelector", 
+        key = "textStateTransform", 
         get = 
             (fun getter ->
                 getter.get(textState)
@@ -32,6 +34,8 @@ let inner = React.functionComponent(fun () ->
             prop.text (sprintf "Transformed value: %s" text)
         ]
         Html.input [
+            prop.classes [ Bulma.Input ]
+            prop.style [ style.maxWidth (length.em 30) ]
             prop.type'.text
             prop.onTextChange setText
         ]

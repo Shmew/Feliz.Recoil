@@ -5,13 +5,12 @@ asynchronous transformations without the use of the
 React suspense component via loadables.
 
 ```fsharp:recoil-loadable
+open Css
 open Fable.Core
 open Fable.SimpleHttp
 open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
-
-type FA = CssClasses<"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/fontawesome.min.css", Naming.PascalCase>
 
 let pokemon = Recoil.atom("pokemon", "pikachu")
 
@@ -82,6 +81,8 @@ let inner = React.functionComponent(fun () ->
             ]
         ]
         Html.input [
+            prop.classes [ Bulma.Input ]
+            prop.style [ style.maxWidth (length.em 30) ]
             prop.type'.text
             prop.onTextChange <| fun s ->
                 setCurrentText s
