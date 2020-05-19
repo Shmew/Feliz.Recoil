@@ -1,8 +1,10 @@
 ﻿[<RequireQualifiedAccess>]
 module Samples.Callback
 
+open Css
 open Feliz
 open Feliz.Recoil
+open Zanaptak.TypedCssClasses
 
 let firstCount = Recoil.atom("firstCount", 0)
 let secondCount = Recoil.atom("secondCount", 0)
@@ -15,6 +17,11 @@ let countOne = React.functionComponent(fun () ->
             prop.text (sprintf "First count current value: %i" firstCount)
         ]
         Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
             prop.text "Increment"
             prop.onClick <| fun _ -> setFirstCount (firstCount + 1)
         ]
@@ -28,6 +35,11 @@ let countTwo = React.functionComponent(fun () ->
             prop.text (sprintf "First count current value: %i" secondCount)
         ]
         Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
             prop.text "Increment"
             prop.onClick <| fun _ -> setSecondCount (secondCount + 1)
         ]
@@ -42,6 +54,8 @@ let combine = React.functionComponent(fun () ->
                 let! one = caller.getAsync(firstCount)
                 let! two = caller.getAsync(secondCount)
 
+                do! Async.Sleep 500
+
                 do setSum(one + two)
             }
             |> Async.StartImmediate
@@ -53,6 +67,11 @@ let combine = React.functionComponent(fun () ->
                 prop.text (sprintf "Sum: %i" sum)
             ]
             Html.button [
+                prop.classes [ 
+                    Bulma.Button
+                    Bulma.HasBackgroundSuccess
+                    Bulma.HasTextWhite 
+                ]
                 prop.text "Async sum"
                 prop.onClick <| fun _ -> setSum()
             ]
@@ -65,4 +84,3 @@ let render = React.functionComponent(fun () ->
        countTwo()
        combine()
     ])
-

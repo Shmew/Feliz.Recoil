@@ -1,8 +1,10 @@
 ﻿[<RequireQualifiedAccess>]
 module Samples.ComputationExpressions
 
+open Css
 open Feliz
 open Feliz.Recoil
+open Zanaptak.TypedCssClasses
 
 let textState = 
     atom {
@@ -42,6 +44,8 @@ let transformer = React.functionComponent(fun () ->
             prop.text (sprintf "Transformed value: %s" text)
         ]
         Html.input [
+            prop.classes [ Bulma.Input ]
+            prop.style [ style.maxWidth (length.em 30) ]
             prop.type'.text
             prop.onTextChange setAtomText
         ]

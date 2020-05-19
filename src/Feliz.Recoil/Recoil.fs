@@ -67,7 +67,7 @@ type Recoil =
 
     /// Used in selectors to get the RecoilValue's default value or to 
     /// set the RecoilValue to the default value.
-    static member inline defaultValue = Bindings.Recoil.defaultValue
+    static member inline defaultValue = Bindings.Recoil.defaultValue.Create()
 
     /// Provides the context in which atoms have values. 
     /// 

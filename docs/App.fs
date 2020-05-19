@@ -1,6 +1,7 @@
 module App
 
 open Browser.Dom
+open Css
 open Elmish
 open Feliz
 open Feliz.Markdown
@@ -8,10 +9,6 @@ open Feliz.Recoil
 open Fable.SimpleHttp
 open Feliz.Router
 open Fable.Core.JsInterop
-open Zanaptak.TypedCssClasses
-
-type Bulma = CssClasses<"https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css", Naming.PascalCase>
-type FA = CssClasses<"https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", Naming.PascalCase>
 
 type Highlight =
     static member inline highlight (properties: IReactProperty list) =
@@ -35,26 +32,6 @@ let currentPathSelector =
             setter.set(currentPath, segments) 
         )
     }
-
-let centeredSpinner =
-    Html.div [
-        prop.style [
-            style.textAlign.center
-            style.marginLeft length.auto
-            style.marginRight length.auto
-            style.marginTop 50
-        ]
-        prop.children [
-            Html.li [
-                prop.className [
-                    FA.Fa
-                    FA.FaRefresh
-                    FA.FaSpin
-                    FA.Fa3X
-                ]
-            ]
-        ]
-    ]
 
 let samples = 
     [ "recoil-basic", Samples.Basic.render()

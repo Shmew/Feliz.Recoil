@@ -8,9 +8,13 @@ module Bindings =
     open Fable.Core.JsInterop
     open Feliz
 
+    type InnerDefaultValue =
+        [<Emit("new $0()")>]
+        abstract Create: unit -> DefaultValue
+
     type Recoil =
         static member RecoilRoot (props: obj) : ReactElement = import "RecoilRoot" "recoil"
-        static member defaultValue : DefaultValue = import "DefaultValue" "recoil"
+        static member inline defaultValue : InnerDefaultValue = import "DefaultValue" "recoil"
         static member atom<'T> (options: obj) : RecoilValue<'T,ReadWrite> = import "atom" "recoil"
         //static member atomFamily<'T,'P> (options: obj) : 'P -> RecoilValue<'T,ReadWrite> = import "atomFamily" "recoil"
         static member selector<'T,'Permissions> (options: obj) : RecoilValue<'T,'Permissions> = import "selector" "recoil"

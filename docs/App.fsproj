@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Css.fs" />
     <Compile Include="Recoil\Examples\Basic.fs" />
     <Compile Include="Recoil\Examples\MixAndMatch.fs" />
     <Compile Include="Recoil\Examples\BidirectionalSelectors.fs" />

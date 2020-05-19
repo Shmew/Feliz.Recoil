@@ -1,3 +1,6 @@
+### 0.2.2 - Monday, May 18th, 2020
+* Fix Recoil.defaultValue initialization.
+
 ### 0.2.1 - Monday, May 18th, 2020
 * Fix issue with atom CE type resolution.
 
