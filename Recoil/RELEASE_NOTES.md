@@ -1,3 +1,6 @@
+### 0.2.1 - Monday, May 18th, 2020
+* Fix issue with atom CE type resolution.
+
 ### 0.2.0 - Monday, May 18th, 2020
 * Fix computation expression syntax and overloads.
 
