@@ -71,6 +71,8 @@ Creates a RecoilValue with the given default value.
 Atoms optionally take a key, which represents a unique ID of the atom.
 
 If you do not specify the key, a generated GUID will be used instead.
+Please note that if you need *persistence* the unnamed overloads *should
+not be used*.
 
 Signature:
 ```fs
@@ -134,7 +136,8 @@ let myComp = React.functionComponent(fun () ->
 Derives state and returns a RecoilValue via the provided get function.
 
 Like an atom, it also optionally takes a key, where if not provided, a 
-GUID is generated.
+GUID is generated. Please note that if you need *persistence* the 
+unnamed overloads *should not be used*.
 
 When a setter is not provided the selector is *ReadOnly*. If you try to 
 use hooks like `Recoil.useState` you will get compiler errors.

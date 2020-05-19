@@ -13,6 +13,7 @@
     <Compile Include="Recoil\Examples\Loadable.fs" />
     <Compile Include="Recoil\Examples\Previous.fs" />
     <Compile Include="Recoil\Examples\ComputationExpressions.fs" />
+    <Compile Include="Recoil\Examples\Nesting.fs" />
     <Compile Include="Recoil\Examples\AtomFamily.fs" />
     <Compile Include="..\paket-files\docs\Zaid-Ajaj\Feliz\Feliz.Markdown\Markdown.fs">
       <Paket>True</Paket>

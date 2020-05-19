@@ -19,6 +19,7 @@ let [<Literal>] Callback = "Callback"
 let [<Literal>] Loadable = "Loadable"
 let [<Literal>] Previous = "Previous"
 let [<Literal>] ComputationExpressions = "ComputationExpressions"
+let [<Literal>] Nesting = "Nesting"
 
 // Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"

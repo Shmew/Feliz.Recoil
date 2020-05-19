@@ -36,8 +36,6 @@ let currentPathSelector =
         )
     }
 
-let testAtom = atom { def "" }
-
 let centeredSpinner =
     Html.div [
         prop.style [
@@ -67,7 +65,8 @@ let samples =
       "recoil-callback", Samples.Callback.render()
       "recoil-loadable", Samples.Loadable.render()
       "recoil-previous", Samples.Previous.render()
-      "recoil-computationexpressions", Samples.ComputationExpressions.render() ]
+      "recoil-computationexpressions", Samples.ComputationExpressions.render()
+      "recoil-nesting", Samples.Nesting.render() ]
       //"recoil-atomfamily", Samples.AtomFamily.render() 
 
 let githubPath (rawPath: string) =
@@ -133,6 +132,7 @@ let resolveContent (path: string list) =
         | [ Urls.Loadable ] -> [ "Loadable.md" ]
         | [ Urls.Previous ] -> [ "Previous.md" ]
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
+        | [ Urls.Nesting ] -> [ "Nesting.md" ]
         // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []
@@ -339,6 +339,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Loadables" [ Urls.Recoil; Urls.Examples; Urls.Loadable ]
                 menuItem "Previous" [ Urls.Recoil; Urls.Examples; Urls.Previous ]
                 menuItem "Computation Expressions" [ Urls.Recoil; Urls.Examples; Urls.ComputationExpressions ]
+                menuItem "Nesting" [ Urls.Recoil; Urls.Examples; Urls.Nesting ]
                 //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]

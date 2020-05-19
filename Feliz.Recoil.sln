@@ -73,6 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 		public\Recoil\Examples\ComputationExpressions.md = public\Recoil\Examples\ComputationExpressions.md
 		public\Recoil\Examples\Loadable.md = public\Recoil\Examples\Loadable.md
 		public\Recoil\Examples\MixAndMatch.md = public\Recoil\Examples\MixAndMatch.md
+		public\Recoil\Examples\Nesting.md = public\Recoil\Examples\Nesting.md
 		public\Recoil\Examples\Previous.md = public\Recoil\Examples\Previous.md
 		public\Recoil\Examples\Reset.md = public\Recoil\Examples\Reset.md
 	EndProjectSection

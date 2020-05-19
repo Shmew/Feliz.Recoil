@@ -104,12 +104,12 @@ module ComputationExpressions =
     [<NoEquality;NoComparison>]
     type AtomState<'T> =
         { Key: string option
-          Get: 'T option }
+          Def: 'T option }
 
     type AtomBuilder [<EditorBrowsable(EditorBrowsableState.Never)>] () =
         member _.Yield (_) =
             { Key = None
-              Get = None }
+              Def = None }
 
         [<CustomOperation("key")>]
         member _.Key (state: AtomState<_>, value: string) = 
@@ -117,22 +117,25 @@ module ComputationExpressions =
             
         [<CustomOperation("def")>]
         member _.Default (state: AtomState<_>, v: 'T) = 
-            { state with Get = Some v }
+            { state with Def = Some v }
 
-        member inline _.Run<'T> (atom: AtomState<'T>) =
-            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Get.Value)
-            else Recoil.atom(atom.Get.Value)
+        member inline _.Run (atom: AtomState<JS.Promise<'T>>) =
+            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Def.Value)
+            else Recoil.atom(atom.Def.Value)
 
-        member inline _.Run<'T> (atom: AtomState<JS.Promise<'T>>) =
-            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Get.Value)
-            else Recoil.atom(atom.Get.Value)
+        member inline _.Run (atom: AtomState<Async<'T>>) =
+            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Def.Value)
+            else Recoil.atom(atom.Def.Value)
 
-        member inline _.Run<'T> (atom: AtomState<Async<'T>>) =
-            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Get.Value)
-            else Recoil.atom(atom.Get.Value)
+        member inline _.Run (atom: AtomState<RecoilValue<'T,_>>) =
+            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Def.Value)
+            else Recoil.atom(atom.Def.Value)
 
-        member inline _.Run<'T> (atom: AtomState<RecoilValue<'T,_>>) =
-            if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Get.Value)
-            else Recoil.atom(atom.Get.Value)
+    [<AutoOpen>]
+    module AtomBuilderMagic =
+        type AtomBuilder with
+            member inline _.Run<'T> (atom: AtomState<'T>) : RecoilValue<'T,ReadWrite> =
+                if atom.Key.IsSome then Recoil.atom(atom.Key.Value, atom.Def.Value)
+                else Recoil.atom(atom.Def.Value)
 
     let atom = AtomBuilder()

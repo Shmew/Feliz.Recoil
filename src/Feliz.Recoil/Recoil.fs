@@ -10,6 +10,8 @@ type Recoil =
     /// promise resolves to.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline atom<'T> (defaultValue: JS.Promise<'T>) =
         Bindings.Recoil.atom<'T> (
             [ "key" ==> System.Guid.NewGuid()
@@ -28,6 +30,8 @@ type Recoil =
     /// async returns.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline atom<'T> (defaultValue: Async<'T>) =
         Bindings.Recoil.atom<'T> (
             [ "key" ==> System.Guid.NewGuid()
@@ -45,6 +49,8 @@ type Recoil =
     /// Creates a RecoilValue with a default value the given RecoilValue.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline atom<'T,'Mode> (defaultValue: RecoilValue<'T,'Mode>) =
         Bindings.Recoil.atom<'T> (
             [ "key" ==> System.Guid.NewGuid()
@@ -88,6 +94,8 @@ type Recoil =
     /// Derives state and returns a RecoilValue via the provided get function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> JS.Promise<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> System.Guid.NewGuid()
@@ -106,6 +114,8 @@ type Recoil =
     /// Applies state changes via the provided set function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> System.Guid.NewGuid()
@@ -126,6 +136,8 @@ type Recoil =
     /// Derives state and returns a RecoilValue via the provided get function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> Async<'U>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> System.Guid.NewGuid()
@@ -144,6 +156,8 @@ type Recoil =
     /// Applies state changes via the provided set function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> System.Guid.NewGuid()
@@ -164,6 +178,8 @@ type Recoil =
     /// Derives state and returns a RecoilValue via the provided get function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> RecoilValue<'U,'Mode>) =
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> System.Guid.NewGuid()
@@ -182,6 +198,8 @@ type Recoil =
     /// Applies state changes via the provided set function.
     /// 
     /// Uses a generated GUID for the key.
+    ///
+    /// This should not be used if you need data persistence.
     static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> RecoilValue<'U,'Mode>, set: SelectorMethods -> 'T -> unit) =
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> System.Guid.NewGuid()
@@ -412,6 +430,8 @@ module RecoilMagic =
         /// Creates a RecoilValue with the given default value.
         /// 
         /// Uses a generated GUID for the key.
+        ///
+        /// This should not be used if you need data persistence.
         static member inline atom<'T> (defaultValue: 'T) =
             Bindings.Recoil.atom<'T> (
                 [ "key" ==> System.Guid.NewGuid()
@@ -429,6 +449,8 @@ module RecoilMagic =
         /// Derives state and returns a RecoilValue via the provided get function.
         /// 
         /// Uses a generated GUID for the key.
+        ///
+        /// This should not be used if you need data persistence.
         static member inline selector<'Mode,'U> (get: SelectorGetter -> 'U) =
             Bindings.Recoil.selector<'U,ReadOnly> (
                 [ "key" ==> System.Guid.NewGuid()
@@ -447,6 +469,8 @@ module RecoilMagic =
         /// Applies state changes via the provided set function.
         /// 
         /// Uses a generated GUID for the key.
+        ///
+        /// This should not be used if you need data persistence.
         static member inline selector<'T,'Mode,'U> (get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) =
             Bindings.Recoil.selector<'U,ReadWrite> (
                 [ "key" ==> System.Guid.NewGuid()
