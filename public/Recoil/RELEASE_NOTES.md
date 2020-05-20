@@ -1,3 +1,6 @@
+### 0.2.3 - Wednesday, May 20th, 2020
+* Update Feliz dependency.
+
 ### 0.2.2 - Monday, May 18th, 2020
 * Fix Recoil.defaultValue initialization.
 

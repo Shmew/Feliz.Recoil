@@ -53,7 +53,7 @@ NUGET
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.Parsimmon (>= 4.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
-    Feliz (0.86)
+    Feliz (1.0)
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.React (>= 6.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
@@ -77,7 +77,7 @@ NUGET
     FSharp.Core (4.7)
 GITHUB
   remote: Zaid-Ajaj/Feliz
-    Feliz.Markdown/Markdown.fs (9bda80755fa4c4ae25b60e3f4f396c4032ffa6ea)
+    Feliz.Markdown/Markdown.fs (2877a50ae581ad222bea440ab0dc1ae4f4a91544)
 GROUP FakeBuild
 NUGET
   remote: https://api.nuget.org/v3/index.json
@@ -234,7 +234,7 @@ NUGET
     FSharp.Core (4.7.1) - restriction: >= netstandard2.0
     FSharp.Json (0.4)
       FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
-    FSharpLint.Core (0.14)
+    FSharpLint.Core (0.14.1)
       Dotnet.ProjInfo (>= 0.31) - restriction: >= netstandard2.0
       FParsec (>= 1.1.1) - restriction: >= netstandard2.0
       FSharp.Compiler.Service (>= 35.0) - restriction: >= netstandard2.0
@@ -789,7 +789,7 @@ NUGET
       Fable.Browser.Dom (>= 1.0) - restriction: >= netstandard2.0
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
-    Feliz (0.86)
+    Feliz (1.0)
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.React (>= 6.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
@@ -1002,7 +1002,7 @@ NUGET
     FSharp.Core (4.7)
     FSharp.Json (0.4)
       FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
-    FSharpLint.Core (0.14)
+    FSharpLint.Core (0.14.1)
       Dotnet.ProjInfo (>= 0.31) - restriction: >= netstandard2.0
       FParsec (>= 1.1.1) - restriction: >= netstandard2.0
       FSharp.Compiler.Service (>= 35.0) - restriction: >= netstandard2.0

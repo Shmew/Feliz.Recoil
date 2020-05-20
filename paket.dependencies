@@ -8,7 +8,7 @@ group Recoil
 
     nuget Fable.Core ~> 3
     nuget Fable.Promise ~> 2
-    nuget Feliz ~> 0.86
+    nuget Feliz ~> 1
     nuget FSharp.Core ~> 4.7 lowest_matching: true
 
 group Docs
@@ -20,7 +20,7 @@ group Docs
     nuget Fable.Promise ~> 2
     nuget Fable.SimpleHttp ~> 2
     nuget Fable.SimpleJson ~> 3
-    nuget Feliz ~> 0.86
+    nuget Feliz ~> 1
     nuget Feliz.ElmishComponents ~> 0
     nuget Feliz.Router ~> 1
     nuget FSharp.Core ~> 4.7 lowest_matching: true
