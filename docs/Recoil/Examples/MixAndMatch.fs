@@ -42,7 +42,7 @@ let otherInner = React.functionComponent(fun () ->
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
-       inner()
-       otherInner()
+        inner()
+        otherInner()
     ])
 

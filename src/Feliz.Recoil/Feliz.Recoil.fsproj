@@ -5,9 +5,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Bindings.fs" />
     <Compile Include="Recoil.fs" />
+    <Compile Include="Logger.fs" />
     <Compile Include="CE.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />

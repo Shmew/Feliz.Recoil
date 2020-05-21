@@ -16,16 +16,19 @@ type Highlight =
 
 let currentPath = 
     atom { 
+        key "currentPath"
         def (Router.currentUrl())
     }
 
 let currentTab = 
     atom { 
+        key "currentTab"
         def (Router.currentUrl())
     }
 
 let currentPathSelector =
     selector {
+        key "currentPathSelector"
         get (fun getter -> getter.get(currentPath))
         set (fun setter (segments: string list) ->
             setter.set(currentTab, segments)
@@ -43,7 +46,8 @@ let samples =
       "recoil-loadable", Samples.Loadable.render()
       "recoil-previous", Samples.Previous.render()
       "recoil-computationexpressions", Samples.ComputationExpressions.render()
-      "recoil-nesting", Samples.Nesting.render() ]
+      "recoil-nesting", Samples.Nesting.render()
+      "recoil-logger", Samples.Logger.render() ]
       //"recoil-atomfamily", Samples.AtomFamily.render() 
 
 let githubPath (rawPath: string) =
@@ -110,6 +114,7 @@ let resolveContent (path: string list) =
         | [ Urls.Previous ] -> [ "Previous.md" ]
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         | [ Urls.Nesting ] -> [ "Nesting.md" ]
+        | [ Urls.Logger ] -> [ "Logger.md" ]
         // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []
@@ -118,11 +123,13 @@ let resolveContent (path: string list) =
 
 let contentPath =
     atom {
+        key "contentPath"
         def (Router.currentUrl() |> resolveContent)
     }
 
 let contentSelector =
     selector {
+        key "contentSelector"
         get (fun getter -> getter.get(contentPath))
         set (fun setter (newValue: string list) ->
             setter.set(currentPathSelector, newValue)
@@ -134,6 +141,7 @@ let contentSelector =
 
 let currentMarkdownPath =
     selector {
+        key "currentMarkdownPath"
         get (fun getter ->
             match getter.get(contentSelector) with
             | [ one: string ] when one.StartsWith "http" -> one
@@ -143,6 +151,7 @@ let currentMarkdownPath =
 
 let markdownSelector =
     selector {
+        key "markdownSelector"
         get (fun getter ->
             async {
                 let! (statusCode, responseText) = Http.get (getter.get(currentMarkdownPath))
@@ -317,6 +326,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Previous" [ Urls.Recoil; Urls.Examples; Urls.Previous ]
                 menuItem "Computation Expressions" [ Urls.Recoil; Urls.Examples; Urls.ComputationExpressions ]
                 menuItem "Nesting" [ Urls.Recoil; Urls.Examples; Urls.Nesting ]
+                menuItem "Debug Logger" [ Urls.Recoil; Urls.Examples; Urls.Logger ]
                 //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]

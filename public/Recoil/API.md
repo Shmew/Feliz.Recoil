@@ -68,18 +68,10 @@ being computation expressions.
 
 Creates a RecoilValue with the given default value.
 
-Atoms optionally take a key, which represents a unique ID of the atom.
-
-If you do not specify the key, a generated GUID will be used instead.
-Please note that if you need *persistence* the unnamed overloads *should
-not be used*.
+**Keys mut be unique across the application!**
 
 Signature:
 ```fs
-(defaultValue: 'T) -> RecoilValue<'T,ReadWrite>
-(defaultValue: JS.Promise<'T>) -> RecoilValue<'T,ReadWrite>
-(defaultValue: Async<'T>) -> RecoilValue<'T,ReadWrite>
-(defaultValue: RecoilValue<'T,'Mode>) -> RecoilValue<'T,ReadWrite>
 (key: string, defaultValue: 'T) -> RecoilValue<'T,ReadWrite>
 (key: string, defaultValue: JS.Promise<'T>) -> RecoilValue<'T,ReadWrite>
 (key: string, defaultValue: Async<'T>) -> RecoilValue<'T,ReadWrite>
@@ -102,6 +94,23 @@ Usage:
 Recoil.selector(... fun setter -> setter.set(someAtom, Recoil.defaultValue))
 ```
 
+### Recoil.logger
+
+Enables console debugging when in development.
+
+Similar to `React.strictMode`, this will do nothing
+in production.
+
+This must be a descendant of a `Recoil.root` component.
+
+Usage:
+```fs
+Recoil.root [
+    Recoil.logger()
+    ...
+]
+```
+
 ### Recoil.root
 
 Provides the context in which atoms have values. 
@@ -112,12 +121,27 @@ Multiple roots may co-exist; atoms will have distinct values
 within each root. If they are nested, the innermost root will 
 completely mask any outer roots.
 
+The initilizer parameter is a function that will be called when 
+the root is first rendered, which can set initial values for atoms.
+
 Signature:
 ```fs
+type RootInitializer =
+    /// Sets the initial value of a single atom to the provided value.
+    member set (recoilValue: RecoilValue<'T,ReadWrite>, currentValue: 'T) : unit
+    /// Sets the initial value for any number of atoms whose keys are the
+    /// keys in the provided map. 
+    ///
+    /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
+    /// called when it is next read, and setting an atom without a configured 
+    /// validator will result in an exception.
+    member setUnvalidatedAtomValues (atomValues: Map<string,'T>) : unit
+    member setUnvalidatedAtomValues (atomValues: (string * 'T) list) : unit
+
 (children: ReactElement list) -> ReactElement
 
-(initializer: RecoilValue<'T,ReadWrite> -> 'T -> unit, 
- children: ReactElement list) -> ReactElement
+(initializer: RootInitializer -> unit, children: ReactElement list)
+    -> ReactElement
 ```
 
 Usage:
@@ -135,29 +159,17 @@ let myComp = React.functionComponent(fun () ->
 
 Derives state and returns a RecoilValue via the provided get function.
 
-Like an atom, it also optionally takes a key, where if not provided, a 
-GUID is generated. Please note that if you need *persistence* the 
-unnamed overloads *should not be used*.
+**Keys mut be unique across the application!**
 
 When a setter is not provided the selector is *ReadOnly*. If you try to 
 use hooks like `Recoil.useState` you will get compiler errors.
 
 Signature:
 ```fs
-(get: SelectorGetter -> 'U) -> RecoilValue<'U,ReadOnly>
-(get: SelectorGetter -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
-(get: SelectorGetter -> Async<'U>) -> RecoilValue<'U,ReadOnly>
-(get: SelectorGetter -> RecoilValue<'U,_>)  -> RecoilValue<'U,ReadOnly>
-
 (key: string, get: SelectorGetter -> 'U) -> RecoilValue<'U,ReadOnly>
 (key: string, get: SelectorGetter -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
 (key: string, get: SelectorGetter -> Async<'U>) -> RecoilValue<'U,ReadOnly>
 (key: string, get: SelectorGetter -> RecoilValue<'U,_>) -> RecoilValue<'U,ReadOnly>
-
-(get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
 
 (key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
 (key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
@@ -188,8 +200,7 @@ This will also subscribe the component for any updates in the value.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadOnly>) -> 'T
-(recoilValue: RecoilValue<'T,ReadWrite>) -> 'T
+(recoilValue: RecoilValue<'T,_>) -> 'T
 ```
 
 Usage:
@@ -212,8 +223,7 @@ This will also subscribe the component for any updates in the value.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadOnly>) -> 'T
-(recoilValue: RecoilValue<'T,ReadWrite>) -> 'T
+(recoilValue: RecoilValue<'T,_>) -> 'T
 ```
 
 Usage:
@@ -252,7 +262,7 @@ throw the error so that the nearest React error boundary can catch it.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> 'T * ('T -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> 'T * ('T -> unit)
 ```
 
 Usage:
@@ -283,7 +293,7 @@ the new one.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> 'T * (('T -> 'T) -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> 'T * (('T -> 'T) -> unit)
 ```
 
 Usage:
@@ -314,7 +324,7 @@ unavailable due to an error.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> Loadable<'T> * ('T -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> Loadable<'T> * ('T -> unit)
 ```
 
 Usage:
@@ -358,7 +368,7 @@ the new one.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> Loadable<'T> * (('T -> 'T) -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> Loadable<'T> * (('T -> 'T) -> unit)
 ```
 
 Usage:
@@ -398,7 +408,7 @@ not subscribe the compoment to changes to that RecoilValue.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> ('T -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> ('T -> unit)
 ```
 
 Usage:
@@ -422,7 +432,7 @@ not subscribe the compoment to changes to that RecoilValue.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> (('T -> 'T) -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> (('T -> 'T) -> unit)
 ```
 
 Usage:
@@ -445,7 +455,7 @@ Returns a function that will reset the value of a RecoilValue to its default.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite>) -> (unit -> unit)
+(recoilValue: RecoilValue<'T,ReadWrite> -> (unit -> unit)
 ```
 
 Usage: Usage: See the [reset example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Reset).
@@ -478,13 +488,83 @@ Signature:
 Usage: Same usage as this [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback)
 , just replace the function name.
 
+### Recoil.useSetUnvalidatedAtomValues
+
+**This API is unstable.**
+
+Sets the initial value for any number of atoms whose keys are the
+keys in the provided key-value list. 
+
+As with useSetUnvalidatedAtomValues, the validator for each atom will be 
+called when it is next read, and setting an atom without a configured 
+validator will result in an exception.
+
+TransactionMetadata should should be a record or anonymous record mapping
+atom/selector keys to the data you want to set alongside them.
+
+Signature:
+```fs
+(values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) -> unit
+(values: (string * 'Value) list, ?transactionMetadata: 'Metadata) -> unit
+```
+
+### Recoil.useTransactionObservation
+
+**This API is unstable.**
+
+Calls the given callback after any atoms have been modified and the consequent
+component re-renders have been committed. This is intended for persisting
+the values of the atoms to storage. The stored values can then be restored
+using the useSetUnvalidatedAtomValues hook.
+
+The callback receives the following info:
+
+atomValues: 
+The current value of every atom that is both persistable (persistence
+type not set to 'none') and whose value is available (not in an
+error or loading state).
+
+previousAtomValues: 
+The value of every persistable and available atom before the transaction began.
+
+atomInfo: 
+A map containing the persistence settings for each atom. Every key
+that exists in atomValues will also exist in atomInfo.
+
+modifiedAtoms: The set of atoms that were written to during the transaction.
+
+transactionMetadata: 
+Arbitrary information that was added via the useSetUnvalidatedAtomValues hook. 
+
+Useful for ignoring the useSetUnvalidatedAtomValues transaction, to avoid loops.
+
+Signature:
+```fs
+(callback: TransactionObservation<'Values,'Metadata> -> unit) -> unit
+```
+
+### Recoil.useSetUnvalidatedAtomValues
+
+**This API is unstable.**
+
+Subscribes to the store.
+
+Signature:
+```fs
+(callback: Store<'T> * TreeState<'T> -> 'U) -> 'U
+```
+
 ## Computation Expressions
 
 There are computation expressions for both atoms and selectors, to help make composition easier.
 
 ### atom
 
-The atom computation expression only has two operations: `key` and `def`.
+The atom computation expression has four operations: 
+* `key` - The atom key.
+* `def` - The default value.
+* `log` - Enables logging when using the `Recoil.logger` component.
+* `persist` - Allows modifications to atom persistence settings.
 
 They are used like so:
 
@@ -493,6 +573,7 @@ let myAtom =
     atom {
         key "myAtomKey"
         def "myDefaultValue"
+        log
     }
 ```
 
@@ -502,13 +583,10 @@ The key and default operations support all the overloads that `Recoil.atom` does
 
 The selector computation expression has three operations: 
 
-`key`, `get`, and `set`.
-
-`key` is self explainatory, it sets the key (if you want) for the selector.
-
-`get` is when you want to use the getter function format.
-
-`set` is when you want to use the setter function format.
+* `key` - Sets the key for the selector.
+* `get` - Sets the function to get a value.
+* `set` - Sets the function to set a value.
+* `cache` - Sets the `CacheImplementation<'T>` interface.
 
 These can be used like so:
 

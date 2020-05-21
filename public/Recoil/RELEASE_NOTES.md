@@ -1,3 +1,7 @@
+### 0.3.0 - Wednesday, May 20th, 2020
+* Finish API bindings.
+* Add logging component.
+
 ### 0.2.3 - Wednesday, May 20th, 2020
 * Update Feliz dependency.
 

@@ -20,6 +20,7 @@ let [<Literal>] Loadable = "Loadable"
 let [<Literal>] Previous = "Previous"
 let [<Literal>] ComputationExpressions = "ComputationExpressions"
 let [<Literal>] Nesting = "Nesting"
+let [<Literal>] Logger = "Logger"
 
 // Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"

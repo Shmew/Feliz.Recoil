@@ -1,14 +1,32 @@
-﻿# Feliz.Recoil - Basic Example
+﻿# Feliz.Recoil - Debug Logging Example
 
-This example shows some basic usage of atoms.
+This example shows how you can enable debug logging.
 
-```fsharp:recoil-basic
+```fsharp:recoil-logger
 open Css
 open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = 
+    atom {
+        key "textState"
+        def "Hello world!"
+        log
+    }
+
+(* This can also be implented like so:
+
+let textState = 
+    Recoil.atom (
+        "textState", 
+        "Hello world!", 
+        { Type = PersistenceType.Log
+          Backbutton = None
+          Validator = (fun _ -> None) }
+    )
+
+*)
 
 let inner = React.functionComponent(fun () ->
     let text,setText = Recoil.useState(textState)
@@ -27,6 +45,7 @@ let inner = React.functionComponent(fun () ->
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
+        Recoil.logger()
         inner()
     ])
 ```
