@@ -92,6 +92,6 @@ let inner = React.functionComponent(fun () ->
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
-       inner()
+        inner()
     ])
 ```

@@ -83,8 +83,8 @@ let combine = React.functionComponent(fun () ->
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
-       countOne()
-       countTwo()
-       combine()
+        countOne()
+        countTwo()
+        combine()
     ])
 ```

@@ -11,7 +11,7 @@ open Zanaptak.TypedCssClasses
 
 let textState = 
     atom {
-        key "test"
+        key "textState"
         def ""
     }
 
