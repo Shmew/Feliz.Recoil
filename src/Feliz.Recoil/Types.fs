@@ -265,6 +265,7 @@ type PersistenceSettings<'T,'U> =
       Backbutton: bool option 
       Validator: ('U -> 'T option) }
 
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     static member inline CreateObj (settings: PersistenceSettings<'T,'U>) =
         [ "type" ==> settings.Type
           if settings.Backbutton.IsSome then

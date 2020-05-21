@@ -5,7 +5,7 @@ open System.ComponentModel
 
 [<AutoOpen>]
 module ComputationExpressions =
-    //[<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     [<RequireQualifiedAccess>]
     module SelectorState =
         type Empty = interface end

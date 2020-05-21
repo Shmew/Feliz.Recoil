@@ -1,3 +1,6 @@
+### 0.3.1 - Wednesday, May 20th, 2020
+* Fix visibility attributes for some types
+
 ### 0.3.0 - Wednesday, May 20th, 2020
 * Finish API bindings.
 * Add logging component.
