@@ -55,4 +55,27 @@ let mySelector =
 
 A standard computation expression to make binding values easier.
 
-See the [composition example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Composition) for usage.
+
+Usage:
+```fs
+let textState = Recoil.atom("textState", "Hello world!")
+
+let otherTextState = Recoil.atom("otherTextState", "")
+
+let textStateTransformed =
+    recoil {
+        let! text = 
+            textState
+            |> RecoilValue.map(fun s -> s + " wow")
+
+        let! otherText = otherTextState
+
+        return
+            selector {
+                key "textStateTransformed"
+                get (fun _ ->
+                    if otherText = "" then text
+                    else sprintf "%s - %s" text otherText)
+            }
+    }
+```
