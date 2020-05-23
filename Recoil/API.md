@@ -72,15 +72,15 @@ Creates a RecoilValue with the given default value.
 
 Signature:
 ```fs
-(key: string, defaultValue: 'T) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: JS.Promise<'T>) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: Async<'T>) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: RecoilValue<'T,'Mode>) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
 ```
 
 Usage:
 ```fs
-let myText = Recoil.atom("some text")
+let myText = Recoil.atom("myAtomKey", "some text")
 ```
 
 ### Recoil.defaultValue
@@ -103,8 +103,31 @@ in production.
 
 This must be a descendant of a `Recoil.root` component.
 
+If you have persistence settings already enabled, they will
+already log, this below usage is for non-persisted atoms.
+
 Usage:
 ```fs
+
+let myAtom = 
+    Recoil.atom (
+        "myAtomKey", 
+        1, 
+        { Type = PersistenceType.Log
+          Backbutton = None
+          Validator = (fun _ -> None) }
+    )
+
+// or
+
+let myOtherAtom =
+    atom {
+        key "myOtherAtomKey"
+        def 1
+        log
+    }
+
+...
 Recoil.root [
     Recoil.logger()
     ...
@@ -166,26 +189,28 @@ use hooks like `Recoil.useState` you will get compiler errors.
 
 Signature:
 ```fs
-(key: string, get: SelectorGetter -> 'U) -> RecoilValue<'U,ReadOnly>
-(key: string, get: SelectorGetter -> JS.Promise<'U>) -> RecoilValue<'U,ReadOnly>
-(key: string, get: SelectorGetter -> Async<'U>) -> RecoilValue<'U,ReadOnly>
-(key: string, get: SelectorGetter -> RecoilValue<'U,_>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> 'U, ?cacheImplementation: CacheImplementation<'U,'U>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> JS.Promise<'U>, ?cacheImplementation: CacheImplementation<'U,JS.Promise<'U>>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> Async<'U>, ?cacheImplementation: CacheImplementation<'U,Async<'U>>) -> RecoilValue<'U,ReadOnly>
+(key: string, get: SelectorGetter -> RecoilValue<'U,_>, ?cacheImplementation: CacheImplementation<'U,RecoilValue<'U,_>>) -> RecoilValue<'U,ReadOnly>
 
-(key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
-(key: string, get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,'U>) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,JS.Promise<'U>>) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,Async<'U>>) -> RecoilValue<'U,ReadWrite>
+(key: string, get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,RecoilValue<'U,_>>) -> RecoilValue<'U,ReadWrite>
 ```
 
 Usage:
 ```fs
-let myComp = React.functionComponent(fun () ->
-    Recoil.root [
-        Html.div [
-            ...
-        ]
-        ...
-    ])
+let textState = Recoil.atom("textState", "Hello world!")
+
+let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
+
+let textStateTransform =
+    Recoil.selector("textStateTransform", fun getter ->
+        getter.get(textState)
+        |> String.filter(fun v -> List.contains v vowels)
+    )
 ```
 
 ### Recoil.useValue
