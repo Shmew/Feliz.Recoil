@@ -5,7 +5,7 @@ open Feliz
 
 [<AutoOpen>]
 module Logger =
-    let internal logAction (name: string, atomValue: 'T, prevAtomValue: 'T option) =
+    let logAction (name: string, atomValue: 'T, prevAtomValue: 'T option) =
         JS.console.groupCollapsed(
             sprintf "[%s]: Atom - %s" 
                 (System.DateTime.Now.ToLongTimeString())

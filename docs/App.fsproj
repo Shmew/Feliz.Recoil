@@ -16,6 +16,7 @@
     <Compile Include="Recoil\Examples\ComputationExpressions.fs" />
     <Compile Include="Recoil\Examples\Nesting.fs" />
     <Compile Include="Recoil\Examples\Logger.fs" />
+    <Compile Include="Recoil\Examples\Elmish.fs" />
     <Compile Include="Recoil\Examples\AtomFamily.fs" />
     <Compile Include="..\paket-files\docs\Zaid-Ajaj\Feliz\Feliz.Markdown\Markdown.fs">
       <Paket>True</Paket>
@@ -29,6 +30,7 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\Feliz.Recoil.Elmish\Feliz.Recoil.Elmish.fsproj" />
     <ProjectReference Include="..\src\Feliz.Recoil\Feliz.Recoil.fsproj" />
   </ItemGroup>
   <PropertyGroup>

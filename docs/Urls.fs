@@ -21,6 +21,7 @@ let [<Literal>] Previous = "Previous"
 let [<Literal>] ComputationExpressions = "ComputationExpressions"
 let [<Literal>] Nesting = "Nesting"
 let [<Literal>] Logger = "Logger"
+let [<Literal>] Elmish = "Elmish"
 
 // Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"

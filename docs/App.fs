@@ -47,7 +47,8 @@ let samples =
       "recoil-previous", Samples.Previous.render()
       "recoil-computationexpressions", Samples.ComputationExpressions.render()
       "recoil-nesting", Samples.Nesting.render()
-      "recoil-logger", Samples.Logger.render() ]
+      "recoil-logger", Samples.Logger.render()
+      "recoil-elmish", Samples.Elmish.render() ]
       //"recoil-atomfamily", Samples.AtomFamily.render() 
 
 let githubPath (rawPath: string) =
@@ -115,6 +116,7 @@ let resolveContent (path: string list) =
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         | [ Urls.Nesting ] -> [ "Nesting.md" ]
         | [ Urls.Logger ] -> [ "Logger.md" ]
+        | [ Urls.Elmish ] -> [ "Elmish.md" ]
         // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []
@@ -327,6 +329,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Computation Expressions" [ Urls.Recoil; Urls.Examples; Urls.ComputationExpressions ]
                 menuItem "Nesting" [ Urls.Recoil; Urls.Examples; Urls.Nesting ]
                 menuItem "Debug Logger" [ Urls.Recoil; Urls.Examples; Urls.Logger ]
+                menuItem "Elmish" [ Urls.Recoil; Urls.Examples; Urls.Elmish ]
                 //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]

@@ -409,13 +409,13 @@ type StoreState<'T> =
     member _.nextTree : TreeState<'T> option = jsNative
 
     /// For observing transactions.
-    [<Emit("$0.+transactionSubscriptions")>]
+    [<Emit("$0.transactionSubscriptions")>]
     member _.transactionSubscriptions' : JS.Map<int, Store<'T> * TreeState<'T> -> unit> = jsNative
     member inline this.transactionSubscriptions = 
         this.transactionSubscriptions'.entries() |> Map.ofSeq
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    [<Emit("$0.+queuedComponentCallback")>]
+    [<Emit("$0.queuedComponentCallback")>]
     member _.queuedComponentCallback' : ResizeArray<TreeState<'T> -> unit> = jsNative
     /// Callbacks to render external components that are subscribed to nodes,
     /// these are executed at the end of the transaction or asynchronously.
@@ -423,7 +423,7 @@ type StoreState<'T> =
         this.queuedComponentCallback' |> List.ofSeq
 
     /// Promise resolvers to wake any components we suspended with React Suspense.
-    [<Emit("$0.+suspendedComponentResolvers")>]
+    [<Emit("$0.suspendedComponentResolvers")>]
     member _.suspendedComponentResolvers : JS.Set<unit -> unit> = jsNative
 
 and Store<'T> =
@@ -442,8 +442,11 @@ and Store<'T> =
     [<Emit("$0.fireNodeSubscriptions($1, $2)")>]
     member _.fireNodeSubscriptions (updatedNodes: Set<string>, when': FireNodeWhen) : unit = jsNative
 
-type CacheImplementation<'T> =
-    [<Emit("$0.+get($1)")>]
-    abstract get: 'U -> U2<Loadable<'T>,unit>
-    [<Emit("$0.+set($1)")>]
-    abstract set: ('U * Loadable<'T>) -> CacheImplementation<'T>
+type CacheImplementation<'T,'U> =
+    abstract get: string -> Loadable<'T> option
+    abstract set: (string * Loadable<'T>) -> CacheImplementation<'T,'U>
+
+type NoCache<'T,'U> () =
+    interface CacheImplementation<'T,'U> with
+        member _.get _ = None
+        member this.set _ = this :> CacheImplementation<'T,'U>

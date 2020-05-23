@@ -53,20 +53,20 @@ NUGET
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.Parsimmon (>= 4.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
-    Feliz (1.0)
+    Feliz (1.1)
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.React (>= 6.0) - restriction: >= netstandard2.0
-      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
-    Feliz.ElmishComponents (0.7)
-      Fable.Elmish (>= 3.0.6) - restriction: >= netstandard2.0
-      Fable.Promise (>= 2.0) - restriction: >= netstandard2.0
-      Feliz (>= 0.83) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
     Feliz.Router (1.9)
       Fable.Core (>= 3.1.2) - restriction: >= netstandard2.0
       Fable.Elmish (>= 3.0.5) - restriction: >= netstandard2.0
       Feliz (>= 0.68.3) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Feliz.UseElmish (1.1)
+      Fable.Elmish (>= 3.0.6) - restriction: >= netstandard2.0
+      Fable.Promise (>= 2.0) - restriction: >= netstandard2.0
+      Feliz (>= 1.1) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7.1) - restriction: >= netstandard2.0
     FSharpPlus (1.1.1)
       FSharp.Core (>= 4.6.2) - restriction: || (>= net45) (>= netstandard2.0)
       System.ValueTuple (>= 4.4) - restriction: >= net45
@@ -74,10 +74,10 @@ NUGET
     Zanaptak.TypedCssClasses (0.2)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net452) (>= netstandard2.0)
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Core (4.7)
+    FSharp.Core (4.7.1)
 GITHUB
   remote: Zaid-Ajaj/Feliz
-    Feliz.Markdown/Markdown.fs (2877a50ae581ad222bea440ab0dc1ae4f4a91544)
+    Feliz.Markdown/Markdown.fs (2a0b9341c1e1c429bf483e4ddac05c002ff3c34c)
 GROUP FakeBuild
 NUGET
   remote: https://api.nuget.org/v3/index.json
@@ -228,13 +228,13 @@ NUGET
       System.Reflection.TypeExtensions (>= 4.3) - restriction: && (< net461) (>= netstandard2.0)
       System.Runtime.Loader (>= 4.0) - restriction: && (< net461) (>= netstandard2.0)
       System.ValueTuple (>= 4.4) - restriction: >= net461
-    FSharp.Control.Reactive (4.2) - restriction: >= netstandard2.0
-      FSharp.Core (>= 4.2.3) - restriction: || (>= net46) (>= netstandard2.0)
-      System.Reactive (>= 4.0) - restriction: || (>= net46) (>= netstandard2.0)
-    FSharp.Core (4.7.1) - restriction: >= netstandard2.0
+    FSharp.Control.Reactive (4.3) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7) - restriction: || (>= net46) (>= netstandard2.0)
+      System.Reactive (>= 4.3.2) - restriction: || (>= net46) (>= netstandard2.0)
+    FSharp.Core (4.7.2) - restriction: >= netstandard2.0
     FSharp.Json (0.4)
       FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
-    FSharpLint.Core (0.14.1)
+    FSharpLint.Core (0.14.2)
       Dotnet.ProjInfo (>= 0.31) - restriction: >= netstandard2.0
       FParsec (>= 1.1.1) - restriction: >= netstandard2.0
       FSharp.Compiler.Service (>= 35.0) - restriction: >= netstandard2.0
@@ -301,23 +301,23 @@ NUGET
       Microsoft.Build.Utilities.Core (>= 16.4) - restriction: >= netstandard2.0
       System.IO.Compression (>= 4.3) - restriction: >= netstandard2.0
     Newtonsoft.Json (12.0.3) - restriction: >= netstandard2.0
-    NuGet.Common (5.5.1) - restriction: >= netstandard2.0
-      NuGet.Frameworks (>= 5.5.1) - restriction: >= netstandard2.0
+    NuGet.Common (5.6) - restriction: >= netstandard2.0
+      NuGet.Frameworks (>= 5.6) - restriction: >= netstandard2.0
       System.Diagnostics.Process (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
       System.Threading.Thread (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
-    NuGet.Configuration (5.5.1) - restriction: >= netstandard2.0
-      NuGet.Common (>= 5.5.1) - restriction: >= netstandard2.0
+    NuGet.Configuration (5.6) - restriction: >= netstandard2.0
+      NuGet.Common (>= 5.6) - restriction: >= netstandard2.0
       System.Security.Cryptography.ProtectedData (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
-    NuGet.Frameworks (5.5.1) - restriction: >= netstandard2.0
-    NuGet.Packaging (5.5.1) - restriction: >= netstandard2.0
+    NuGet.Frameworks (5.6) - restriction: >= netstandard2.0
+    NuGet.Packaging (5.6) - restriction: >= netstandard2.0
       Newtonsoft.Json (>= 9.0.1) - restriction: >= netstandard2.0
-      NuGet.Configuration (>= 5.5.1) - restriction: >= netstandard2.0
-      NuGet.Versioning (>= 5.5.1) - restriction: >= netstandard2.0
+      NuGet.Configuration (>= 5.6) - restriction: >= netstandard2.0
+      NuGet.Versioning (>= 5.6) - restriction: >= netstandard2.0
       System.Dynamic.Runtime (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
-    NuGet.Protocol (5.5.1) - restriction: >= netstandard2.0
-      NuGet.Packaging (>= 5.5.1) - restriction: >= netstandard2.0
+    NuGet.Protocol (5.6) - restriction: >= netstandard2.0
+      NuGet.Packaging (>= 5.6) - restriction: >= netstandard2.0
       System.Dynamic.Runtime (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
-    NuGet.Versioning (5.5.1) - restriction: >= netstandard2.0
+    NuGet.Versioning (5.6) - restriction: >= netstandard2.0
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: && (< monoandroid) (< net45) (>= netstandard2.0) (< xamarinios) (< xamarinmac)
     runtime.debian.9-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: && (< monoandroid) (< net45) (>= netstandard2.0) (< xamarinios) (< xamarinmac)
     runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: && (< monoandroid) (< net45) (>= netstandard2.0) (< xamarinios) (< xamarinmac)
@@ -789,12 +789,55 @@ NUGET
       Fable.Browser.Dom (>= 1.0) - restriction: >= netstandard2.0
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
-    Feliz (1.0)
+    Feliz (1.1)
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.React (>= 6.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
   remote: https://api.nuget.org/v3/index.json
     FSharp.Core (4.7)
+
+GROUP Recoil.Elmish
+NUGET
+  remote: https://www.nuget.org/api/v2
+    Fable.Browser.Blob (1.1) - restriction: >= netstandard2.0
+      Fable.Core (>= 3.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
+    Fable.Browser.Dom (1.2) - restriction: >= netstandard2.0
+      Fable.Browser.Blob (>= 1.1) - restriction: >= netstandard2.0
+      Fable.Browser.Event (>= 1.0) - restriction: >= netstandard2.0
+      Fable.Browser.WebStorage (>= 1.0) - restriction: >= netstandard2.0
+      Fable.Core (>= 3.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Fable.Browser.Event (1.0) - restriction: >= netstandard2.0
+      Fable.Core (>= 3.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.5.2) - restriction: >= netstandard2.0
+    Fable.Browser.WebStorage (1.0) - restriction: >= netstandard2.0
+      Fable.Browser.Event (>= 1.0) - restriction: >= netstandard2.0
+      Fable.Core (>= 3.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.5.2) - restriction: >= netstandard2.0
+    Fable.Core (3.1.5)
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Fable.Elmish (3.0.6)
+      Fable.Core (>= 3.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
+    Fable.Promise (2.1)
+      Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Fable.React (6.2) - restriction: >= netstandard2.0
+      Fable.Browser.Dom (>= 1.0) - restriction: >= netstandard2.0
+      Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Feliz (1.1)
+      Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
+      Fable.React (>= 6.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Feliz.UseElmish (1.1)
+      Fable.Elmish (>= 3.0.6) - restriction: >= netstandard2.0
+      Fable.Promise (>= 2.0) - restriction: >= netstandard2.0
+      Feliz (>= 1.1) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.7.1) - restriction: >= netstandard2.0
+  remote: https://api.nuget.org/v3/index.json
+    FSharp.Core (4.7.1)
 
 GROUP Tooling
 NUGET
@@ -1002,7 +1045,7 @@ NUGET
     FSharp.Core (4.7)
     FSharp.Json (0.4)
       FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
-    FSharpLint.Core (0.14.1)
+    FSharpLint.Core (0.14.2)
       Dotnet.ProjInfo (>= 0.31) - restriction: >= netstandard2.0
       FParsec (>= 1.1.1) - restriction: >= netstandard2.0
       FSharp.Compiler.Service (>= 35.0) - restriction: >= netstandard2.0

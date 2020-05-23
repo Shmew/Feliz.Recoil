@@ -1,0 +1,12 @@
+﻿type project
+licenseExpression https://github.com/Shmew/Feliz.Recoil/blob/master/LICENSE
+authors Cody Johnson
+description
+    Elmish patterns for Feliz.Recoil.
+language
+    F#
+tags
+    fsharp, fable, react, feliz, recoil, elmish, state, management, web
+files
+    *.fsproj ==> fable
+    *.fs ==> fable
