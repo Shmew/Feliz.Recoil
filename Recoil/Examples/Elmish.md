@@ -6,11 +6,14 @@ Shows how to imlement an elmish model with Recoil.
 type Model = 
     { Count: int }
 
-type ModelAtom = 
-    { Count: RecoilValue<int,ReadWrite> }
+module Model =
+    type Atoms = 
+        { Count: RecoilValue<int,ReadWrite> }
 
-let modelAtom =
-    { Count = Recoil.atom("modelCount", 0) }
+    let [<Literal>] key = "model"
+
+    let atoms =
+        { Count = Recoil.atom(sprintf "%s/count" key, 0) }
 
 type Msg =
     | Increment
@@ -40,7 +43,7 @@ let update (msg: Msg) (state: Model) : Model * Cmd<Msg> =
         state, Cmd.batch [ Cmd.ofMsg IncrementDelayed; Cmd.ofMsg IncrementDelayed ]
 
 let countComp = React.functionComponent(fun () ->
-    let count = Recoil.useValue(modelAtom.Count)
+    let count = Recoil.useValue(Model.atoms.Count)
 
     Html.div [
         prop.children [
@@ -51,7 +54,7 @@ let countComp = React.functionComponent(fun () ->
     ])
 
 let actionsComp = React.functionComponent(fun () ->
-    let dispatch = Recoil.useDispatch("model", modelAtom, update)
+    let dispatch = Recoil.useDispatch(Model.key, Model.atoms, update)
 
     Html.div [
         Html.button [

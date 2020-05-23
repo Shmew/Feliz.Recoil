@@ -1,3 +1,6 @@
+### 0.4.0 - Wednesday, May 20th, 2020
+* Add Elmish companion library
+
 ### 0.3.1 - Wednesday, May 20th, 2020
 * Fix visibility attributes for some types
 
