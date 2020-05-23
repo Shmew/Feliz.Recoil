@@ -50,3 +50,9 @@ let mySelector =
         )
     }
 ```
+
+### recoil
+
+A standard computation expression to make binding values easier.
+
+See the [composition example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Composition) for usage.

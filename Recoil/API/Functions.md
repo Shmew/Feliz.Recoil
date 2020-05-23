@@ -55,3 +55,29 @@ let textStateTransform =
         |> String.filter(fun v -> List.contains v vowels)
     )
 ```
+
+### RecoilValue Module
+
+Contains standard helpers for `RecoilValue` such as:
+
+* apply
+* bind
+* map
+* unzip 
+* zip
+
+As well as modules for common collection types: Array, List, Seq, ResizeArray:
+* traverse
+* sequence
+
+#### Operators
+
+You can open `Feliz.Recoil.RecoilValue.Operators` if you want 
+to use the usual suspects:
+
+* Infix apply - `<*>`
+* Infix map - `<!>`
+* Infix bind - `>>=`
+* Infix bind (right to left) - `=<<`
+* Left-to-right Kleisli composition - `>=>`
+* Right-to-left Kleisli composition - `<=<`
