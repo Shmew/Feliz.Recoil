@@ -9,6 +9,14 @@ let [<Literal>] Overview = "Overview"
 let [<Literal>] ReleaseNotes = "ReleaseNotes"
 let [<Literal>] API = "API"
 
+// Api Reference
+let [<Literal>] Types = "Types"
+let [<Literal>] Components = "Components"
+let [<Literal>] Functions = "Functions"
+let [<Literal>] Hooks = "Hooks"
+// Computation Expressions
+// Elmish
+
 // Examples
 let [<Literal>] Basic = "Basic"
 let [<Literal>] MixAndMatch = "MixAndMatch"

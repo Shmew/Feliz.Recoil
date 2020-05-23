@@ -82,6 +82,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Feliz.Recoil.Elmish", "src\Feliz.Recoil.Elmish\Feliz.Recoil.Elmish.fsproj", "{8E95D82F-0A5F-44AB-ACBE-B2DB200878DE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{7EC5185F-5420-4A09-9AF7-63C397ACFDA3}"
+	ProjectSection(SolutionItems) = preProject
+		public\Recoil\API\Components.md = public\Recoil\API\Components.md
+		public\Recoil\API\ComputationExpressions.md = public\Recoil\API\ComputationExpressions.md
+		public\Recoil\API\Elmish.md = public\Recoil\API\Elmish.md
+		public\Recoil\API\Functions.md = public\Recoil\API\Functions.md
+		public\Recoil\API\Hooks.md = public\Recoil\API\Hooks.md
+		public\Recoil\API\Types.md = public\Recoil\API\Types.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,6 +122,7 @@ Global
 		{E03A3045-EEAB-4616-B0D8-A50A1B75F72B} = {55637037-300B-4FA5-8D14-B2CECCCD4B0D}
 		{64222420-D7C5-4807-A840-0BBD5D22B97D} = {CABBED80-2F75-4DFE-8F77-7F7FDFDC8008}
 		{BC9553AA-0DEF-48E7-B581-F249164D0B8D} = {64222420-D7C5-4807-A840-0BBD5D22B97D}
+		{7EC5185F-5420-4A09-9AF7-63C397ACFDA3} = {64222420-D7C5-4807-A840-0BBD5D22B97D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96DAE6A9-B1CC-4FF7-B08C-D5FBFD55B385}

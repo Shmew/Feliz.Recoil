@@ -100,9 +100,18 @@ let resolveContent (path: string list) =
     match path with
     | [ Urls.Recoil; Urls.Overview; ] -> [ "Recoil"; "README.md" ]
     | [ Urls.Recoil; Urls.Installation ] -> [ "Recoil"; "Installation.md" ]
-    | [ Urls.Recoil; Urls.API ] -> [ "Recoil"; "API.md" ]
     | [ Urls.Recoil; Urls.ReleaseNotes ] -> [ "Recoil"; "RELEASE_NOTES.md" ]
     | [ Urls.Recoil; Urls.Contributing ] -> [ contributing ]
+    | PathPrefix [ Urls.Recoil; Urls.API ] (Some res) ->
+        match res with
+        | [ Urls.Types ] -> [ "Types.md" ]
+        | [ Urls.Components ] -> [ "Components.md" ]
+        | [ Urls.Functions ] -> [ "Functions.md" ]
+        | [ Urls.Hooks ] -> [ "Hooks.md" ]
+        | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
+        | [ Urls.Elmish ] -> [ "Elmish.md" ]
+        | _ -> []
+        |> fun path -> [ Urls.Recoil; Urls.API ] @ path
     | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
         match res with
         | [ Urls.Basic ] -> [ "Basic.md" ]
@@ -314,9 +323,16 @@ let allItems = React.memo(fun () ->
             menuList [
                 menuItem "Overview" [ ]
                 menuItem "Installation" [ Urls.Recoil; Urls.Installation ]
-                menuItem "API Reference" [ Urls.Recoil; Urls.API ]
                 menuItem "Release Notes" [ Urls.Recoil; Urls.ReleaseNotes ]
                 menuItem "Contributing" [ Urls.Recoil; Urls.Contributing ]
+                nestedMenuList "API Reference" [ Urls.Recoil; Urls.API ] [
+                    nestedMenuItem "Types" [ Urls.Types ]
+                    nestedMenuItem "Components" [ Urls.Components ]
+                    nestedMenuItem "Functions" [ Urls.Functions ]
+                    nestedMenuItem "Hooks" [ Urls.Hooks ]
+                    nestedMenuItem "Computation Expressions" [ Urls.ComputationExpressions ]
+                    nestedMenuItem "Elmish" [ Urls.Elmish ]
+                ]
                 menuLabel "Examples"
                 menuItem "Basic" [ Urls.Recoil; Urls.Examples; Urls.Basic ]
                 menuItem "Mix and Match" [ Urls.Recoil; Urls.Examples; Urls.MixAndMatch ]

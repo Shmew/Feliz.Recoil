@@ -5,7 +5,9 @@ module Elmish =
     open Fable.Core
     open Fable.Core.JsInterop
     open Feliz
+    open System.ComponentModel
 
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     module Impl =
         [<Struct>]
         type RingState<'Item> =
@@ -71,16 +73,17 @@ module Elmish =
     open Impl
 
     type Recoil with
+        /// Returns an elmish dispatch function.
         static member useDispatch<'AtomRecord,'Model,'Msg> (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) =
             let modelAtoms =
                 selector {
-                    key (sprintf "%s/atoms" selectorKey)
+                    key (sprintf "%s/_atoms_" selectorKey)
                     get (fun _ -> modelAtoms(model))
                 }
             
             let modelView = 
                 selector {
-                    key (sprintf "%s/view" selectorKey)
+                    key (sprintf "%s/_view_" selectorKey)
                     get (fun getter ->
                         getter.get(modelAtoms)
                         |> Seq.map (fun (field, atom) -> field, getter.get(atom))
@@ -135,27 +138,32 @@ module Elmish =
 
             dispatch
 
+        /// Returns an elmish dispatch function.
         static member useDispatch (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model) =
+            let modelAtoms =
+                selector {
+                    key (sprintf "%s/_atoms_" selectorKey)
+                    get (fun _ -> modelAtoms(model))
+                }
+
             let modelView = 
-                modelAtoms(model)
-                |> fun res ->
-                    selector {
-                        key (sprintf "%s/view" selectorKey)
-                        get (fun getter ->
-                            res 
-                            |> Seq.map (fun (field, atom) -> field, getter.get(atom))
-                            |> fun res -> unbox<'Model>(createObj !!res))
-                        set (fun setter (newModel: 'Model) ->
-                            objEntries newModel
-                            |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
-                                if setter.get(recoilValue) <> newValue then
-                                    setter.set(recoilValue, newValue)
-                            ) res)
-                    }
+                selector {
+                    key (sprintf "%s/_view_" selectorKey)
+                    get (fun getter ->
+                        getter.get(modelAtoms) 
+                        |> Seq.map (fun (field, atom) -> field, getter.get(atom))
+                        |> fun res -> unbox<'Model>(createObj !!res))
+                    set (fun setter (newModel: 'Model) ->
+                        objEntries newModel
+                        |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
+                            if setter.get(recoilValue) <> newValue then
+                                setter.set(recoilValue, newValue)
+                        ) (setter.get(modelAtoms)))
+                }
 
             let modelSelector =
                 selector {
-                    key (sprintf "%s/selector" selectorKey)
+                    key (sprintf "%s/_selector_" selectorKey)
                     get (fun _ -> unbox<'Msg>())
                     set (fun setter msg ->
                         setter.get(modelView)

@@ -41,12 +41,12 @@ let repo = "https://github.com/Shmew/Feliz.Recoil"
 
 // Files to skip Fantomas formatting
 let excludeFantomas =
-    [ __SOURCE_DIRECTORY__ @@ "src/Feliz.Recoil/*.fs" ]
+    [ __SOURCE_DIRECTORY__ @@ "src/**/*.fs" ]
 
 // Files that have bindings to other languages where name linting needs to be more relaxed.
 let relaxedNameLinting = 
-    [ __SOURCE_DIRECTORY__ @@ "src/Feliz.Recoil/**/*.fs"
-      __SOURCE_DIRECTORY__ @@ "src/Feliz.Recoil/*.fs" ]
+    [ __SOURCE_DIRECTORY__ @@ "src/**/**/*.fs"
+      __SOURCE_DIRECTORY__ @@ "src/**/*.fs" ]
 
 // Read additional information from the release notes document
 let release = ReleaseNotes.load (__SOURCE_DIRECTORY__ @@ "RELEASE_NOTES.md")

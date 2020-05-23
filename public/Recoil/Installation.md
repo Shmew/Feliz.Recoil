@@ -4,6 +4,8 @@ To install `Feliz.Recoil` into your project, you need to install the nuget packa
 ```bash
 # nuget
 dotnet add package Feliz.Recoil
+dotnet add package Feliz.Recoil.Elmish // optional
+
 # paket
 paket add Feliz.Recoil --project ./project/path
 ```

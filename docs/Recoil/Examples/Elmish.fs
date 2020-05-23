@@ -11,11 +11,14 @@ open Zanaptak.TypedCssClasses
 type Model = 
     { Count: int }
 
-type ModelAtom = 
-    { Count: RecoilValue<int,ReadWrite> }
+module Model =
+    type Atoms = 
+        { Count: RecoilValue<int,ReadWrite> }
 
-let modelAtom =
-    { Count = Recoil.atom("modelCount", 0) }
+    let [<Literal>] key = "model"
+
+    let atoms =
+        { Count = Recoil.atom(sprintf "%s/count" key, 0) }
 
 type Msg =
     | Increment
@@ -63,7 +66,7 @@ let renderCount = React.functionComponent(fun () ->
     ])
 
 let countComp = React.functionComponent(fun () ->
-    let count = Recoil.useValue(modelAtom.Count)
+    let count = Recoil.useValue(Model.atoms.Count)
 
     Html.div [
         prop.children [
@@ -84,7 +87,7 @@ let inline drawBorder (children: ReactElement list) =
     drawBorder' {| children = children |}
 
 let actionsComp = React.functionComponent(fun () ->
-    let dispatch = Recoil.useDispatch("model", modelAtom, update)
+    let dispatch = Recoil.useDispatch(Model.key, Model.atoms, update)
 
     Html.div [
         //renderCount()
