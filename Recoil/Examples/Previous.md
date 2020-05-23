@@ -37,7 +37,7 @@ let input = React.functionComponent(fun () ->
         prop.onTextChange <| fun s -> 
             setText <| fun current -> 
                 setPrevText current
-                current
+                s
     ])
 
 let render = React.functionComponent(fun () ->
