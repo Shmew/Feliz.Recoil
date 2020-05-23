@@ -11,6 +11,7 @@
     <Compile Include="Recoil.fs" />
     <Compile Include="Logger.fs" />
     <Compile Include="CE.fs" />
+    <Compile Include="RecoilValue.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>

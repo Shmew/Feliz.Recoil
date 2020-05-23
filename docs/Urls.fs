@@ -30,6 +30,7 @@ let [<Literal>] ComputationExpressions = "ComputationExpressions"
 let [<Literal>] Nesting = "Nesting"
 let [<Literal>] Logger = "Logger"
 let [<Literal>] Elmish = "Elmish"
+let [<Literal>] Composition = "Composition"
 
 // Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"

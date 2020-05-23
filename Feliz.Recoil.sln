@@ -59,7 +59,6 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Feliz.Recoil", "src\Feliz.R
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Recoil", "Recoil", "{64222420-D7C5-4807-A840-0BBD5D22B97D}"
 	ProjectSection(SolutionItems) = preProject
-		public\Recoil\API.md = public\Recoil\API.md
 		public\Recoil\Installation.md = public\Recoil\Installation.md
 	EndProjectSection
 EndProject
@@ -70,6 +69,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 		public\Recoil\Examples\Basic.md = public\Recoil\Examples\Basic.md
 		public\Recoil\Examples\BidirectionalSelectors.md = public\Recoil\Examples\BidirectionalSelectors.md
 		public\Recoil\Examples\Callback.md = public\Recoil\Examples\Callback.md
+		public\Recoil\Examples\Composition.md = public\Recoil\Examples\Composition.md
 		public\Recoil\Examples\ComputationExpressions.md = public\Recoil\Examples\ComputationExpressions.md
 		public\Recoil\Examples\Elmish.md = public\Recoil\Examples\Elmish.md
 		public\Recoil\Examples\Loadable.md = public\Recoil\Examples\Loadable.md

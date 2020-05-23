@@ -1,4 +1,8 @@
-### 0.4.0 - Wednesday, May 20th, 2020
+### 0.5.0 - Saturday, May 23th, 2020
+* Add map, bind, apply, etc for RecoilValue
+* Add RecoilValue computation expression
+
+### 0.4.0 - Saturday, May 23th, 2020
 * Add Elmish companion library
 
 ### 0.3.1 - Wednesday, May 20th, 2020
