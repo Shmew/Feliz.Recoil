@@ -6,18 +6,6 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let test =
-    atom {
-        key "testing"
-        def [1;2;3;4]
-    }
-
-let testTesting =
-    test
-    |> RecoilValue.map(List.map ((*) 2))
-    |> RecoilValue.map(List.sum)
-
-
 let textState = Recoil.atom("textState", "Hello world!")
 
 let otherTextState = Recoil.atom("otherTextState", "")

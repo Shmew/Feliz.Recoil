@@ -1,3 +1,6 @@
+### 0.5.2 - Saturday, May 23th, 2020
+* Remove some recoil CE methods
+
 ### 0.5.1 - Saturday, May 23th, 2020
 * Add hashing to inner selector keys to prevent collisions
 

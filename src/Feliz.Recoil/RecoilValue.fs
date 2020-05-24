@@ -207,11 +207,6 @@ module RecoilValueBuilder =
 
         member _.Delay f = f
 
-        member this.For (s: #seq<_>, m) =
-            using(s.GetEnumerator(), fun (enum: Collections.Generic.IEnumerator<_>) ->
-                this.While(enum.MoveNext,
-                    this.Delay(fun () -> m enum.Current)))
-
         member _.Return (value: RecoilValue<'T,'Mode>) = value
 
         member _.ReturnFrom (value: RecoilValue<_,_>) = 
@@ -232,12 +227,5 @@ module RecoilValueBuilder =
 
         member this.Using (value, k) = 
             this.TryFinally(k value, (fun () -> dispose value))
-
-        member this.While (p, m) =
-            if not (p()) then this.Zero()
-            else this.Bind(m(), fun () ->
-                this.While(p, m))
-
-        member this.Zero () = this.Return unitSelector
 
     let recoil = RecoilValueBuilder()
