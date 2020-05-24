@@ -1,3 +1,6 @@
+### 0.5.3 - Saturday, May 23th, 2020
+* Relax FSharp.Core version restrictions
+
 ### 0.5.2 - Saturday, May 23th, 2020
 * Remove some recoil CE methods
 
