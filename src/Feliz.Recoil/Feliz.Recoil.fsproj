@@ -5,6 +5,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="Hash\uint32.js" />
+    <None Include="Hash\xxhash.js" />
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Bindings.fs" />
