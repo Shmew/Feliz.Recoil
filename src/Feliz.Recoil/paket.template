@@ -10,3 +10,4 @@ tags
 files
     *.fsproj ==> fable
     *.fs ==> fable
+    Hash/*.js ==> fable/Hash

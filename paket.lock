@@ -795,7 +795,9 @@ NUGET
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
   remote: https://api.nuget.org/v3/index.json
     FSharp.Core (4.7)
-
+GITHUB
+  remote: pierrec/js-xxhash
+    lib/xxhash.js (7ff5ced282f97dba121109d7013e0fa80360398c)
 GROUP Recoil.Elmish
 NUGET
   remote: https://www.nuget.org/api/v2

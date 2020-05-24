@@ -1,3 +1,6 @@
+### 0.5.1 - Saturday, May 23th, 2020
+* Add hashing to inner selector keys to prevent collisions
+
 ### 0.5.0 - Saturday, May 23th, 2020
 * Add map, bind, apply, etc for RecoilValue
 * Add RecoilValue computation expression
