@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="public\index.html" />
+    <Compile Include="Bridge.fs" />
+    <Compile Include="App.fs" />
+    <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ServerBridge.fs" />
+    <Compile Include="Router.fs" />
+    <Compile Include="Env.fs" />
+    <Compile Include="App.fs" />
+    <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

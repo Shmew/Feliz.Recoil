@@ -1,3 +1,6 @@
+### 0.6.0 - Saturday, May 23th, 2020
+* Add Elmish.Bridge adapter
+
 ### 0.5.3 - Saturday, May 23th, 2020
 * Relax FSharp.Core version restrictions
 

@@ -1,0 +1,11 @@
+﻿group Recoil.Bridge
+    Elmish.Bridge.Client
+    Fable.Browser.Dom
+    Fable.Browser.Url
+    Fable.Browser.WebSocket
+    Fable.Core
+    Fable.Elmish
+    Fable.React
+    Fable.SimpleJson
+    Feliz
+    FSharp.Core

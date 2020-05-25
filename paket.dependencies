@@ -11,6 +11,20 @@ group Recoil
     nuget Feliz ~> 1
     nuget FSharp.Core ~> 4.7 lowest_matching: true
 
+group Recoil.Bridge
+    source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+    nuget Elmish.Bridge.Client ~> 3
+    nuget Fable.Browser.Dom ~> 1
+    nuget Fable.Browser.Url ~> 1
+    nuget Fable.Browser.WebSocket ~> 1
+	nuget Fable.Core ~> 3
+	nuget Fable.Elmish ~> 3
+    nuget Fable.SimpleJson ~> 3
+    nuget Feliz ~> 1
+    nuget FSharp.Core ~> 4.7 lowest_matching: true
+
 group Recoil.Elmish
 	source https://nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
@@ -19,6 +33,41 @@ group Recoil.Elmish
     nuget Fable.Elmish ~> 3
     nuget Fable.Promise ~> 2
     nuget Feliz ~> 1
+    nuget FSharp.Core ~> 4.7 lowest_matching: true
+
+group Client
+    source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+    nuget Elmish.Bridge.Client ~> 3
+    nuget Fable.Browser.Dom ~> 1
+    nuget Fable.Browser.Url ~> 1
+    nuget Fable.Browser.WebSocket ~> 1
+	nuget Fable.Core ~> 3
+	nuget Fable.Elmish ~> 3
+    nuget Fable.Promise ~> 2
+    nuget Fable.SimpleJson ~> 3
+    nuget Feliz ~> 1
+    nuget Feliz.Recoil ~> 0.5.3
+    nuget Feliz.Recoil.Elmish ~> 0.5.3
+    nuget FSharp.Core ~> 4.7 lowest_matching: true
+
+group Server
+    source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
+    nuget Elmish.Bridge.Giraffe ~> 3
+    nuget Fable.Elmish ~> 3
+	nuget Fake.Core.Environment ~> 5
+	nuget Fake.IO.FileSystem ~> 5
+	nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget Thoth.Json.Giraffe ~> 4
+	nuget Saturn ~> 0
+
+group Shared
+    source https://nuget.org/api/v2
+	source https://api.nuget.org/v3/index.json
+
     nuget FSharp.Core ~> 4.7 lowest_matching: true
 
 group Docs
@@ -31,7 +80,6 @@ group Docs
     nuget Fable.SimpleHttp ~> 2
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
-    nuget Feliz.UseElmish ~> 1
     nuget Feliz.Router ~> 1
     nuget FSharp.Core ~> 4.7 lowest_matching: true
     nuget FSharpPlus ~> 1

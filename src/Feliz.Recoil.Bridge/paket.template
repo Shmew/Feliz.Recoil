@@ -1,0 +1,12 @@
+﻿type project
+licenseExpression https://github.com/Shmew/Feliz.Recoil/blob/master/LICENSE
+authors Cody Johnson
+description
+    Elmish.Bridge adapter to enable use in Feliz.Recoil.
+language
+    F#
+tags
+    fsharp, fable, react, feliz, recoil, elmish, state, management, web
+files
+    *.fsproj ==> fable
+    *.fs ==> fable

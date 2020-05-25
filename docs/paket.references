@@ -6,7 +6,6 @@ group Docs
     Fable.SimpleJson
     Feliz
     Feliz.Router
-    Feliz.UseElmish
     FSharp.Core
     Zanaptak.TypedCssClasses
 

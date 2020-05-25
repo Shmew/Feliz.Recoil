@@ -1,0 +1,8 @@
+﻿group Server
+	Elmish.Bridge.Giraffe
+    Fable.Elmish
+	Fake.Core.Environment
+	Fake.IO.FileSystem
+	FSharp.Core
+    Thoth.Json.Giraffe
+	Saturn

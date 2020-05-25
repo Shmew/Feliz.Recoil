@@ -1,8 +1,8 @@
 {
-  "name": "feliz.-recoil",
-  "version": "0.6.0",
-  "description": "Fable bindings in Feliz style for Facebook's experimental state management library recoil.",
-  "homepage": "https://github.com/Shmew/Feliz.Recoil",
+  "name": "demo",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "",
   "bugs": {
     "url": "https://github.com/Shmew/Feliz.Recoil/issues/new/choose"
   },
@@ -14,32 +14,32 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "compile-demo-raw": "fable-splitter",
-    "publish-docs": "yarn build && node publish.js",
-    "start": "webpack-dev-server"
+    "dev": "webpack-dev-server"
   },
   "dependencies": {
     "react": "^16",
     "react-dom": "^16",
-    "react-highlight": "^0",
-    "react-markdown": "^4",
-    "recoil": "^0",
-    "source-map-support": "^0"
+    "recoil": "^0"
   },
   "devDependencies": {
     "@babel/core": "^7",
+    "@babel/plugin-transform-modules-commonjs": "^7",
+    "@babel/plugin-transform-regenerator": "^7",
     "@babel/preset-env": "^7",
     "babel-loader": "^8",
+    "clean-webpack-plugin": "^3",
+    "copy-webpack-plugin": "^5",
     "core-js": "^3",
     "fable-compiler": "^2",
     "fable-loader": "^2",
-    "fable-splitter": "^2.1.13",
+    "fable-splitter": "^2",
     "file-loader": "^4",
     "gh-pages": "^2",
     "html-webpack-plugin": "^3",
-    "mkdirp": "^0",
+    "live-server": "^1",
     "remotedev": "^0",
     "resolve-url-loader": "^3",
+    "save": "^2",
     "webpack": "^4",
     "webpack-cli": "^3",
     "webpack-dev-server": "^3"
