@@ -1,6 +1,11 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+// If we're running the webpack-dev-server, assume we're in development mode
+var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
+console.log('Bundling for ' + (isProduction ? 'production' : 'development') + '...');
 
 var CONFIG = {
     indexHtmlTemplate: 'public/index.html',
@@ -20,12 +25,9 @@ var CONFIG = {
                 corejs: 3
             }]
         ],
+        plugins: isProduction ? [] : ['@babel/plugin-transform-regenerator', require.resolve('react-refresh/babel')]
     }
 }
-
-// If we're running the webpack-dev-server, assume we're in development mode
-var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
-console.log('Bundling for ' + (isProduction ? 'production' : 'development') + '...');
 
 var commonPlugins = [
     new HtmlWebpackPlugin({
@@ -51,7 +53,7 @@ module.exports = {
     plugins: isProduction ?
         commonPlugins.concat([])
         : commonPlugins.concat([
-            new webpack.HotModuleReplacementPlugin()
+            new ReactRefreshWebpackPlugin()
         ]),
     resolve: {
         // See https://github.com/fable-compiler/Fable/issues/1490

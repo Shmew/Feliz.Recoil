@@ -111,6 +111,7 @@ let resolveContent (path: string list) =
         | [ Urls.Hooks ] -> [ "Hooks.md" ]
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         | [ Urls.Elmish ] -> [ "Elmish.md" ]
+        | [ Urls.Bridge ] -> [ "Bridge.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.API ] @ path
     | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
@@ -128,6 +129,7 @@ let resolveContent (path: string list) =
         | [ Urls.Logger ] -> [ "Logger.md" ]
         | [ Urls.Elmish ] -> [ "Elmish.md" ]
         | [ Urls.Composition ] -> [ "Composition.md" ]
+        | [ Urls.Websockets ] -> [ "Websockets.md" ]
         // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | _ -> []
@@ -334,6 +336,7 @@ let allItems = React.memo(fun () ->
                     nestedMenuItem "Hooks" [ Urls.Hooks ]
                     nestedMenuItem "Computation Expressions" [ Urls.ComputationExpressions ]
                     nestedMenuItem "Elmish" [ Urls.Elmish ]
+                    nestedMenuItem "Bridge" [ Urls.Bridge ]
                 ]
                 menuLabel "Examples"
                 menuItem "Basic" [ Urls.Recoil; Urls.Examples; Urls.Basic ]
@@ -349,6 +352,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Debug Logger" [ Urls.Recoil; Urls.Examples; Urls.Logger ]
                 menuItem "Elmish" [ Urls.Recoil; Urls.Examples; Urls.Elmish ]
                 menuItem "Composition" [ Urls.Recoil; Urls.Examples; Urls.Composition ]
+                menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
                 //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
             ]
         ]

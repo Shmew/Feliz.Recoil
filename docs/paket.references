@@ -1,6 +1,5 @@
 group Docs
     Fable.Core
-    Fable.Elmish.React
     Fable.Promise
     Fable.SimpleHttp
     Fable.SimpleJson

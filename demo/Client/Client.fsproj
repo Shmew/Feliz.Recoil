@@ -6,7 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="public\index.html" />
-    <Compile Include="Bridge.fs" />
     <Compile Include="App.fs" />
     <None Include="paket.references" />
   </ItemGroup>

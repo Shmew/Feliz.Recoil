@@ -39,17 +39,13 @@ group Client
     source https://nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-    nuget Elmish.Bridge.Client ~> 3
-    nuget Fable.Browser.Dom ~> 1
-    nuget Fable.Browser.Url ~> 1
-    nuget Fable.Browser.WebSocket ~> 1
 	nuget Fable.Core ~> 3
 	nuget Fable.Elmish ~> 3
     nuget Fable.Promise ~> 2
-    nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
-    nuget Feliz.Recoil ~> 0.5.3
-    nuget Feliz.Recoil.Elmish ~> 0.5.3
+    nuget Feliz.Recoil ~> 0.6
+    nuget Feliz.Recoil.Elmish ~> 0.6
+    nuget Feliz.Recoil.Bridge ~> 0.6
     nuget FSharp.Core ~> 4.7 lowest_matching: true
 
 group Server
@@ -75,7 +71,6 @@ group Docs
 	source https://api.nuget.org/v3/index.json
 
     nuget Fable.Core ~> 3
-    nuget Fable.Elmish.React ~> 3
     nuget Fable.Promise ~> 2
     nuget Fable.SimpleHttp ~> 2
     nuget Fable.SimpleJson ~> 3

@@ -78,12 +78,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 		public\Recoil\Examples\Nesting.md = public\Recoil\Examples\Nesting.md
 		public\Recoil\Examples\Previous.md = public\Recoil\Examples\Previous.md
 		public\Recoil\Examples\Reset.md = public\Recoil\Examples\Reset.md
+		public\Recoil\Examples\Websockets.md = public\Recoil\Examples\Websockets.md
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Feliz.Recoil.Elmish", "src\Feliz.Recoil.Elmish\Feliz.Recoil.Elmish.fsproj", "{8E95D82F-0A5F-44AB-ACBE-B2DB200878DE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{7EC5185F-5420-4A09-9AF7-63C397ACFDA3}"
 	ProjectSection(SolutionItems) = preProject
+		public\Recoil\API\Bridge.md = public\Recoil\API\Bridge.md
 		public\Recoil\API\Components.md = public\Recoil\API\Components.md
 		public\Recoil\API\ComputationExpressions.md = public\Recoil\API\ComputationExpressions.md
 		public\Recoil\API\Elmish.md = public\Recoil\API\Elmish.md

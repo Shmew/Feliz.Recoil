@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Elmish.fs" />
+    <Compile Include="Bridge.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>

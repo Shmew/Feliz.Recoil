@@ -16,6 +16,7 @@ let [<Literal>] Functions = "Functions"
 let [<Literal>] Hooks = "Hooks"
 // Computation Expressions
 // Elmish
+let [<Literal>] Bridge = "Bridge"
 
 // Examples
 let [<Literal>] Basic = "Basic"
@@ -31,6 +32,7 @@ let [<Literal>] Nesting = "Nesting"
 let [<Literal>] Logger = "Logger"
 let [<Literal>] Elmish = "Elmish"
 let [<Literal>] Composition = "Composition"
+let [<Literal>] Websockets = "Websockets"
 
 // Utils - not implemented
 let [<Literal>] AtomFamily = "AtomFamily"

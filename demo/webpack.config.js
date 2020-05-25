@@ -11,6 +11,11 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+// If we're running the webpack-dev-server, assume we're in development mode
+var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
+console.log('Bundling for ' + (isProduction ? 'production' : 'development') + '...');
 
 var CONFIG = {
     // The tags to include the generated JS and CSS will be automatically injected in the HTML template
@@ -43,13 +48,11 @@ var CONFIG = {
                 corejs: 3
             }]
         ],
-        plugins: ['@babel/plugin-transform-regenerator']
+        plugins: isProduction ?
+            ['@babel/plugin-transform-regenerator',]
+            : ['@babel/plugin-transform-regenerator', require.resolve('react-refresh/babel')]
     }
 }
-
-// If we're running the webpack-dev-server, assume we're in development mode
-var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
-console.log('Bundling for ' + (isProduction ? 'production' : 'development') + '...');
 
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
 // and automatically injects <script> or <link> tags for generated bundles.
@@ -91,7 +94,7 @@ module.exports = {
             new CleanWebpackPlugin(),
         ])
         : commonPlugins.concat([
-            new webpack.HotModuleReplacementPlugin(),
+            new ReactRefreshWebpackPlugin(),
         ]),
     resolve: {
         // See https://github.com/fable-compiler/Fable/issues/1490
