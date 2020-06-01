@@ -11,13 +11,13 @@ open Zanaptak.TypedCssClasses
 
 let textState = 
     atom {
-        key "textState"
+        key "ComputationExpressions/textState"
         def ""
     }
 
 let textStateAddition =
     selector {
-        key "textStateSelector"
+        key "ComputationExpressions/textStateSelector"
         get (fun getter ->
             let text = getter.get(textState)
             text + " wow"
@@ -28,7 +28,7 @@ let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
     selector {
-        key "testing"
+        key "ComputationExpressions/textStateTransform"
         get (fun getter ->
             let addedText = getter.get(textStateAddition)
             

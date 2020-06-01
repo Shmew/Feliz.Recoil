@@ -8,10 +8,10 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let pokemon = Recoil.atom("pokemon", "pikachu")
+let pokemon = Recoil.atom("Loadable/pokemon", "pikachu")
 
 let askIsPokemon = 
-    Recoil.selector("isPokemon", fun getter ->
+    Recoil.selector("Loadable/isPokemon", fun getter ->
         let pokemonQuery = getter.get(pokemon)
         async {
             do! Async.Sleep 400
@@ -57,7 +57,7 @@ let inner = React.functionComponent(fun () ->
         let handler = JS.setTimeout (fun () -> askIsPokemon(currentText)) 200
 
         React.createDisposable(fun () -> JS.clearTimeout(handler))
-    ))
+    ), [| currentText :> obj |])
 
     Html.div [
         Html.div [

@@ -6,7 +6,7 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = Recoil.atom("Reset/textState", "Hello world!")
 
 let inner = React.functionComponent(fun () ->
     let inputBoxValue = React.useRef ""

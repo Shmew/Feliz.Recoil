@@ -449,10 +449,10 @@ and Store<'T> =
     member _.fireNodeSubscriptions (updatedNodes: Set<string>, when': FireNodeWhen) : unit = jsNative
 
 type CacheImplementation<'T,'U> =
-    abstract get: string -> Loadable<'T> option
-    abstract set: (string * Loadable<'T>) -> CacheImplementation<'T,'U>
+    abstract get: 'U -> 'T option
+    abstract set: 'U -> 'T -> CacheImplementation<'T,'U>
 
 type NoCache<'T,'U> () =
     interface CacheImplementation<'T,'U> with
         member _.get _ = None
-        member this.set _ = this :> CacheImplementation<'T,'U>
+        member this.set _ _ = this :> CacheImplementation<'T,'U>

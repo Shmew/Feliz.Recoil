@@ -6,12 +6,12 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = Recoil.atom("MixAndMatch/textState", "Hello world!")
 
 let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
-    Recoil.selector("textStateTransform", fun getter ->
+    Recoil.selector("MixAndMatch/textStateTransform", fun getter ->
         getter.get(textState)
         |> String.filter(fun v -> List.contains v vowels)
     )

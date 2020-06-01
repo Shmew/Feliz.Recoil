@@ -49,8 +49,9 @@ let samples =
       "recoil-nesting", Samples.Nesting.render()
       "recoil-logger", Samples.Logger.render()
       "recoil-elmish", Samples.Elmish.render()
-      "recoil-composition", Samples.Composition.render() ]
-      //"recoil-atomfamily", Samples.AtomFamily.render() 
+      "recoil-composition", Samples.Composition.render() 
+      "recoil-atomfamily", Samples.AtomFamily.render()
+      "recoil-selectorfamily", Samples.SelectorFamily.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -130,8 +131,8 @@ let resolveContent (path: string list) =
         | [ Urls.Elmish ] -> [ "Elmish.md" ]
         | [ Urls.Composition ] -> [ "Composition.md" ]
         | [ Urls.Websockets ] -> [ "Websockets.md" ]
-        // Utils - not implemented
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
+        | [ Urls.SelectorFamily ] -> [ "SelectorFamily.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
     | _ -> [ "Recoil"; "README.md" ]
@@ -353,7 +354,8 @@ let allItems = React.memo(fun () ->
                 menuItem "Elmish" [ Urls.Recoil; Urls.Examples; Urls.Elmish ]
                 menuItem "Composition" [ Urls.Recoil; Urls.Examples; Urls.Composition ]
                 menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
-                //menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
+                menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
+                menuItem "Selector Family" [ Urls.Recoil; Urls.Examples; Urls.SelectorFamily ]
             ]
         ]
     ])

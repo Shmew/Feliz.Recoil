@@ -80,7 +80,7 @@ NUGET
       Feliz.Recoil (>= 0.6)
       FSharp.Core (>= 4.7 < 5.0)
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Core (4.7.1)
+    FSharp.Core (4.7)
 
 GROUP Docs
 NUGET
@@ -149,7 +149,7 @@ NUGET
     FSharp.Core (4.7)
 GITHUB
   remote: Zaid-Ajaj/Feliz
-    Feliz.Markdown/Markdown.fs (aa0a742237fd8329cb942f192dfa48200e2f81c4)
+    Feliz.Markdown/Markdown.fs (5f849614953e1198e12757681bcd5ccb3e235b12)
 GROUP FakeBuild
 NUGET
   remote: https://api.nuget.org/v3/index.json
@@ -908,7 +908,7 @@ NUGET
     Fable.Parsimmon (4.1) - restriction: >= netstandard2.0
       Fable.Core (>= 3.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.6.2) - restriction: >= netstandard2.0
-    Fable.React (6.2)
+    Fable.React (6.2) - restriction: >= netstandard2.0
       Fable.Browser.Dom (>= 1.0) - restriction: >= netstandard2.0
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0

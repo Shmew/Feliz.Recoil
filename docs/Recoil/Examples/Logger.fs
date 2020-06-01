@@ -53,7 +53,7 @@ type Recoil with
 
 let textState = 
     atom {
-        key "textState"
+        key "Logger/textState"
         def "Hello world!"
         log
     }

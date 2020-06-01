@@ -19,6 +19,7 @@
     <Compile Include="Recoil\Examples\Elmish.fs" />
     <Compile Include="Recoil\Examples\Composition.fs" />
     <Compile Include="Recoil\Examples\AtomFamily.fs" />
+    <Compile Include="Recoil\Examples\SelectorFamily.fs" />
     <Compile Include="..\paket-files\docs\Zaid-Ajaj\Feliz\Feliz.Markdown\Markdown.fs">
       <Paket>True</Paket>
       <Link>Feliz.Markdown/Markdown.fs</Link>

@@ -6,8 +6,8 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let firstCount = Recoil.atom("firstCount", 0)
-let secondCount = Recoil.atom("secondCount", 0)
+let firstCount = Recoil.atom("Callback/firstCount", 0)
+let secondCount = Recoil.atom("Callback/secondCount", 0)
 
 let countOne = React.functionComponent(fun () ->
     let firstCount,setFirstCount = Recoil.useState(firstCount)

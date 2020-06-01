@@ -12,14 +12,17 @@
     <Compile Include="Bindings.fs" />
     <Compile Include="Recoil.fs" />
     <Compile Include="Logger.fs" />
-    <Compile Include="CE.fs" />
+    <Compile Include="ComputationExpressions\AtomFamily.fs" />
+    <Compile Include="ComputationExpressions\Atom.fs" />
+    <Compile Include="ComputationExpressions\Selector.fs" />
+    <Compile Include="ComputationExpressions\SelectorFamily.fs" />
     <Compile Include="RecoilValue.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="recoil" Version="gte 0.0.7 lt 1" ResolutionStrategy="max" />
+      <NpmPackage Name="recoil" Version="gte 0.0.8 lt 1" ResolutionStrategy="max" />
     </NpmDependencies>
   </PropertyGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

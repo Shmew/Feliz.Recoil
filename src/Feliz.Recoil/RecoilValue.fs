@@ -22,17 +22,51 @@ module xxHash =
     let inline hashFunc f = f |> funcToString |> getHash
 
 module RecoilValue =
-    let map (mapping: 'T -> 'U) (recoilValue: RecoilValue<'T,'Mode>) =
-        selector {
-            key (recoilValue.key + "/map" + (xxHash.hashFunc mapping))
-            get (fun getter -> getter.get(recoilValue) |> mapping)
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    type SelectorCache<'T,'U> (map: Map<string,RecoilValue<'U,ReadOnly>>) =
+        interface CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U> with
+            member _.get key = map.TryFind(xxHash.hashFunc key) 
+            member _.set (key: 'T -> 'U) (value: RecoilValue<'U,ReadOnly>) = 
+                SelectorCache<'T,'U>(map.Add(xxHash.hashFunc key, value)) 
+                    :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>
+
+        static member toCacheImpl (cache: SelectorCache<'T,'U>) = cache :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    type BindSelectorCache<'T,'U,'Mode> (map: Map<string,RecoilValue<'U,ReadOnly>>) =
+        interface CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> RecoilValue<'U,'Mode>> with
+            member _.get key = map.TryFind(xxHash.hashFunc key) 
+            member _.set (key: 'T -> RecoilValue<'U,'Mode>) (value: RecoilValue<'U,ReadOnly>) = 
+                BindSelectorCache<'T,'U,'Mode>(map.Add(xxHash.hashFunc key, value)) 
+                    :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> RecoilValue<'U,'Mode>>
+
+        static member toCacheImpl (cache: BindSelectorCache<'T,'U,'Mode>) = cache :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> RecoilValue<'U,'Mode>>
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let mapFamily (recoilValue: RecoilValue<'T,'Mode>) =
+        selectorFamily {
+            key (recoilValue.key + "/__map")
+            get (fun (mapping: 'T -> 'U) getter -> getter.get(recoilValue) |> mapping)
+            param_cache (fun () -> 
+                SelectorCache<'T,'U>(Map.empty) 
+                    :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>)
         }
 
-    let bind (binder: 'T -> RecoilValue<'U,_>) (recoilValue: RecoilValue<'T,'Mode>) =
-        selector {
-            key (recoilValue.key + "/bind" + (xxHash.hashFunc binder))
-            get (fun getter -> getter.get(recoilValue) |> binder)
+    let map (mapping: 'T -> 'U) (recoilValue: RecoilValue<'T,'Mode>) =
+        mapFamily recoilValue mapping
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let bindFamily (recoilValue: RecoilValue<'T,'Mode1>) =
+        selectorFamily {
+            key (recoilValue.key + "/__bind")
+            get (fun (binder: 'T -> RecoilValue<'U,'Mode2>) getter -> getter.get(recoilValue) |> binder)
+            param_cache (fun () -> 
+                BindSelectorCache<'T,'U,'Mode2>(Map.empty) 
+                    :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> RecoilValue<'U,_>>)
         }
+
+    let bind (binder: 'T -> RecoilValue<'U,'Mode1>) (recoilValue: RecoilValue<'T,'Mode2>) =
+        bindFamily recoilValue binder
 
     let apply (recoilFun: RecoilValue<'T -> 'U,'Mode1>) (recoilValue: RecoilValue<'T,'Mode2>) =
         recoilFun |> bind (fun f -> recoilValue |> map f)
@@ -207,13 +241,9 @@ module RecoilValueBuilder =
 
         member _.Delay f = f
 
-        member _.Return (value: RecoilValue<'T,'Mode>) = value
+        member _.Return value = Bindings.Recoil.constSelector value
 
-        member _.ReturnFrom (value: RecoilValue<_,_>) = 
-            atom {
-                key (value.key + "/__computation_expression__")
-                def value
-            }
+        member _.ReturnFrom (value: RecoilValue<_,_>) = value
 
         member _.Run f = f()
 

@@ -25,7 +25,7 @@ type Recoil =
             [ "key" ==> key
               "default" ==> (defaultValue |> Async.StartAsPromise)
               if persistence.IsSome then
-                   "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
               if dangerouslyAllowMutability.IsSome then
                   "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
@@ -36,7 +36,7 @@ type Recoil =
             [ "key" ==> key
               "default" ==> defaultValue
               if persistence.IsSome then
-                   "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
               if dangerouslyAllowMutability.IsSome then
                   "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
@@ -72,66 +72,111 @@ type Recoil =
         ])
 
     /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector (key: string, get: SelectorGetter -> JS.Promise<'U>, ?cacheImplementation: CacheImplementation<'U,JS.Promise<'U>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> JS.Promise<'U>, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> key
               "get" ==> get
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     ///
     /// Applies state changes via the provided set function.
-    static member inline selector (key: string, get: SelectorGetter -> JS.Promise<'U>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,JS.Promise<'U>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> JS.Promise<'U>, 
+         set: SelectorMethods -> 'T -> unit, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> key
               "get" ==> get
               "set" ==> System.Func<_,_,_>(set)
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector (key: string, get: SelectorGetter -> Async<'U>, ?cacheImplementation: CacheImplementation<'U,Async<'U>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> Async<'U>, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> key
               "get" ==> (get >> Async.StartAsPromise)
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     ///
     /// Applies state changes via the provided set function.
-    static member inline selector (key: string, get: SelectorGetter -> Async<'U>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,Async<'U>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> Async<'U>, 
+         set: SelectorMethods -> 'T -> unit, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> key
               "get" ==> (get >> Async.StartAsPromise)
               "set" ==> System.Func<_,_,_>(set)
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
-    static member inline selector (key: string, get: SelectorGetter -> RecoilValue<'U,_>, ?cacheImplementation: CacheImplementation<'U,RecoilValue<'U,_>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> RecoilValue<'U,_>, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadOnly> (
             [ "key" ==> key
               "get" ==> get
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
     /// Derives state and returns a RecoilValue via the provided get function.
     ///
     /// Applies state changes via the provided set function.
-    static member inline selector (key: string, get: SelectorGetter -> RecoilValue<'U,_>, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,RecoilValue<'U,_>>) =
+    static member inline selector 
+        (key: string, 
+         get: SelectorGetter -> RecoilValue<'U,_>, 
+         set: SelectorMethods -> 'T -> unit, 
+         ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>,
+         ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.selector<'U,ReadWrite> (
             [ "key" ==> key
               "get" ==> get
               "set" ==> System.Func<_,_,_>(set)
               if cacheImplementation.IsSome then
-                "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                  "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
         )
 
@@ -284,107 +329,203 @@ type Recoil =
     static member inline useValueLoadable (recoilValue: RecoilValue<'T,'Mode>) =
         Bindings.Recoil.useRecoilValueLoadable<'T,'Mode>(recoilValue)
         
-//[<Erase;RequireQualifiedAccess>]
-//module Recoil =
-    //[<Erase>]
-    //type Family =
-    //    static member inline atom<'T,'P> (defaultValue: 'P -> 'T) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+[<Erase;RequireQualifiedAccess>]
+module Recoil =
+    [<Erase>]
+    type Family =
+        /// Creates an atom family with the given default of what the promise resolves to.
+        static member inline atom (key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> defaultValue
+                  if persistence.IsSome then
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Creates an atom family with the given default of what the promise resolves to.
+        static member inline atom (key: string, defaultValue: 'P -> JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> defaultValue
+                  if persistence.IsSome then
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Creates an atom family with the given default of what the async returns.
+        static member inline atom (key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> (defaultValue |> Async.StartAsPromise)
+                  if persistence.IsSome then
+                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Creates an atom family with the given default of what the async returns.
+        static member inline atom (key: string, defaultValue: 'P -> Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> (defaultValue >> Async.StartAsPromise)
+                  if persistence.IsSome then
+                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Creates an atom family with the given default RecoilValue.
+        static member inline atom (key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> defaultValue
+                  if persistence.IsSome then
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Creates an atom family with the given default RecoilValue.
+        static member inline atom (key: string, defaultValue: 'P -> RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> defaultValue
+                  if persistence.IsSome then
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
 
-    //    static member inline atom<'T,'P> (key: string, defaultValue: 'P -> 'T) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> JS.Promise<'U>, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
+            
+            Bindings.Recoil.selectorFamily<'U,ReadOnly,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        ///
+        /// Applies state changes via the provided set function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> JS.Promise<'U>, 
+             set: 'P -> SelectorMethods -> 'T -> unit, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
+            
+            Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  "set" ==> System.Func<_,_,_,_>(set)
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> Async<'U>, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
+            
+            Bindings.Recoil.selectorFamily<'U,ReadOnly,'P> (
+                [ "key" ==> key
+                  "get" ==> System.Func<_,_>(fun p getter -> get p getter |> Async.StartAsPromise)
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        ///
+        /// Applies state changes via the provided set function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> Async<'U>, 
+             set: 'P -> SelectorMethods -> 'T -> unit, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
 
-    //    static member inline atom<'T,'P> (defaultValue: JS.Promise<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+            Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
+                [ "key" ==> key
+                  "get" ==> System.Func<_,_>(fun p getter -> get p getter |> Async.StartAsPromise)
+                  "set" ==> System.Func<_,_,_,_>(set)
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> RecoilValue<'U,_>, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
 
-    //    static member inline atom<'T,'P> (defaultValue: 'P -> JS.Promise<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+            Bindings.Recoil.selectorFamily<'U,ReadOnly,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        ///
+        /// Applies state changes via the provided set function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> RecoilValue<'U,_>, 
+             set: 'P -> SelectorMethods -> 'T -> unit, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
 
-    //    static member inline atom<'T,'P> (key: string, defaultValue: JS.Promise<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (key: string, defaultValue: 'P -> JS.Promise<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (defaultValue: Async<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> (defaultValue |> Async.StartAsPromise) ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (defaultValue: 'P -> Async<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> (defaultValue >> Async.StartAsPromise) ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (key: string, defaultValue: Async<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> (defaultValue |> Async.StartAsPromise) ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (key: string, defaultValue: 'P -> Async<'T>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> (defaultValue >> Async.StartAsPromise) ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (defaultValue: RecoilValue<'T,_>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (defaultValue: 'P -> RecoilValue<'T,_>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (key: string, defaultValue: RecoilValue<'T,_>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
-
-    //    static member inline atom<'T,'P> (key: string, defaultValue: 'P -> RecoilValue<'T,_>) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+            Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  "set" ==> System.Func<_,_,_,_>(set)
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
 
 [<AutoOpen;Erase>]
 module RecoilMagic =
@@ -395,31 +536,46 @@ module RecoilMagic =
                 [ "key" ==> key
                   "default" ==> defaultValue
                   if persistence.IsSome then
-                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
                       "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
                 |> createObj
             )
 
         /// Derives state and returns a RecoilValue via the provided get function.
-        static member inline selector (key: string, get: SelectorGetter -> 'U, ?cacheImplementation: CacheImplementation<'U,'U>) =
+        static member inline selector 
+            (key: string, 
+             get: SelectorGetter -> 'U, 
+             ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>, 
+             ?dangerouslyAllowMutability: bool) =
+            
             Bindings.Recoil.selector<'U,ReadOnly> (
                 [ "key" ==> key
                   "get" ==> get
                   if cacheImplementation.IsSome then
-                    "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
                 |> createObj
             )
         /// Derives state and returns a RecoilValue via the provided get function.
         ///
         /// Applies state changes via the provided set function.
-        static member inline selector (key: string, get: SelectorGetter -> 'U, set: SelectorMethods -> 'T -> unit, ?cacheImplementation: CacheImplementation<'U,'U>) =
+        static member inline selector 
+            (key: string, 
+             get: SelectorGetter -> 'U, 
+             set: SelectorMethods -> 'T -> unit, 
+             ?cacheImplementation: CacheImplementation<'U,Loadable<'U>>, 
+             ?dangerouslyAllowMutability: bool) =
+            
             Bindings.Recoil.selector<'U,ReadWrite> (
                 [ "key" ==> key
                   "get" ==> get
                   "set" ==> System.Func<_,_,_>(set)
                   if cacheImplementation.IsSome then
-                    "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value  ]
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
                 |> createObj
             )
 
@@ -433,17 +589,58 @@ module RecoilMagic =
             Bindings.Recoil.useRecoilCallback<unit,'U>(System.Func<_,_>(f))
             |> React.useCallbackRef
 
-    //type Recoil.Family with
-    //    static member inline atom<'T,'P> (defaultValue: 'T) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> System.Guid.NewGuid()
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+    type Recoil.Family with
+        /// Creates an atom family with the given default value.
+        static member inline atom (key: string, defaultValue: 'P -> 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+            Bindings.Recoil.atomFamily<'T,'P> (
+                [ "key" ==> key
+                  "default" ==> defaultValue
+                  if persistence.IsSome then
+                      "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
 
-    //    static member inline atom<'T,'P> (key: string, defaultValue: 'T) =
-    //        Bindings.Recoil.atomFamily<'T,'P> (
-    //            [ "key" ==> key
-    //              "default" ==> defaultValue ]
-    //            |> createObj
-    //        )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> 'U, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
+
+            Bindings.Recoil.selectorFamily<'U,ReadOnly,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Derives state and returns a RecoilValue via the provided get function.
+        ///
+        /// Applies state changes via the provided set function.
+        static member inline selector 
+            (key: string, 
+             get: 'P -> SelectorGetter -> 'U, 
+             set: 'P -> SelectorMethods -> 'T -> unit, 
+             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
+             ?dangerouslyAllowMutability: bool) =
+            
+            Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
+                [ "key" ==> key
+                  "get" ==> get
+                  "set" ==> System.Func<_,_,_,_>(set)
+                  if cacheImplementation.IsSome then
+                      "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+                  if paramCacheImplementation.IsSome then
+                      "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )

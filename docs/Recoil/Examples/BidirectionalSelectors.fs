@@ -6,13 +6,13 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = Recoil.atom("BidirectionalSelectors/textState", "Hello world!")
 
 let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
 let textStateTransform =
     Recoil.selector (
-        key = "textStateTransform", 
+        key = "BidirectionalSelectors/textStateTransform", 
         get = 
             (fun getter ->
                 getter.get(textState)

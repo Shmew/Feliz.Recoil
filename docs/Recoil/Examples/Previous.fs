@@ -6,8 +6,8 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak
 
-let textState = Recoil.atom("textState", "Hello world!")
-let prevTextState = Recoil.atom("prevTextState", "")
+let textState = Recoil.atom("Previous/textState", "Hello world!")
+let prevTextState = Recoil.atom("Previous/prevTextState", "")
 
 let views = React.functionComponent(fun () ->
     let text = Recoil.useValue(textState)

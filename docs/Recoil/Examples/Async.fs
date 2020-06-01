@@ -8,21 +8,44 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let pokemon = Recoil.atom("pokemon", "pikachu")
+let pokemon = 
+    atom {
+        key "Async/pokemon"
+        def "pikachu"
+    }
 
 let askIsPokemon = 
-    Recoil.selector("isPokemon", fun getter ->
-        let pokemonQuery = getter.get(pokemon)
-        async {
-            do! Async.Sleep 400
-            if pokemonQuery <> "" then
-                let! (statusCode, _) = 
-                    Http.get (sprintf "https://pokeapi.co/api/v2/pokemon/%s" pokemonQuery)
+    selector {
+        key "Async/isPokemon"
+        get (fun getter ->
+            async {
+                let pokemonQuery = getter.get(pokemon)
+                do! Async.Sleep 400
+                if pokemonQuery <> "" then
+                    let! (statusCode, _) = 
+                        Http.get (sprintf "https://pokeapi.co/api/v2/pokemon/%s" pokemonQuery)
 
-                return (statusCode = 200)
-            else return false
-        }
-    )
+                    return (statusCode = 200)
+                else return false
+            })
+    }
+    (*
+        Can also be written as:
+
+        Recoil.selector("Async/isPokemon", fun getter ->
+            async {
+                let pokemonQuery = getter.get(pokemon)
+
+                do! Async.Sleep 400
+                if pokemonQuery <> "" then
+                    let! (statusCode, _) = 
+                        Http.get (sprintf "https://pokeapi.co/api/v2/pokemon/%s" pokemonQuery)
+
+                    return (statusCode = 200)
+                else return false
+            }
+        )
+    *)
 
 let spinner =
     Html.div [
@@ -41,7 +64,7 @@ let spinner =
 
 let pokemonAsker = React.functionComponent(fun () ->
     let isPokemon = Recoil.useValue(askIsPokemon)
-
+    
     Html.div [
         prop.text (sprintf "%b" isPokemon)
     ])
@@ -50,11 +73,11 @@ let inner = React.functionComponent(fun () ->
     let pokeStr, askIsPokemon = Recoil.useState(pokemon)
     let currentText,setCurrentText = React.useState(pokeStr)
 
-    React.useEffect((fun () ->
+    React.useLayoutEffect((fun () ->
         let handler = JS.setTimeout (fun () -> askIsPokemon(currentText)) 200
 
         React.createDisposable(fun () -> JS.clearTimeout(handler))
-    ))
+    ), [| currentText :> obj |])
 
     Html.div [
         Html.div [
