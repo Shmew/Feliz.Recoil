@@ -1,3 +1,15 @@
+### 0.7.0 - Saturday, May 23th, 2020
+* Update for 0.0.8 release which adds:
+  * atomFamily
+  * selectorFamily
+  * noWait
+  * waitForAll
+  * waitForAny
+  * waitForNone
+* Refactor map/bind internals for better performance.
+* Refactor elmish internals for better performance.
+* Various bug fixes.
+
 ### 0.6.0 - Saturday, May 23th, 2020
 * Add Elmish.Bridge adapter
 

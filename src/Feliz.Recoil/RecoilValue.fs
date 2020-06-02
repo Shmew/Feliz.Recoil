@@ -23,14 +23,14 @@ module xxHash =
 
 module RecoilValue =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    type SelectorCache<'T,'U> (map: Map<string,RecoilValue<'U,ReadOnly>>) =
+    type MapSelectorCache<'T,'U> (map: Map<string,RecoilValue<'U,ReadOnly>>) =
         interface CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U> with
             member _.get key = map.TryFind(xxHash.hashFunc key) 
             member _.set (key: 'T -> 'U) (value: RecoilValue<'U,ReadOnly>) = 
-                SelectorCache<'T,'U>(map.Add(xxHash.hashFunc key, value)) 
+                MapSelectorCache<'T,'U>(map.Add(xxHash.hashFunc key, value)) 
                     :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>
 
-        static member toCacheImpl (cache: SelectorCache<'T,'U>) = cache :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>
+        static member toCacheImpl (cache: MapSelectorCache<'T,'U>) = cache :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     type BindSelectorCache<'T,'U,'Mode> (map: Map<string,RecoilValue<'U,ReadOnly>>) =
@@ -48,7 +48,7 @@ module RecoilValue =
             key (recoilValue.key + "/__map")
             get (fun (mapping: 'T -> 'U) getter -> getter.get(recoilValue) |> mapping)
             param_cache (fun () -> 
-                SelectorCache<'T,'U>(Map.empty) 
+                MapSelectorCache<'T,'U>(Map.empty) 
                     :> CacheImplementation<RecoilValue<'U,ReadOnly>,'T -> 'U>)
         }
 
@@ -71,6 +71,9 @@ module RecoilValue =
     let apply (recoilFun: RecoilValue<'T -> 'U,'Mode1>) (recoilValue: RecoilValue<'T,'Mode2>) =
         recoilFun |> bind (fun f -> recoilValue |> map f)
         
+    let inline lift (value: 'T) =
+        Bindings.Recoil.constSelector(value)
+
     module Operators =
         /// Infix apply.
         let (<*>) f m = apply f m
@@ -150,70 +153,49 @@ module RecoilValue =
         map6(fun u v w x y z -> u, v, w, x, y, z) a b c d e f
 
     module Array =
-        [<EditorBrowsable(EditorBrowsableState.Never)>]
-        let empty<'T> =
-            selector {
-                key "__empty_array__"
-                get (fun _ -> [||] : 'T [])
-            }
-
         let traverse (f: 'T -> RecoilValue<'U,_>) (recoilValues: RecoilValue<'T,_> []) =
-            empty<'U>
+            lift [||]
             |> Array.foldBack (fun x xs ->
                 let x' = x |> bind f
                 map2 (fun h t -> Array.append [|h|] t) x' xs
             ) recoilValues
 
         let sequence (recoilValues: RecoilValue<'T,_> []) =
-            traverse (bind id) recoilValues
+            traverse (Bindings.Recoil.constSelector) recoilValues
 
     module List =
-        [<EditorBrowsable(EditorBrowsableState.Never)>]
-        let empty<'T> =
-            selector {
-                key "__empty_list__"
-                get (fun _ -> [] : 'T list)
-            }
-
         let traverse (f: 'T -> RecoilValue<'U,_>) (recoilValues: RecoilValue<'T,_> list) =
-            empty<'U>
+            lift []
             |> List.foldBack (fun x xs ->
                 let x' = x |> bind f
                 map2 (fun h t -> h::t) x' xs
             ) recoilValues
 
         let sequence (recoilValues: RecoilValue<'T,_> list) =
-            traverse (bind id) recoilValues
+            traverse (Bindings.Recoil.constSelector) recoilValues
 
     module ResizeArray =
         let traverse f (recoilValues: ResizeArray<RecoilValue<'T,_>>) =
-            List.empty<'U>
+            lift []
             |> List.foldBack (fun x xs ->
                 let x' = x |> bind f
                 map2 (fun h t -> h::t) x' xs
             ) (List.ofSeq recoilValues)
             |> map ResizeArray
     
-        let sequence (recoilValues: ResizeArray<RecoilValue<'T,_>>) =
-            traverse (bind id) recoilValues
+        let sequence (recoilValues: ResizeArray<RecoilValue<'T,_>>) : RecoilValue<ResizeArray<'T>,ReadOnly> =
+            traverse (Bindings.Recoil.constSelector) recoilValues
 
     module Seq =
-        [<EditorBrowsable(EditorBrowsableState.Never)>]
-        let empty<'T> =
-            selector {
-                key "__empty_list__"
-                get (fun _ -> Seq.empty<'T>)
-            }
-
         let traverse f (recoilValues: RecoilValue<'T,_> seq) =
-            empty<'U>
+            lift Seq.empty
             |> Seq.foldBack (fun x xs ->
                 let x' = x |> bind f
                 map2 (fun h t -> Seq.append (Seq.singleton(h)) t) x' xs
             ) recoilValues
     
         let sequence (recoilValues: RecoilValue<'T,_> seq) =
-            traverse (bind id) recoilValues
+            traverse (Bindings.Recoil.constSelector) recoilValues
 
 [<AutoOpen>]
 module RecoilValueBuilder =
@@ -226,13 +208,6 @@ module RecoilValueBuilder =
     let inline using (a, k) = 
         try k a
         finally dispose a
-
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let unitSelector =
-        selector {
-            key "__unit__"
-            get (fun _ -> ())
-        }
 
     type RecoilValueBuilder internal () =
         member _.Bind (value: RecoilValue<_,_>, f) = value |> RecoilValue.bind f

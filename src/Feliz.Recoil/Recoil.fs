@@ -46,6 +46,11 @@ type Recoil =
     /// set the RecoilValue to the default value.
     static member inline defaultValue = Bindings.Recoil.defaultValue.Create()
 
+    /// Converts a RecoilValue<'T,_> into a RecoilValue<Loadable<'T>,ReadOnly>.
+    ///
+    /// Prevents a selector from being blocked while trying to resolve a RecoilValue.
+    static member inline noWait (recoilValue: RecoilValue<'T,'Mode>) = Bindings.Recoil.noWait(recoilValue)
+
     /// Provides the context in which atoms have values. 
     /// 
     /// Must be an ancestor of any component that uses any Recoil hooks. 
@@ -328,7 +333,7 @@ type Recoil =
     /// This will also subscribe the component for any updates in the value.
     static member inline useValueLoadable (recoilValue: RecoilValue<'T,'Mode>) =
         Bindings.Recoil.useRecoilValueLoadable<'T,'Mode>(recoilValue)
-        
+
 [<Erase;RequireQualifiedAccess>]
 module Recoil =
     [<Erase>]
@@ -404,7 +409,7 @@ module Recoil =
         static member inline selector 
             (key: string, 
              get: 'P -> SelectorGetter -> JS.Promise<'U>, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
              ?dangerouslyAllowMutability: bool) =
             
@@ -426,14 +431,14 @@ module Recoil =
             (key: string, 
              get: 'P -> SelectorGetter -> JS.Promise<'U>, 
              set: 'P -> SelectorMethods -> 'T -> unit, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
              ?dangerouslyAllowMutability: bool) =
             
             Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
                 [ "key" ==> key
                   "get" ==> get
-                  "set" ==> System.Func<_,_,_,_>(set)
+                  "set" ==> (fun p -> System.Func<_,_,_>(set p))
                   if cacheImplementation.IsSome then
                       "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
                   if paramCacheImplementation.IsSome then
@@ -446,7 +451,7 @@ module Recoil =
         static member inline selector 
             (key: string, 
              get: 'P -> SelectorGetter -> Async<'U>, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
              ?dangerouslyAllowMutability: bool) =
             
@@ -468,14 +473,14 @@ module Recoil =
             (key: string, 
              get: 'P -> SelectorGetter -> Async<'U>, 
              set: 'P -> SelectorMethods -> 'T -> unit, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
              ?dangerouslyAllowMutability: bool) =
 
             Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
                 [ "key" ==> key
                   "get" ==> System.Func<_,_>(fun p getter -> get p getter |> Async.StartAsPromise)
-                  "set" ==> System.Func<_,_,_,_>(set)
+                  "set" ==> (fun p -> System.Func<_,_,_>(set p))
                   if cacheImplementation.IsSome then
                       "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
                   if paramCacheImplementation.IsSome then
@@ -488,7 +493,7 @@ module Recoil =
         static member inline selector 
             (key: string, 
              get: 'P -> SelectorGetter -> RecoilValue<'U,_>, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
              ?dangerouslyAllowMutability: bool) =
 
@@ -510,14 +515,14 @@ module Recoil =
             (key: string, 
              get: 'P -> SelectorGetter -> RecoilValue<'U,_>, 
              set: 'P -> SelectorMethods -> 'T -> unit, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
              ?dangerouslyAllowMutability: bool) =
 
             Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
                 [ "key" ==> key
                   "get" ==> get
-                  "set" ==> System.Func<_,_,_,_>(set)
+                  "set" ==> (fun p -> System.Func<_,_,_>(set p))
                   if cacheImplementation.IsSome then
                       "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
                   if paramCacheImplementation.IsSome then
@@ -606,7 +611,7 @@ module RecoilMagic =
         static member inline selector 
             (key: string, 
              get: 'P -> SelectorGetter -> 'U, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>,
              ?dangerouslyAllowMutability: bool) =
 
@@ -627,15 +632,15 @@ module RecoilMagic =
         static member inline selector 
             (key: string, 
              get: 'P -> SelectorGetter -> 'U, 
-             set: 'P -> SelectorMethods -> 'T -> unit, 
-             ?cacheImplementation: CacheImplementation<'T,Loadable<'T>>,
+             set: 'P -> (SelectorMethods -> 'T -> unit), 
+             ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
              ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
              ?dangerouslyAllowMutability: bool) =
             
             Bindings.Recoil.selectorFamily<'U,ReadWrite,'P> (
                 [ "key" ==> key
                   "get" ==> get
-                  "set" ==> System.Func<_,_,_,_>(set)
+                  "set" ==> (fun p -> System.Func<_,_,_>(set p))
                   if cacheImplementation.IsSome then
                       "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
                   if paramCacheImplementation.IsSome then

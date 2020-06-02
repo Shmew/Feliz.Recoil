@@ -51,7 +51,8 @@ let samples =
       "recoil-elmish", Samples.Elmish.render()
       "recoil-composition", Samples.Composition.render() 
       "recoil-atomfamily", Samples.AtomFamily.render()
-      "recoil-selectorfamily", Samples.SelectorFamily.render() ]
+      "recoil-selectorfamily", Samples.SelectorFamily.render()
+      "recoil-concurrency", Samples.Concurrency.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -130,9 +131,10 @@ let resolveContent (path: string list) =
         | [ Urls.Logger ] -> [ "Logger.md" ]
         | [ Urls.Elmish ] -> [ "Elmish.md" ]
         | [ Urls.Composition ] -> [ "Composition.md" ]
-        | [ Urls.Websockets ] -> [ "Websockets.md" ]
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | [ Urls.SelectorFamily ] -> [ "SelectorFamily.md" ]
+        | [ Urls.Concurrency ] -> [ "Concurrency.md" ]
+        | [ Urls.Websockets ] -> [ "Websockets.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
     | _ -> [ "Recoil"; "README.md" ]
@@ -353,9 +355,10 @@ let allItems = React.memo(fun () ->
                 menuItem "Debug Logger" [ Urls.Recoil; Urls.Examples; Urls.Logger ]
                 menuItem "Elmish" [ Urls.Recoil; Urls.Examples; Urls.Elmish ]
                 menuItem "Composition" [ Urls.Recoil; Urls.Examples; Urls.Composition ]
-                menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
                 menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
                 menuItem "Selector Family" [ Urls.Recoil; Urls.Examples; Urls.SelectorFamily ]
+                menuItem "Concurrency" [ Urls.Recoil; Urls.Examples; Urls.Concurrency ]
+                menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
             ]
         ]
     ])

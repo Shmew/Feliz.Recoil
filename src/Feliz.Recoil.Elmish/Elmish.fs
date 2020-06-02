@@ -70,56 +70,70 @@ module Elmish =
         [<Emit("Object.entries($0)")>]
         let modelAtoms (record: 'T) : ResizeArray<string * RecoilValue<obj,ReadWrite>> = jsNative
 
+        let modelAtomFamily<'AtomRecord> (selectorKey: string) =
+            selectorFamily {
+                key (sprintf "%s/_atoms_" selectorKey)
+                get (fun (model: 'AtomRecord) _ -> modelAtoms(model))
+            }
+
+        let modelViewFamily (selectorKey: string) =
+            selectorFamily {
+                key (sprintf "%s/_view_" selectorKey)
+                get (fun modelAtom _ ->
+                    recoil {
+                        let! modelAtom = modelAtom
+                        let! modelSeq =
+                            modelAtom
+                            |> Seq.map (fun (field, recoilValue) ->
+                                recoilValue
+                                |> RecoilValue.map (fun v -> field, v))
+                            |> RecoilValue.Seq.sequence
+                        return unbox<'Model>(createObj !!modelSeq)
+                    })
+                set (fun (model: RecoilValue<ResizeArray<string * RecoilValue<obj,ReadWrite>>,ReadOnly>) setter (newModel: 'Model) ->
+                    objEntries newModel
+                    |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
+                        if setter.get(recoilValue) <> newValue then
+                            setter.set(recoilValue, newValue)
+                    ) (setter.get(model)))
+            }
+
     open Impl
 
     type Recoil with
         /// Returns an elmish dispatch function.
         static member useDispatch<'AtomRecord,'Model,'Msg> (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) =
-            let modelAtoms =
-                selector {
-                    key (sprintf "%s/_atoms_" selectorKey)
-                    get (fun _ -> modelAtoms(model))
-                }
-            
             let modelView = 
-                selector {
-                    key (sprintf "%s/_view_" selectorKey)
-                    get (fun getter ->
-                        getter.get(modelAtoms)
-                        |> Seq.map (fun (field, atom) -> field, getter.get(atom))
-                        |> fun res -> unbox<'Model>(createObj !!res))
-                    set (fun setter (newModel: 'Model) ->
-                        objEntries newModel
-                        |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
-                            if setter.get(recoilValue) <> newValue then
-                                setter.set(recoilValue, newValue)
-                        ) (setter.get(modelAtoms)))
-                }
-
-            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(modelView))
+                modelAtomFamily<'AtomRecord> selectorKey model
+                |> modelViewFamily selectorKey
 
             let state = React.useRef(None)
-            
+            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(modelView))
             let setState = Recoil.useSetState(modelView)
-
-            promise {
-                let! initState = getState()
-                state.current <- Some initState
-            }
-            |> Promise.start
             
             let ring = React.useRef(RingBuffer(10))
 
             let token = React.useRef(new System.Threading.CancellationTokenSource())
 
+            let initializeState () =
+                if state.current.IsNone && not token.current.IsCancellationRequested then
+                    promise {
+                        let! initState = getState()
+
+                        state.current <- Some initState
+                    }
+                    |> Promise.start
+
+            React.useEffect(initializeState)
+
             let rec dispatch (msg: 'Msg) =
                 promise {
-                    while state.current.IsNone do
+                    while state.current.IsNone && not token.current.IsCancellationRequested do
                         do! Promise.sleep 10
 
                     let mutable nextMsg = Some msg
 
-                    while nextMsg.IsSome && not (token.current.IsCancellationRequested) do
+                    while nextMsg.IsSome && not token.current.IsCancellationRequested do
                         let msg = nextMsg.Value
                         let (state', cmd') = update msg state.current.Value
                         cmd' |> List.iter (fun sub -> sub dispatch)
@@ -140,37 +154,29 @@ module Elmish =
 
         /// Returns an elmish dispatch function.
         static member useDispatch (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model) =
-            let modelAtoms =
-                selector {
-                    key (sprintf "%s/_atoms_" selectorKey)
-                    get (fun _ -> modelAtoms(model))
-                }
-
             let modelView = 
-                selector {
-                    key (sprintf "%s/_view_" selectorKey)
-                    get (fun getter ->
-                        getter.get(modelAtoms) 
-                        |> Seq.map (fun (field, atom) -> field, getter.get(atom))
-                        |> fun res -> unbox<'Model>(createObj !!res))
-                    set (fun setter (newModel: 'Model) ->
-                        objEntries newModel
-                        |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
-                            if setter.get(recoilValue) <> newValue then
-                                setter.set(recoilValue, newValue)
-                        ) (setter.get(modelAtoms)))
-                }
+                modelAtomFamily<'AtomRecord> selectorKey model
+                |> modelViewFamily selectorKey
 
-            let modelSelector =
-                selector {
-                    key (sprintf "%s/_selector_" selectorKey)
-                    get (fun _ -> unbox<'Msg>())
-                    set (fun setter msg ->
-                        setter.get(modelView)
-                        |> update msg
-                        |> fun res -> setter.set(modelView, res))
-                }
+            let setModelView = Recoil.useSetState(modelView)
+            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(modelView))
 
-            let dispatch = Recoil.useSetState(modelSelector)
+            let token = React.useRef(new System.Threading.CancellationTokenSource())
+
+            let dispatch (msg: 'Msg) =
+                promise {
+                    let! state = getState()
+
+                    if not token.current.IsCancellationRequested then
+                        update msg state
+                        |> setModelView
+                } |> Promise.start
+
+            React.useEffectOnce(fun () ->
+                React.createDisposable <| fun () ->
+                    token.current.Cancel()
+                    token.current.Dispose())
+
+            let dispatch = React.useCallbackRef(dispatch)
             
             React.useCallbackRef(dispatch)

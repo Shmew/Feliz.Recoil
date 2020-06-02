@@ -13,7 +13,7 @@ module SelectorFamilyCE =
         type Key = | Value of string
 
         type IOptionImplementer<'T,'U,'P,'Mode,'V> =
-            abstract member SetCache : CacheImplementation<'T,Loadable<'T>> -> 'V
+            abstract member SetCache : (unit -> CacheImplementation<'T,Loadable<'T>>) -> 'V
             abstract member SetParamCache<'Mode> : (unit -> CacheImplementation<RecoilValue<'T,'Mode>,'P>) -> 'V
             abstract member SetMutability : unit -> 'V
 
@@ -21,7 +21,7 @@ module SelectorFamilyCE =
         type ReadOnly<'T,'U,'P> = 
             { Key: string
               Get: 'P -> SelectorGetter -> 'U
-              Cache: CacheImplementation<'T,Loadable<'T>> option
+              Cache: (unit -> CacheImplementation<'T,Loadable<'T>>) option
               ParamCache: (unit -> CacheImplementation<RecoilValue<'T,ReadOnly>,'P>) option
               DangerouslyAllowMutability: bool option }
 
@@ -52,12 +52,12 @@ module SelectorFamilyCE =
             { Key: string
               Get: 'P -> SelectorGetter -> 'U
               Set: 'P -> SelectorMethods -> 'T -> unit
-              Cache: CacheImplementation<'T,Loadable<'T>> option
+              Cache: (unit -> CacheImplementation<'T,Loadable<'T>>) option
               ParamCache: (unit -> CacheImplementation<RecoilValue<'T,ReadWrite>,'P>) option
               DangerouslyAllowMutability: bool option }
 
             interface IOptionImplementer<'T,'U,'P,ReadWrite,ReadWrite<'T,'U,'P>> with
-                member this.SetCache (cache: CacheImplementation<'T,Loadable<'T>>) =
+                member this.SetCache (cache: unit -> CacheImplementation<'T,Loadable<'T>>) =
                     { this with Cache = Some cache }
 
                 member this.SetParamCache cache =
@@ -92,16 +92,20 @@ module SelectorFamilyCE =
               DangerouslyAllowMutability = None }
 
         [<CustomOperation("cache")>]
-        member inline _.Cache (state: SelectorFamilyState.IOptionImplementer<'T,_,_,_,_>, (cacheImplementation: CacheImplementation<'T,Loadable<'T>>)) = 
+        member inline _.Cache (state: SelectorFamilyState.IOptionImplementer<'T,_,_,_,_>, (cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>)) = 
             state.SetCache(cacheImplementation)
 
         [<CustomOperation("param_cache")>]
         member inline _.ParamCache (state: SelectorFamilyState.IOptionImplementer<'T,_,'P,_,_>, (cacheImplementation: unit -> CacheImplementation<RecoilValue<'T,_>,'P>)) = 
             state.SetParamCache(cacheImplementation)
 
-        [<CustomOperation("no_cache")>]
-        member inline _.NoCache (state: SelectorFamilyState.IOptionImplementer<_,_,_,_,_>) = 
-            state.SetCache(NoCache())
+        //[<CustomOperation("no_cache")>]
+        //member inline _.NoCache (state: SelectorFamilyState.IOptionImplementer<_,_,_,_,_>) = 
+        //    state.SetCache(fun () -> NoCache() :> CacheImplementation<'T,Loadable<'T>>)
+
+        //[<CustomOperation("no_param_cache")>]
+        //member inline _.NoParamCache (state: SelectorFamilyState.IOptionImplementer<_,_,_,_,_>) = 
+        //    state.SetParamCache(fun () -> NoCache() :> CacheImplementation<_,_>)
 
         [<CustomOperation("dangerouslyAllowMutability")>]
         member inline _.DangerouslyAllowMutability (state: SelectorFamilyState.IOptionImplementer<_,_,_,_,_>) = 

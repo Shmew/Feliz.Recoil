@@ -71,6 +71,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 		public\Recoil\Examples\Callback.md = public\Recoil\Examples\Callback.md
 		public\Recoil\Examples\Composition.md = public\Recoil\Examples\Composition.md
 		public\Recoil\Examples\ComputationExpressions.md = public\Recoil\Examples\ComputationExpressions.md
+		public\Recoil\Examples\Concurrency.md = public\Recoil\Examples\Concurrency.md
 		public\Recoil\Examples\Elmish.md = public\Recoil\Examples\Elmish.md
 		public\Recoil\Examples\Loadable.md = public\Recoil\Examples\Loadable.md
 		public\Recoil\Examples\Logger.md = public\Recoil\Examples\Logger.md

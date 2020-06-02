@@ -17,6 +17,7 @@
     <Compile Include="ComputationExpressions\Selector.fs" />
     <Compile Include="ComputationExpressions\SelectorFamily.fs" />
     <Compile Include="RecoilValue.fs" />
+    <Compile Include="Async.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>
