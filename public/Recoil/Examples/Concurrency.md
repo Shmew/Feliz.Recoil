@@ -67,16 +67,10 @@ let fetchAllPokemon =
             | WaitForAll -> 
                 Recoil.waitForAll(pokemonRecoils) 
                 |> getter.get
-                |> fun res ->
-                    res |> List.iter (fun o -> JS.console.log(o))
-                    res
             | WaitForAny -> 
                 Recoil.waitForAny(pokemonRecoils) 
                 |> getter.get
                 |> List.map (fun l -> l.valueMaybe() |> Option.flatten)
-                |> fun res ->
-                    res |> List.iter (fun o -> JS.console.log(o))
-                    res
             | WaitForNone -> 
                 Recoil.waitForNone(pokemonRecoils)
                 |> getter.get
