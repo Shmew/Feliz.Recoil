@@ -10,7 +10,7 @@ A quick look:
 open Feliz
 open Feliz.Recoil
 
-let textState = Recoil.atom("Hello world!")
+let textState = Recoil.atom("textState", "Hello world!")
 
 let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
 
