@@ -1,6 +1,6 @@
 {
   "name": "feliz.-recoil",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Fable bindings in Feliz style for Facebook's experimental state management library recoil.",
   "homepage": "https://github.com/Shmew/Feliz.Recoil",
   "bugs": {

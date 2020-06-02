@@ -1,4 +1,7 @@
-### 0.7.0 - Saturday, May 23th, 2020
+### 0.7.1 - Tuesday, June 2nd, 2020
+* Fix fable path resolution
+
+### 0.7.0 - Monday, June 1st, 2020
 * Update for 0.0.8 release which adds:
   * atomFamily
   * selectorFamily
