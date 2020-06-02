@@ -10,7 +10,7 @@ open Zanaptak.TypedCssClasses
 
 let textState = 
     atom {
-        key "textState"
+        key "Logger/textState"
         def "Hello world!"
         log
     }
@@ -25,7 +25,6 @@ let textState =
           Backbutton = None
           Validator = (fun _ -> None) }
     )
-
 *)
 
 let inner = React.functionComponent(fun () ->

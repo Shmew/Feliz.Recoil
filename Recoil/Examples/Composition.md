@@ -9,9 +9,9 @@ open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
 
-let textState = Recoil.atom("textState", "Hello world!")
+let textState = Recoil.atom("Composition/textState", "Hello world!")
 
-let otherTextState = Recoil.atom("otherTextState", "")
+let otherTextState = Recoil.atom("Composition/otherTextState", "")
 
 let textStateTransformed =
     recoil {
@@ -22,12 +22,8 @@ let textStateTransformed =
         let! otherText = otherTextState
 
         return
-            selector {
-                key "textStateTransformed"
-                get (fun _ ->
-                    if otherText = "" then text
-                    else sprintf "%s - %s" text otherText)
-            }
+            if otherText = "" then text
+            else sprintf "%s - %s" text otherText
     }
 
 let label = React.functionComponent(fun (input: {| name: string |}) ->

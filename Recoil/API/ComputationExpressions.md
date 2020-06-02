@@ -6,11 +6,13 @@ There are computation expressions for both atoms and selectors, to help make com
 
 ### atom
 
-The atom computation expression has four operations: 
+The atom computation expression has five operations: 
+
 * `key` - The atom key.
 * `def` - The default value.
 * `log` - Enables logging when using the `Recoil.logger` component.
 * `persist` - Allows modifications to atom persistence settings.
+* `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
 
 They are used like so:
 
@@ -25,14 +27,37 @@ let myAtom =
 
 The key and default operations support all the overloads that `Recoil.atom` does.
 
+### atomFamily
+
+The atomFamily computation expression has five operations:
+
+* `key` - The atom key.
+* `def` - The default value.
+* `log` - Enables logging when using the `Recoil.logger` component.
+* `persist` - Allows modifications to atom persistence settings.
+* `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
+
+They are used like so:
+
+```fs
+let myAtom = 
+    atomFamily {
+        key "myAtomKey"
+        def (fun s -> "myDefaultValue" + s)
+        log
+    }
+```
+
 ### selector
 
-The selector computation expression has three operations: 
+The selector computation expression has six operations: 
 
 * `key` - Sets the key for the selector.
 * `get` - Sets the function to get a value.
 * `set` - Sets the function to set a value.
-* `cache` - Sets the `CacheImplementation<'T>` interface.
+* `cache` - Sets the `CacheImplementation<'T,'U>` interface.
+* `no_cache` - Disables caching for the selector.
+* `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
 
 These can be used like so:
 
@@ -40,13 +65,41 @@ These can be used like so:
 let mySelector =
     selector {
         key "mySelectorKey"
-        get (fun get ->
-            let myTextValue = get(myAtom)
+        get (fun getter ->
+            let myTextValue = getter.get(myAtom)
             myTextValue + " and some more text"
         )
-        set (fun setter ->
+        set (fun setter newValue ->
             let myTextValue = setter.get(myAtom)
-            setter.set(myAtom, myTextValue + " and some other text")
+            setter.set(myAtom, myTextValue + newValue + " and some other text")
+        )
+    }
+```
+
+### selectorFamily
+
+The selectorFamily computation expression has six operations: 
+
+* `key` - Sets the key for the selector.
+* `get` - Sets the function to get a value.
+* `set` - Sets the function to set a value.
+* `cache` - Sets the `CacheImplementation<'T,'U>` interface.
+* `param_cache` - Sets the `CacheImplementation<'T,'U>` interface for parameters.
+* `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
+
+These can be used like so:
+
+```fs
+let mySelector =
+    selectorFamily {
+        key "mySelectorKey"
+        get (fun andEvenMoreText getter ->
+            let myTextValue = getter.get(myAtom)
+            myTextValue + " and some more text" + andEvenMoreText
+        )
+        set (fun andEvenMoreText setter newValue ->
+            let myTextValue = setter.get(myAtom)
+            setter.set(myAtom, myTextValue + newValue + " and some other text" + andEvenMoreText)
         )
     }
 ```
@@ -54,7 +107,6 @@ let mySelector =
 ### recoil
 
 A standard computation expression to make binding values easier.
-
 
 Usage:
 ```fs
@@ -71,11 +123,7 @@ let textStateTransformed =
         let! otherText = otherTextState
 
         return
-            selector {
-                key "textStateTransformed"
-                get (fun _ ->
-                    if otherText = "" then text
-                    else sprintf "%s - %s" text otherText)
-            }
+            if otherText = "" then text
+            else sprintf "%s - %s" text otherText
     }
 ```

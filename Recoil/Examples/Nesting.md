@@ -17,25 +17,25 @@ type State =
 
 let age =
     atom {
-        key "age"
+        key "Nesting/age"
         def 26
     }
 
 let firstName =
     atom {
-        key "firstName"
+        key "Nesting/firstName"
         def "Cody"
     }
 
 let lastName =
     atom {
-        key "lastName"
+        key "Nesting/lastName"
         def "Johnson"
     }
 
 let fullName =
     selector {
-        key "fullName"
+        key "Nesting/fullName"
         get (fun getter ->
             sprintf "%s %s" 
                 (getter.get(firstName))
@@ -45,13 +45,13 @@ let fullName =
 
 let job =
     atom {
-        key "job"
+        key "Nesting/job"
         def "F# Developer"
     }
 
 let state =
     selector {
-        key "state"
+        key "Nesting/state"
         get (fun getter ->
             { Age = getter.get(age)
               FirstName = getter.get(firstName)
