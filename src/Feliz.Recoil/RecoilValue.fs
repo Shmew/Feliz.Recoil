@@ -74,6 +74,9 @@ module RecoilValue =
     let inline lift (value: 'T) =
         Bindings.Recoil.constSelector(value)
 
+    let flatten (value: RecoilValue<RecoilValue<'T,_>,_>) =
+        value |> bind id
+
     module Operators =
         /// Infix apply.
         let (<*>) f m = apply f m

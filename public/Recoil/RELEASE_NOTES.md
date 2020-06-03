@@ -1,3 +1,6 @@
+### 0.8.0 - Tuesday, June 2nd, 2020
+* Add `RecoilValue.flatten`
+
 ### 0.7.1 - Tuesday, June 2nd, 2020
 * Fix fable path resolution
 

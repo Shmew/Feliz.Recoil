@@ -1,0 +1,6 @@
+﻿group Recoil.Datasheet
+    Fable.Core
+    Fable.Promise
+    Feliz
+    FSharp.Core
+    Zanaptak.TypedCssClasses

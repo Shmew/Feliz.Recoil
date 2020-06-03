@@ -73,6 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BC
 		public\Recoil\Examples\ComputationExpressions.md = public\Recoil\Examples\ComputationExpressions.md
 		public\Recoil\Examples\Concurrency.md = public\Recoil\Examples\Concurrency.md
 		public\Recoil\Examples\Elmish.md = public\Recoil\Examples\Elmish.md
+		public\Recoil\Examples\ExcelClone.md = public\Recoil\Examples\ExcelClone.md
 		public\Recoil\Examples\Loadable.md = public\Recoil\Examples\Loadable.md
 		public\Recoil\Examples\Logger.md = public\Recoil\Examples\Logger.md
 		public\Recoil\Examples\MixAndMatch.md = public\Recoil\Examples\MixAndMatch.md
@@ -112,6 +113,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{4A2165E7-ABB
 		demo\webpack.config.js = demo\webpack.config.js
 	EndProjectSection
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Feliz.Recoil.DataSheet", "src\Feliz.Recoil.DataSheet\Feliz.Recoil.DataSheet.fsproj", "{CE1CDB55-55A2-45B6-8F3F-014E2950A215}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +153,10 @@ Global
 		{D1377ED1-688D-48B0-959B-A494FCCE9791}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1377ED1-688D-48B0-959B-A494FCCE9791}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1377ED1-688D-48B0-959B-A494FCCE9791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1CDB55-55A2-45B6-8F3F-014E2950A215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1CDB55-55A2-45B6-8F3F-014E2950A215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1CDB55-55A2-45B6-8F3F-014E2950A215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1CDB55-55A2-45B6-8F3F-014E2950A215}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -52,7 +52,8 @@ let samples =
       "recoil-composition", Samples.Composition.render() 
       "recoil-atomfamily", Samples.AtomFamily.render()
       "recoil-selectorfamily", Samples.SelectorFamily.render()
-      "recoil-concurrency", Samples.Concurrency.render() ]
+      "recoil-concurrency", Samples.Concurrency.render()
+      "recoil-excelclone", Samples.ExcelClone.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -90,7 +91,6 @@ let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markd
 let codeBlockRenderer (codeProps: Markdown.ICodeProperties) = codeBlockRenderer' {| codeProps = codeProps |}
 
 let readme = sprintf "https://raw.githubusercontent.com/%s/%s/master/README.md"
-let contributing = sprintf "https://raw.githubusercontent.com/Zaid-Ajaj/Feliz/master/public/Feliz/Contributing.md"
 
 let (|PathPrefix|) (segments: string list) (path: string list) =
     if path.Length > segments.Length then
@@ -104,7 +104,6 @@ let resolveContent (path: string list) =
     | [ Urls.Recoil; Urls.Overview; ] -> [ "Recoil"; "README.md" ]
     | [ Urls.Recoil; Urls.Installation ] -> [ "Recoil"; "Installation.md" ]
     | [ Urls.Recoil; Urls.ReleaseNotes ] -> [ "Recoil"; "RELEASE_NOTES.md" ]
-    | [ Urls.Recoil; Urls.Contributing ] -> [ contributing ]
     | PathPrefix [ Urls.Recoil; Urls.API ] (Some res) ->
         match res with
         | [ Urls.Types ] -> [ "Types.md" ]
@@ -134,6 +133,7 @@ let resolveContent (path: string list) =
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | [ Urls.SelectorFamily ] -> [ "SelectorFamily.md" ]
         | [ Urls.Concurrency ] -> [ "Concurrency.md" ]
+        | [ Urls.ExcelClone ] -> [ "ExcelClone.md" ]
         | [ Urls.Websockets ] -> [ "Websockets.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
@@ -331,7 +331,6 @@ let allItems = React.memo(fun () ->
                 menuItem "Overview" [ ]
                 menuItem "Installation" [ Urls.Recoil; Urls.Installation ]
                 menuItem "Release Notes" [ Urls.Recoil; Urls.ReleaseNotes ]
-                menuItem "Contributing" [ Urls.Recoil; Urls.Contributing ]
                 nestedMenuList "API Reference" [ Urls.Recoil; Urls.API ] [
                     nestedMenuItem "Types" [ Urls.Types ]
                     nestedMenuItem "Components" [ Urls.Components ]
@@ -358,6 +357,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
                 menuItem "Selector Family" [ Urls.Recoil; Urls.Examples; Urls.SelectorFamily ]
                 menuItem "Concurrency" [ Urls.Recoil; Urls.Examples; Urls.Concurrency ]
+                menuItem "Excel Clone" [ Urls.Recoil; Urls.Examples; Urls.ExcelClone ]
                 menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
             ]
         ]
