@@ -222,15 +222,9 @@ module Selectors =
 
                             if currentRefs.Contains(cCol,row) then None
                             else
-                                getter.get(expr(row, col))
-                                |> fun res ->
-                                    JS.console.log(res)
-                                    res.ToCharArray()
+                                getter.get(expr(row, col)).ToCharArray()
                                 |> Evaluator.parse
                                 |> Option.bind (evaluate currentRefs)
-                                |> fun res ->
-                                    JS.console.log(res)
-                                    res
 
                     Evaluator.parse (getter.get(expr(row, col)).ToCharArray())
                     |> Option.bind (evaluate ((Set.empty<Evaluator.Position>).Add(char (col + 56), row)))

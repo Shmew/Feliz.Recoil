@@ -47,10 +47,7 @@ module DataSheet =
             | None ->
                 match expr with
                 | "" -> ""
-                | _ when expr.StartsWith("=") ->
-                    JS.console.log(input) 
-                    JS.console.log(cellValue)
-                    "#ERR"
+                | _ when expr.StartsWith("=") -> "#ERR"
                 | _ -> expr
 
         Html.div [
