@@ -5,19 +5,6 @@ open Feliz
 open Feliz.Recoil
 
 module DataSheet =
-    let renderCount = React.functionComponent(fun () ->
-        let countRef = React.useRef 0
-        
-        let mutable currentCount = countRef.current
-
-        React.useEffect(fun () -> countRef.current <- currentCount)
-
-        currentCount <- currentCount + 1
-
-        Html.div [
-            prop.text (sprintf "Render count: %i" currentCount)
-        ])
-
     let cellEditor = React.memo(fun (input: {| col: int; row: int |}) ->
         let cellExpr,setCellExpr = Recoil.useState(Selectors.Cell.expr(input.row, input.col))
         let inputRef = React.useInputRef()
@@ -75,7 +62,7 @@ module DataSheet =
             prop.style [
                 if selected && cellState <> CellState.Editing then 
                     style.outlineColor "#3273dc"
-                    style.custom("outlineStyle", "auto")
+                    style.outlineStyle.auto
                     style.outlineWidth.initial
                 if cellState = CellState.Editing then
                     style.padding 0

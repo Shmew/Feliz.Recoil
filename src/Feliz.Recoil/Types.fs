@@ -41,7 +41,7 @@ type SelectorGetter =
 module SelectorGetterMagic =
     type SelectorGetter with
         [<Emit("$0.get($1)")>]
-        member _.get (recoilValue: RecoilValue<'T,'Mode>) : 'T = jsNative
+        member _.get (recoilValue: RecoilValue<'T,_>) : 'T = jsNative
 
 /// Methods provided in selectors for composing new RecoilValues.
 [<Erase>]

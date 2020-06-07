@@ -76,7 +76,7 @@ module Elmish =
                 get (fun (model: 'AtomRecord) _ -> modelAtoms(model))
             }
 
-        let modelViewFamily (selectorKey: string) =
+        let modelViewFamily<'Model> (selectorKey: string) =
             selectorFamily {
                 key (sprintf "%s/_view_" selectorKey)
                 get (fun modelAtom _ ->

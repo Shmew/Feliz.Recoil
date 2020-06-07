@@ -280,8 +280,10 @@ Creates a callback function that allows for fetching values of RecoilValue(s).
 
 Signature:
 ```fs
-(CallbackMethods -> 'U), ?deps: obj []) -> ('T -> 'U)
-(f: (CallbackMethods -> 'T -> 'U), ?deps: obj []) -> ('T -> 'U)
+(f: CallbackMethods -> 'T -> 'U, ?deps: obj []) -> ('T -> 'U)
+(f: CallbackMethods -> 'T -> 'U -> 'V, ?deps: obj []) -> ('T -> 'U -> 'V)
+(f: CallbackMethods -> 'T -> 'U -> 'V -> 'W, ?deps: obj []) -> ('T -> 'U -> 'V -> 'W)
+...
 ```
 
 Usage: See the [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback).
@@ -295,8 +297,10 @@ This should *not* be used when the callback determines the result of the render.
 
 Signature:
 ```fs
-(f: (CallbackMethods -> 'U)) -> ('T -> 'U)
-(f: (CallbackMethods -> 'T -> 'U), ?deps: obj []) -> ('T -> 'U)
+(f: (CallbackMethods -> 'T -> 'U) -> ('T -> 'U)
+(f: (CallbackMethods -> 'T -> 'U -> 'V) -> ('T -> 'U -> 'V)
+(f: (CallbackMethods -> 'T -> 'U -> 'V -> 'W) -> ('T -> 'U -> 'V -> 'W)
+...
 ```
 
 Usage: Same usage as this [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback)

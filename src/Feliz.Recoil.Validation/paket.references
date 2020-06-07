@@ -1,0 +1,4 @@
+﻿group Recoil.Validation
+    Fable.Core
+    Feliz
+    FSharp.Core

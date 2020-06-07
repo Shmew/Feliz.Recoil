@@ -127,3 +127,17 @@ let textStateTransformed =
             else sprintf "%s - %s" text otherText
     }
 ```
+
+### recoilResult
+
+A standard computation expression for dealing with results
+inside recoil values.
+
+Accessible by opening the Feliz.Recoil.Result namespace.
+
+### recoilOption
+
+A standard computation expression for dealing with options
+inside recoil values.
+
+Accessible by opening the Feliz.Recoil.Option namespace.

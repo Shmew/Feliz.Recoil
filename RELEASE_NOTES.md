@@ -1,3 +1,9 @@
+### 0.9.0 - Sunday, June 7th, 2020
+* Added overloads for useCallback and useCallbackRef for additional parameters
+* Added opt-in RecoilResult and RecoilOption CE and functions
+* Fixed some async/promise conversion when lifting into state
+* Added Feliz.Recoil.Validation library
+
 ### 0.8.0 - Tuesday, June 2nd, 2020
 * Add `RecoilValue.flatten`
 

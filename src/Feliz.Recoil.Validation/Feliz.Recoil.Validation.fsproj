@@ -6,25 +6,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Utils.fs" />
-    <Compile Include="Types.fs" />
-    <Compile Include="Bindings.fs" />
-    <Compile Include="Recoil.fs" />
-    <Compile Include="Logger.fs" />
-    <Compile Include="ComputationExpressions\AtomFamily.fs" />
-    <Compile Include="ComputationExpressions\Atom.fs" />
-    <Compile Include="ComputationExpressions\Selector.fs" />
-    <Compile Include="ComputationExpressions\SelectorFamily.fs" />
-    <Compile Include="RecoilValue.fs" />
-    <Compile Include="RecoilResult.fs" />
-    <Compile Include="RecoilOption.fs" />
-    <Compile Include="Async.fs" />
+    <Compile Include="Validation.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Feliz.Recoil\Feliz.Recoil.fsproj" />
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
       <NpmPackage Name="recoil" Version="gte 0.0.8 lt 1" ResolutionStrategy="max" />
     </NpmDependencies>
   </PropertyGroup>
+
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

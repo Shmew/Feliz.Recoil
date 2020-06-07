@@ -22,6 +22,7 @@
     <Compile Include="Recoil\Examples\SelectorFamily.fs" />
     <Compile Include="Recoil\Examples\Concurrency.fs" />
     <Compile Include="Recoil\Examples\ExcelClone.fs" />
+    <Compile Include="Recoil\Examples\Validation.fs" />
     <Compile Include="..\paket-files\docs\Zaid-Ajaj\Feliz\Feliz.Markdown\Markdown.fs">
       <Paket>True</Paket>
       <Link>Feliz.Markdown/Markdown.fs</Link>
@@ -36,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\src\Feliz.Recoil.DataSheet\Feliz.Recoil.DataSheet.fsproj" />
     <ProjectReference Include="..\src\Feliz.Recoil.Elmish\Feliz.Recoil.Elmish.fsproj" />
+    <ProjectReference Include="..\src\Feliz.Recoil.Validation\Feliz.Recoil.Validation.fsproj" />
     <ProjectReference Include="..\src\Feliz.Recoil\Feliz.Recoil.fsproj" />
   </ItemGroup>
   <PropertyGroup>

@@ -53,7 +53,8 @@ let samples =
       "recoil-atomfamily", Samples.AtomFamily.render()
       "recoil-selectorfamily", Samples.SelectorFamily.render()
       "recoil-concurrency", Samples.Concurrency.render()
-      "recoil-excelclone", Samples.ExcelClone.render() ]
+      "recoil-excelclone", Samples.ExcelClone.render()
+      "recoil-validation", Samples.Validation.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -113,6 +114,7 @@ let resolveContent (path: string list) =
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         | [ Urls.Elmish ] -> [ "Elmish.md" ]
         | [ Urls.Bridge ] -> [ "Bridge.md" ]
+        | [ Urls.Validation ] -> [ "Validation.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.API ] @ path
     | PathPrefix [ Urls.Recoil; Urls.Examples ] (Some res) ->
@@ -134,7 +136,7 @@ let resolveContent (path: string list) =
         | [ Urls.SelectorFamily ] -> [ "SelectorFamily.md" ]
         | [ Urls.Concurrency ] -> [ "Concurrency.md" ]
         | [ Urls.ExcelClone ] -> [ "ExcelClone.md" ]
-        | [ Urls.Websockets ] -> [ "Websockets.md" ]
+        | [ Urls.Validation ] -> [ "Validation.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
     | _ -> [ "Recoil"; "README.md" ]
@@ -339,6 +341,7 @@ let allItems = React.memo(fun () ->
                     nestedMenuItem "Computation Expressions" [ Urls.ComputationExpressions ]
                     nestedMenuItem "Elmish" [ Urls.Elmish ]
                     nestedMenuItem "Bridge" [ Urls.Bridge ]
+                    nestedMenuItem "Validation" [ Urls.Validation ]
                 ]
                 menuLabel "Examples"
                 menuItem "Basic" [ Urls.Recoil; Urls.Examples; Urls.Basic ]
@@ -358,7 +361,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Selector Family" [ Urls.Recoil; Urls.Examples; Urls.SelectorFamily ]
                 menuItem "Concurrency" [ Urls.Recoil; Urls.Examples; Urls.Concurrency ]
                 menuItem "Excel Clone" [ Urls.Recoil; Urls.Examples; Urls.ExcelClone ]
-                menuItem "With Websockets" [ Urls.Recoil; Urls.Examples; Urls.Websockets ]
+                menuItem "Validation" [ Urls.Recoil; Urls.Examples; Urls.Validation ]
             ]
         ]
     ])

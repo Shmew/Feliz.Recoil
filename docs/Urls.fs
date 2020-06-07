@@ -17,6 +17,7 @@ let [<Literal>] Hooks = "Hooks"
 // Computation Expressions
 // Elmish
 let [<Literal>] Bridge = "Bridge"
+// Validation
 
 // Examples
 let [<Literal>] Basic = "Basic"
@@ -37,3 +38,4 @@ let [<Literal>] SelectorFamily = "SelectorFamily"
 let [<Literal>] Concurrency = "Concurrency"
 let [<Literal>] ExcelClone = "ExcelClone"
 let [<Literal>] Websockets = "Websockets"
+let [<Literal>] Validation = "Validation"

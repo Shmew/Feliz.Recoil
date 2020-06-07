@@ -186,15 +186,50 @@ type Recoil =
         )
 
     /// Creates a callback function that allows for fetching values of RecoilValue(s).
-    static member inline useCallback (f: (CallbackMethods -> 'T -> 'U), ?deps: obj []) =
-        Bindings.Recoil.useRecoilCallback<'T,'U>(System.Func<_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U>(System.Func<_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U -> 'V, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V>(System.Func<_,_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W>(System.Func<_,_,_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X>(System.Func<_,_,_,_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X -> 'Y, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X -> 'Y>(System.Func<_,_,_,_,_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallback (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X -> 'Y -> 'Z, ?deps: obj []) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X -> 'Y -> 'Z>(System.Func<_,_,_,_,_,_,_,_>(f), ?deps = (deps |> Option.map ResizeArray))
 
     /// Creates a callback function that allows for fetching values of RecoilValue(s),
     /// but will always stay up-to-date with the required depencencies and reduce re-renders.
     ///
     /// This should *not* be used when the callback determines the result of the render.
-    static member inline useCallbackRef (f: (CallbackMethods -> 'T -> 'U)) =
-        Bindings.Recoil.useRecoilCallback<'T,'U>(System.Func<_,_,_>(f))
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U>(System.Func<_,_,_>(f))
+        |> React.useCallbackRef
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U -> 'V) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V>(System.Func<_,_,_,_>(f))
+        |> React.useCallbackRef
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W>(System.Func<_,_,_,_,_>(f))
+        |> React.useCallbackRef
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X>(System.Func<_,_,_,_,_,_>(f))
+        |> React.useCallbackRef
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X -> 'Y) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X -> 'Y>(System.Func<_,_,_,_,_,_,_>(f))
+        |> React.useCallbackRef
+    /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U -> 'V -> 'W -> 'X -> 'Y -> 'Z) =
+        Bindings.Recoil.useRecoilCallback<'T -> 'U -> 'V -> 'W -> 'X -> 'Y -> 'Z>(System.Func<_,_,_,_,_,_,_,_>(f))
         |> React.useCallbackRef
 
     /// Returns a function that will reset the value of a RecoilValue to its default.
@@ -586,12 +621,12 @@ module RecoilMagic =
 
         /// Creates a callback function that allows for fetching values of RecoilValue(s).
         static member inline useCallback (f: (CallbackMethods -> 'U), ?deps: obj []) =
-            Bindings.Recoil.useRecoilCallback<unit,'U>(System.Func<_,_>(f), ?deps = (deps |> Option.map ResizeArray))
+            Bindings.Recoil.useRecoilCallback<unit -> 'U>(System.Func<_,_>(f), ?deps = (deps |> Option.map ResizeArray))
 
         /// Creates a callback function that allows for fetching values of RecoilValue(s),
         /// but will always stay up-to-date with the required depencencies and reduce re-renders.
         static member inline useCallbackRef (f: (CallbackMethods -> 'U)) =
-            Bindings.Recoil.useRecoilCallback<unit,'U>(System.Func<_,_>(f))
+            Bindings.Recoil.useRecoilCallback<unit -> 'U>(System.Func<_,_>(f))
             |> React.useCallbackRef
 
     type Recoil.Family with

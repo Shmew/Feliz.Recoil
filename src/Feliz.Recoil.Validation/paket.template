@@ -1,0 +1,12 @@
+﻿type project
+licenseExpression https://github.com/Shmew/Feliz.Recoil/blob/master/LICENSE
+authors Cody Johnson
+description
+    Validation hook for recoil.
+language
+    F#
+tags
+    fsharp, fable, react, feliz, recoil, validation, state, management, web
+files
+    *.fsproj ==> fable
+    *.fs ==> fable
