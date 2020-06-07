@@ -11,4 +11,3 @@ files
     *.fsproj ==> fable
     *.fs ==> fable
     ComputationExpressions/*.fs ==> fable/ComputationExpressions
-    Hash/*.js ==> fable/Hash
