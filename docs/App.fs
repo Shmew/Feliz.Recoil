@@ -54,7 +54,8 @@ let samples =
       "recoil-selectorfamily", Samples.SelectorFamily.render()
       "recoil-concurrency", Samples.Concurrency.render()
       "recoil-excelclone", Samples.ExcelClone.render()
-      "recoil-validation", Samples.Validation.render() ]
+      "recoil-validation", Samples.Validation.render()
+      "recoil-persistence", Samples.Persistence.render() ]
 
 let githubPath (rawPath: string) =
     let parts = rawPath.Split('/')
@@ -137,6 +138,7 @@ let resolveContent (path: string list) =
         | [ Urls.Concurrency ] -> [ "Concurrency.md" ]
         | [ Urls.ExcelClone ] -> [ "ExcelClone.md" ]
         | [ Urls.Validation ] -> [ "Validation.md" ]
+        | [ Urls.Persistence ] -> [ "Persistence.md" ]
         | _ -> []
         |> fun path -> [ Urls.Recoil; Urls.Examples ] @ path
     | _ -> [ "Recoil"; "README.md" ]
@@ -362,6 +364,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Concurrency" [ Urls.Recoil; Urls.Examples; Urls.Concurrency ]
                 menuItem "Excel Clone" [ Urls.Recoil; Urls.Examples; Urls.ExcelClone ]
                 menuItem "Validation" [ Urls.Recoil; Urls.Examples; Urls.Validation ]
+                menuItem "Persistence" [ Urls.Recoil; Urls.Examples; Urls.Persistence ]
             ]
         ]
     ])

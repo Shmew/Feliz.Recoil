@@ -10,6 +10,8 @@
     <Compile Include="Bindings.fs" />
     <Compile Include="Recoil.fs" />
     <Compile Include="Logger.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="RecoilRoot.fs" />
     <Compile Include="ComputationExpressions\AtomFamily.fs" />
     <Compile Include="ComputationExpressions\Atom.fs" />
     <Compile Include="ComputationExpressions\Selector.fs" />

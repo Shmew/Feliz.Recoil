@@ -266,7 +266,7 @@ module RecoilResultBuilder =
         member this.Using (value, k) = 
             this.TryFinally(k value, (fun () -> dispose value))
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module RecoilResultBuilderMagic =
     type RecoilResultBuilder with
         member _.Return (value: 'T) = RecoilResult.lift value

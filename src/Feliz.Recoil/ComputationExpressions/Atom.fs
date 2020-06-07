@@ -34,6 +34,28 @@ module AtomCE =
               Persist = None
               DangerouslyAllowMutability = None }
 
+        [<CustomOperation("local_storage")>]
+        member _.LocalStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
+            { Key = state.Key
+              Def = state.Def
+              Persist = 
+                { Type = PersistenceType.LocalStorage
+                  Backbutton = None
+                  Validator = (fun _ -> None) }
+                |> Some
+              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+
+        [<CustomOperation("session_storage")>]
+        member _.SessionStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
+            { Key = state.Key
+              Def = state.Def
+              Persist = 
+                { Type = PersistenceType.SessionStorage
+                  Backbutton = None
+                  Validator = (fun _ -> None) }
+                |> Some
+              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+
         [<CustomOperation("log")>]
         member _.Log (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
             { Key = state.Key
@@ -83,7 +105,7 @@ module AtomCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-    [<AutoOpen>]
+    [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module AtomBuilderMagic =
         type AtomBuilder with
             member inline _.Run<'T,'V> (atom: AtomState.ReadWrite<'T,'T,'V>) =

@@ -52,21 +52,6 @@ module Families =
                     })
             }
 
-//[<Erase>]
-//type RecoilValue =
-//    static member inline lift<'T> (value: Async<'T>) =
-//        Bindings.Recoil.constSelector (fun a -> async { return! a })
-//        |> Families.Async.mapFamily (Bindings.Recoil.constSelector value) 
-
-//    static member inline lift<'T> (value: JS.Promise<'T>) =
-//        Bindings.Recoil.constSelector (fun a -> promise { return! a })
-//        |> Families.Promise.mapFamily (Bindings.Recoil.constSelector value)
-
-//[<AutoOpen;Erase>]
-//module RecoilValueGenericMagic =
-//    type RecoilValue with
-//        static member inline lift<'T> (value: 'T) = Bindings.Recoil.constSelector value
-
 module RecoilValue =
     open Families
 
@@ -291,7 +276,7 @@ module RecoilValueBuilder =
         member this.Using (value, k) = 
             this.TryFinally(k value, (fun () -> dispose value))
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module RecoilValueBuilderMagic =
     type RecoilValueBuilder with
         member _.Return (value: 'T) = Bindings.Recoil.constSelector value

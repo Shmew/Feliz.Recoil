@@ -1,8 +1,9 @@
 ﻿namespace Feliz.Recoil
 
 open Fable.Core
+open System.ComponentModel
 
-[<AutoOpen;Erase>]
+[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module AsyncUtils =
     type Recoil with
         /// Converts an array of RecoilValue<'T,_> into a RecoilValue<'T [],_>.

@@ -137,7 +137,7 @@ module SelectorCE =
                 ?dangerouslyAllowMutability = selector.DangerouslyAllowMutability
             )
 
-    [<AutoOpen>]
+    [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module SelectorBuilderMagic =
         type SelectorBuilder with
             member inline _.Run (selector: SelectorState.ReadOnly<'T,'T>) =

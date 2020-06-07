@@ -1,9 +1,11 @@
 ﻿namespace Feliz.Recoil
 
 open Fable.Core
+open Fable.Core.JsInterop
 open Feliz
+open System.ComponentModel
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module Logger =
     let logAction (name: string, atomValue: 'T, prevAtomValue: 'T option) =
         JS.console.groupCollapsed(
@@ -35,14 +37,21 @@ module Logger =
                 o.modifiedAtoms 
                 |> Set.iter (fun (name, _) ->
                     o.atomInfo.TryFind(name)
-                    |> Option.map (fun o -> o.persistence.type')
-                    |> Option.bind (fun _ -> o.atomValues.TryFind(name))
-                    |> Option.iter(fun value ->
-                        logAction (
-                            name,
-                            value,
-                            o.previousAtomValues.TryFind(name)
-                        ))
+                    |> Option.iter (fun atomInfo -> 
+                        // Until https://github.com/facebookexperimental/Recoil/issues/277 is resolved
+                        // we just log any flagged atom
+                        atomInfo.persistence.type'
+                        |> Option.iter (fun _ ->
+                            o.atomValues.TryFind(name)
+                            |> Option.iter(fun value ->
+                                logAction (
+                                    name,
+                                    value,
+                                    o.previousAtomValues.TryFind(name)
+                                )
+                            )
+                        )
+                    )
                 )
             #endif
 

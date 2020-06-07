@@ -34,6 +34,28 @@ module AtomFamilyCE =
               Persist = None
               DangerouslyAllowMutability = None }
 
+        [<CustomOperation("local_storage")>]
+        member _.LocalStorage (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
+            { Key = state.Key
+              Def = state.Def
+              Persist = 
+                { Type = PersistenceType.LocalStorage
+                  Backbutton = None
+                  Validator = (fun _ -> None) }
+                |> Some
+              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+
+        [<CustomOperation("session_storage")>]
+        member _.SessionStorage (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
+            { Key = state.Key
+              Def = state.Def
+              Persist = 
+                { Type = PersistenceType.SessionStorage
+                  Backbutton = None
+                  Validator = (fun _ -> None) }
+                |> Some
+              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+
         [<CustomOperation("log")>]
         member _.Log (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
             { Key = state.Key
@@ -107,7 +129,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-    [<AutoOpen>]
+    [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module AtomFamilyBuilderMagic =
         type AtomFamilyBuilder with
             member inline _.Run<'T,'V,'P> (atom: AtomFamilyState.ReadWrite<'P -> 'T,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =

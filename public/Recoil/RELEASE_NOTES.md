@@ -1,3 +1,8 @@
+### 0.10.0 - Sunday, June 7th, 2020
+* Added automatic local/session storage subscriptions
+* Refactored the root component to be more idiomatic
+* Some visibility adjustments to reduce intellisense clutter
+
 ### 0.9.0 - Sunday, June 7th, 2020
 * Added overloads for useCallback and useCallbackRef for additional parameters
 * Added opt-in RecoilResult and RecoilOption CE and functions

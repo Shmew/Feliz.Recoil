@@ -355,9 +355,11 @@ module Validation =
         static member isUrl (input: RecoilValue<Result<string,ValidationError<_>>,_>) =
             StringValidators.matches Regex.url input
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module RecoilExtensions =
     type Recoil with
+        /// Accepts an atom of a ValidationState and list of validators returning a setter function that will update
+        /// the atom if the result changes.
         static member useValidation (recoilValue: RecoilValue<ValidationState<'T,'Custom>,ReadWrite>, validators: Validator<'T,'Custom> list) =
             let validator = Validation.validationFamily(validators) recoilValue
 

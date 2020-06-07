@@ -37,7 +37,7 @@ type SelectorGetter =
     [<Emit("$0.get($1)")>]
     member _.get (recoilValue: RecoilValue<'T,ReadWrite>) : 'T = jsNative
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module SelectorGetterMagic =
     type SelectorGetter with
         [<Emit("$0.get($1)")>]
@@ -67,7 +67,7 @@ type SelectorMethods =
     [<Emit("$0.reset($1)")>]
     member _.reset (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
 
-[<AutoOpen;Erase>]
+[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module SelectorMagic =
     type SelectorMethods with
         /// Sets the value of a RecoilValue.
@@ -175,7 +175,7 @@ type Loadable<'T> =
     [<Emit("$0.valueOrThrow()")>]
     member _.valueOrThrow () : 'T = jsNative
 
-[<AutoOpen;Erase>]
+[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module LoadableMagic =
     type Loadable<'T> with
         /// Maps the value of a Loadable.
@@ -185,7 +185,7 @@ module LoadableMagic =
 [<Erase>]
 type RootInitializer =
     /// Sets the initial value of a single atom to the provided value.
-    [<Emit("$0.set($1, $2")>]
+    [<Emit("$0.set($1, $2)")>]
     member _.set (recoilValue: RecoilValue<'T,ReadWrite>, currentValue: 'T) : unit = jsNative
     
     /// Sets the initial value for any number of atoms whose keys are the
@@ -227,7 +227,7 @@ type CallbackMethods =
     [<Emit("$0.set($1, $2)")>]
     member _.set (recoilValue: RecoilValue<'T,ReadWrite>, updater: 'T -> 'T) : unit = jsNative
 
-[<AutoOpen;Erase>]
+[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module CallbackMagic =
     type CallbackMethods with
         /// Sets a RecoilValue to the given value.
@@ -237,13 +237,17 @@ module CallbackMagic =
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 [<StringEnum;RequireQualifiedAccess>]
 type PersistenceTypeWithNone =
+    | LocalStorage
     | Log
     | None
+    | SessionStorage
     | Url
 
 [<StringEnum;RequireQualifiedAccess>]
 type PersistenceType =
+    | LocalStorage
     | Log
+    | SessionStorage
     | Url
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -251,6 +255,8 @@ type PersistenceType =
         match pType with
         | PersistenceTypeWithNone.None -> None
         | PersistenceTypeWithNone.Log -> Some PersistenceType.Log
+        | PersistenceTypeWithNone.LocalStorage -> Some PersistenceType.LocalStorage
+        | PersistenceTypeWithNone.SessionStorage -> Some PersistenceType.SessionStorage
         | PersistenceTypeWithNone.Url -> Some PersistenceType.Url
 
 [<Erase>]

@@ -260,7 +260,7 @@ module RecoilOptionBuilder =
         member this.Using (value, k) = 
             this.TryFinally(k value, (fun () -> dispose value))
 
-[<AutoOpen>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
 module RecoilOptionBuilderMagic =
     type RecoilOptionBuilder with
         member _.Return (value: 'T) = RecoilOption.lift value

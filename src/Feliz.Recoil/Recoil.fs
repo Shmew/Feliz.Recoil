@@ -3,6 +3,7 @@ namespace Feliz.Recoil
 open Fable.Core
 open Fable.Core.JsInterop
 open Feliz
+open System.ComponentModel
 
 [<RequireQualifiedAccess>]
 type Recoil =
@@ -50,31 +51,6 @@ type Recoil =
     ///
     /// Prevents a selector from being blocked while trying to resolve a RecoilValue.
     static member inline noWait (recoilValue: RecoilValue<'T,'Mode>) = Bindings.Recoil.noWait(recoilValue)
-
-    /// Provides the context in which atoms have values. 
-    /// 
-    /// Must be an ancestor of any component that uses any Recoil hooks. 
-    /// 
-    /// Multiple roots may co-exist; atoms will have distinct values 
-    /// within each root. If they are nested, the innermost root will 
-    /// completely mask any outer roots.
-    static member inline root (children: ReactElement list) =
-        Bindings.Recoil.RecoilRoot(createObj ["children" ==> Interop.reactApi.Children.toArray children])
-    /// Provides the context in which atoms have values. 
-    /// 
-    /// Must be an ancestor of any component that uses any Recoil hooks. 
-    /// 
-    /// Multiple roots may co-exist; atoms will have distinct values 
-    /// within each root. If they are nested, the innermost root will 
-    /// completely mask any outer roots.
-    ///
-    /// The initilizer parameter is a function that will be called when 
-    /// the root is first rendered, which can set initial values for atoms.
-    static member inline root (initializer: RootInitializer -> unit, children: ReactElement list) =
-        Bindings.Recoil.RecoilRoot(createObj [
-            "props" ==> (createObj [ "initializeState" ==> System.Func<_,_,_>(fun o _  -> o?set |> initializer) ])
-            "children" ==> Interop.reactApi.Children.toArray children
-        ])
 
     /// Derives state and returns a RecoilValue via the provided get function.
     static member inline selector 
@@ -567,7 +543,7 @@ module Recoil =
                 |> createObj
             )
 
-[<AutoOpen;Erase>]
+[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module RecoilMagic =
     type Recoil with
         /// Creates a RecoilValue with the given default value.
