@@ -96,46 +96,46 @@ module RecoilValue =
     open Operators
 
     let map2 (f: 'A -> 'B -> 'C) (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) =
-        map f a <*> b
+        f <!> a <*> b
     
     let map3 (f: 'A -> 'B -> 'C -> 'D) (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) (c: RecoilValue<'C,_>) =
-        map f a <*> b <*> c
+        f <!> a <*> b <*> c
     
     let map4 (f: 'A -> 'B -> 'C -> 'D -> 'E) (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) (c: RecoilValue<'C,_>) (d: RecoilValue<'D,_>) =
-        map f a <*> b <*> c <*> d
+        f <!> a <*> b <*> c <*> d
     
     let map5 (f: 'A -> 'B -> 'C -> 'D -> 'E -> 'G) (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) (c: RecoilValue<'C,_>) (d: RecoilValue<'D,_>) (e: RecoilValue<'E,_>) =
-        map f a <*> b <*> c <*> d <*> e
+        f <!> a <*> b <*> c <*> d <*> e
     
     let map6 (f: 'A -> 'B -> 'C -> 'D -> 'E -> 'G -> 'H) (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) (c: RecoilValue<'C,_>) (d: RecoilValue<'D,_>) (e: RecoilValue<'E,_>) (g: RecoilValue<'G,_>) =
-        map f a <*> b <*> c <*> d <*> e <*> g
+        f <!> a <*> b <*> c <*> d <*> e <*> g
 
     let unzip (a: RecoilValue<'A * 'B,_>) =
-        a |> map fst, a |> map snd
+        fst <!> a, snd <!> a
     
     let unzip3 (a: RecoilValue<'A * 'B * 'C,_>) =
-        a |> map (fun (res,_,_) -> res), a |> map (fun (_,res,_) -> res), a |> map (fun (_,_,res) -> res)
+        (fun (res,_,_) -> res) <!> a, (fun (_,res,_) -> res) <!> a, (fun (_,_,res) -> res) <!> a
 
     let unzip4 (a: RecoilValue<'A * 'B * 'C * 'D,_>) =
-        a |> map (fun (res,_,_,_) -> res),
-        a |> map (fun (_,res,_,_) -> res), 
-        a |> map (fun (_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,res) -> res)
+        (fun (res,_,_,_) -> res) <!> a,
+        (fun (_,res,_,_) -> res) <!> a, 
+        (fun (_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,res) -> res) <!> a
     
     let unzip5 (a: RecoilValue<'A * 'B * 'C * 'D * 'E,_>) =
-        a |> map (fun (res,_,_,_,_) -> res), 
-        a |> map (fun (_,res,_,_,_) -> res), 
-        a |> map (fun (_,_,res,_,_) -> res), 
-        a |> map (fun (_,_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,_,res) -> res)
+        (fun (res,_,_,_,_) -> res) <!> a, 
+        (fun (_,res,_,_,_) -> res) <!> a, 
+        (fun (_,_,res,_,_) -> res) <!> a, 
+        (fun (_,_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,_,res) -> res) <!> a
     
     let unzip6 (a: RecoilValue<'A * 'B * 'C * 'D * 'E * 'F,_>) =
-        a |> map (fun (res,_,_,_,_,_) -> res), 
-        a |> map (fun (_,res,_,_,_,_) -> res), 
-        a |> map (fun (_,_,res,_,_,_) -> res), 
-        a |> map (fun (_,_,_,res,_,_) -> res), 
-        a |> map (fun (_,_,_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,_,_,res) -> res)
+        (fun (res,_,_,_,_,_) -> res) <!> a, 
+        (fun (_,res,_,_,_,_) -> res) <!> a, 
+        (fun (_,_,res,_,_,_) -> res) <!> a, 
+        (fun (_,_,_,res,_,_) -> res) <!> a, 
+        (fun (_,_,_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,_,_,res) -> res) <!> a
 
     let zip (a: RecoilValue<'A,_>) (b: RecoilValue<'B,_>) =
         map2(fun x y -> x, y) a b

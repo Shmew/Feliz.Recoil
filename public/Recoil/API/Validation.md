@@ -53,19 +53,14 @@ type ValidationError<'Custom> =
     | Url
 ```
 
-### Validator
-
-This is a type alias that represents a `RecoilValue<Result<'T,ValidationError<'Custom>>,_> -> RecoilValue<Result<'T,ValidationError<'Custom>>,ReadOnly>`.
-
-Every step of the validation pipeline is remembered based on the input validators, which allows for very performant
-validation pipelines to be created; in particular when validation cases require asynchronous requests that may take
-a long amount of time to respond.
-
 ### validate
 
-This is the main module that houses all of the validators, there are cases for different types such as `string` and `list`.
+This is the main module that houses all of the validators. There are cases for different types such as `string` and `list`.
 
-There are also top level generic validators and a `custom` method to extend functionality to fit any needs.
+There are also top level generic validators.
+
+If you need any custom validation you can create a function either inline or include it in the list with the signature of:
+`'T -> Result<'T,ValidationError<'Custom>> `.
 
 In addition for cases where you may have nested types within your validation pipeline such as an option or result there are
 helper methods to run validation pipelines within those contexts.

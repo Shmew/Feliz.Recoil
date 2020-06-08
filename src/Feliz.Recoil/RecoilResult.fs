@@ -61,46 +61,46 @@ module RecoilResult =
     open Operators
 
     let map2 (f: 'T -> 'U -> 'V) (a: RecoilValue<Result<'T,'Error>,_>) (b: RecoilValue<Result<'U,'Error>,_>) =
-        map f a <*> b
+        f <!> a <*> b
 
     let map3 (f: 'A -> 'B -> 'C -> 'D) (a: RecoilValue<Result<'A,'Error>,_>) (b: RecoilValue<Result<'B,'Error>,_>) (c: RecoilValue<Result<'C,'Error>,_>) =
-        map f a <*> b <*> c
+        f <!> a <*> b <*> c
     
     let map4 (f: 'A -> 'B -> 'C -> 'D -> 'E) (a: RecoilValue<Result<'A,'Error>,_>) (b: RecoilValue<Result<'B,'Error>,_>) (c: RecoilValue<Result<'C,'Error>,_>) (d: RecoilValue<Result<'D,'Error>,_>) =
-        map f a <*> b <*> c <*> d
+        f <!> a <*> b <*> c <*> d
     
     let map5 (f: 'A -> 'B -> 'C -> 'D -> 'E -> 'G) (a: RecoilValue<Result<'A,'Error>,_>) (b: RecoilValue<Result<'B,'Error>,_>) (c: RecoilValue<Result<'C,'Error>,_>) (d: RecoilValue<Result<'D,'Error>,_>) (e: RecoilValue<Result<'E,'Error>,_>) =
-        map f a <*> b <*> c <*> d <*> e
+        f <!> a <*> b <*> c <*> d <*> e
     
     let map6 (f: 'A -> 'B -> 'C -> 'D -> 'E -> 'G -> 'H) (a: RecoilValue<Result<'A,'Error>,_>) (b: RecoilValue<Result<'B,'Error>,_>) (c: RecoilValue<Result<'C,'Error>,_>) (d: RecoilValue<Result<'D,'Error>,_>) (e: RecoilValue<Result<'E,'Error>,_>) (g: RecoilValue<Result<'G,'Error>,_>) =
-        map f a <*> b <*> c <*> d <*> e <*> g
+        f <!> a <*> b <*> c <*> d <*> e <*> g
 
     let unzip (a: RecoilValue<Result<'A * 'B,'Error>,_>) =
-        a |> map fst, a |> map snd
+        fst <!> a, snd <!> a
     
     let unzip3 (a: RecoilValue<Result<'A  * 'B * 'C,'Error>,_>) =
-        a |> map (fun (res,_,_) -> res), a |> map (fun (_,res,_) -> res), a |> map (fun (_,_,res) -> res)
+        (fun (res,_,_) -> res) <!> a, (fun (_,res,_) -> res) <!> a, (fun (_,_,res) -> res) <!> a
 
     let unzip4 (a: RecoilValue<Result<'A * 'B * 'C * 'D,'Error>,_>) =
-        a |> map (fun (res,_,_,_) -> res),
-        a |> map (fun (_,res,_,_) -> res), 
-        a |> map (fun (_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,res) -> res)
+        (fun (res,_,_,_) -> res) <!> a,
+        (fun (_,res,_,_) -> res) <!> a, 
+        (fun (_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,res) -> res) <!> a
     
     let unzip5 (a: RecoilValue<Result<'A * 'B * 'C * 'D * 'E,'Error>,_>) =
-        a |> map (fun (res,_,_,_,_) -> res), 
-        a |> map (fun (_,res,_,_,_) -> res), 
-        a |> map (fun (_,_,res,_,_) -> res), 
-        a |> map (fun (_,_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,_,res) -> res)
+        (fun (res,_,_,_,_) -> res) <!> a, 
+        (fun (_,res,_,_,_) -> res) <!> a, 
+        (fun (_,_,res,_,_) -> res) <!> a, 
+        (fun (_,_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,_,res) -> res) <!> a
     
     let unzip6 (a: RecoilValue<Result<'A * 'B * 'C * 'D * 'E * 'F,'Error>,_>) =
-        a |> map (fun (res,_,_,_,_,_) -> res), 
-        a |> map (fun (_,res,_,_,_,_) -> res), 
-        a |> map (fun (_,_,res,_,_,_) -> res), 
-        a |> map (fun (_,_,_,res,_,_) -> res), 
-        a |> map (fun (_,_,_,_,res,_) -> res), 
-        a |> map (fun (_,_,_,_,_,res) -> res)
+        (fun (res,_,_,_,_,_) -> res) <!> a, 
+        (fun (_,res,_,_,_,_) -> res) <!> a, 
+        (fun (_,_,res,_,_,_) -> res) <!> a, 
+        (fun (_,_,_,res,_,_) -> res) <!> a, 
+        (fun (_,_,_,_,res,_) -> res) <!> a, 
+        (fun (_,_,_,_,_,res) -> res) <!> a
 
     let zip (a: RecoilValue<Result<'A,'Error>,_>) (b: RecoilValue<Result<'B,'Error>,_>) =
         map2(fun x y -> x, y) a b
