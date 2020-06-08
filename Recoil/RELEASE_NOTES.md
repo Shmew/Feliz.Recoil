@@ -1,3 +1,6 @@
+### 0.11.0 - Monday, June 8th, 2020
+* Simplify validation API and improve performance.
+
 ### 0.10.0 - Sunday, June 7th, 2020
 * Added automatic local/session storage subscriptions
 * Refactored the root component to be more idiomatic
