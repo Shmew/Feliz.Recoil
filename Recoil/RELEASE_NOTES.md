@@ -1,3 +1,6 @@
+### 0.12.0 - Wednesday, June 10th, 2020
+* Simplify elmish API and improve performance.
+
 ### 0.11.0 - Monday, June 8th, 2020
 * Simplify validation API and improve performance.
 

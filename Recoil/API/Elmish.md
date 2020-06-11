@@ -11,10 +11,13 @@ The entirety of the library is one additional hook:
 
 Returns an elmish dispatch function.
 
+Be aware that currently **using multiple useDispatch that uses commands is not safe!**
+If you know of a way to solve this please let me know!
+
 Signature:
 ```fs
-(selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model) -> ('Msg -> unit)
-(selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) -> ('Msg -> unit)
+(model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model) -> ('Msg -> unit)
+(model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) -> ('Msg -> unit)
 ```
 
 See the [elmish example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Elmish) for how to use.
