@@ -1,6 +1,0 @@
-﻿group Recoil.Elmish
-    Fable.Core
-    Fable.Elmish
-    Fable.Promise
-    Feliz
-    FSharp.Core

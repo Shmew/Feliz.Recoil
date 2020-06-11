@@ -62,9 +62,8 @@ group Client
 	nuget Fable.Elmish ~> 3
     nuget Fable.Promise ~> 2
     nuget Feliz ~> 1
-    nuget Feliz.Recoil ~> 0.6
-    nuget Feliz.Recoil.Elmish ~> 0.6
-    nuget Feliz.Recoil.Bridge ~> 0.6
+    nuget Feliz.Recoil ~> 0
+    nuget Feliz.Recoil.Bridge ~> 0
     nuget FSharp.Core ~> 4.7 lowest_matching: true
 
 group Server

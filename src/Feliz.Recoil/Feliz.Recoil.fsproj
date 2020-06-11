@@ -20,6 +20,7 @@
     <Compile Include="RecoilResult.fs" />
     <Compile Include="RecoilOption.fs" />
     <Compile Include="Async.fs" />
+    <Compile Include="Reducer.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>

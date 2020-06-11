@@ -1,18 +1,19 @@
 ﻿# Feliz.Recoil - Elmish Example
 
-Shows how to imlement an elmish model with Recoil.
-
-**Using multiple instances useDispatch with an update function that has 
-commands can be potentially unsafe!**
-
-If you know how to solve this I'd love to know!
+Shows how to imlement an elmish model with Recoil via reducers.
 
 ```fsharp:recoil-elmish
+open Css
+open Elmish
+open Feliz
+open Feliz.Recoil
+open Zanaptak.TypedCssClasses
+
 type Model = 
     { Count: int }
 
 module Model =
-    let atom =
+    let state =
         atom {
             key "Elmish/myModel"
             def {
@@ -20,34 +21,24 @@ module Model =
             }
         }
 
-    let count = atom |> RecoilValue.map (fun m -> m.Count)
+    let count = state |> RecoilValue.map (fun m -> m.Count)
 
 type Msg =
     | Increment
     | Decrement
-    | IncrementIndirect
     | IncrementTwice
-    | IncrementDelayed
-    | IncrementTwiceDelayed
+    | DecrementTwice
 
-let update (msg: Msg) (state: Model) : Model * Cmd<Msg> =
+let update (msg: Msg) (state: Model) =
     match msg with
     | Increment ->
-        { state with Count = state.Count + 1 }, Cmd.ofSub (fun dispatch -> printfn "Increment")
+        { state with Count = state.Count + 1 }
     | Decrement ->
-        { state with Count = state.Count - 1 }, Cmd.ofSub (fun dispatch -> printfn "Decrement")
-    | IncrementIndirect ->
-        state, Cmd.ofMsg Increment
+        { state with Count = state.Count - 1 }
     | IncrementTwice ->
-        state, Cmd.batch [ Cmd.ofMsg Increment; Cmd.ofMsg Increment ]
-    | IncrementDelayed ->
-        state, Cmd.OfAsync.perform (fun () ->
-            async {
-                do! Async.Sleep 1000;
-                return IncrementIndirect
-            }) () (fun msg -> msg)
-    | IncrementTwiceDelayed ->
-        state, Cmd.batch [ Cmd.ofMsg IncrementDelayed; Cmd.ofMsg IncrementDelayed ]
+        { state with Count = state.Count + 2 }
+    | DecrementTwice ->
+        { state with Count = state.Count - 2 }
 
 let countComp = React.functionComponent(fun () ->
     let count = Recoil.useValue(Model.count)
@@ -61,38 +52,52 @@ let countComp = React.functionComponent(fun () ->
     ])
 
 let actionsComp = React.functionComponent(fun () ->
-    let dispatch = Recoil.useDispatch(Model.atom, update)
+    let dispatch = Recoil.useSetReducer(Model.state, update)
 
     Html.div [
         Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
             prop.text "Increment"
             prop.onClick <| fun _ -> dispatch Increment
         ]
         Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
             prop.text "Decrement"
             prop.onClick <| fun _ -> dispatch Decrement
         ]
         Html.button [
-            prop.text "Increment Indirect"
-            prop.onClick <| fun _ -> dispatch IncrementIndirect
-        ]
-        Html.button [
-            prop.text "Increment Delayed"
-            prop.onClick <| fun _ -> dispatch IncrementDelayed
-        ]
-        Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
             prop.text "Increment Twice"
             prop.onClick <| fun _ -> dispatch IncrementTwice
         ]
         Html.button [
-            prop.text "Increment Twice Delayed"
-            prop.onClick <| fun _ -> dispatch IncrementTwiceDelayed
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
+            prop.text "Decrement Twice"
+            prop.onClick <| fun _ -> dispatch DecrementTwice
         ]
     ])
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
-        countComp()
-        actionsComp()
+        Html.div [
+            countComp()
+            actionsComp()
+        ]
     ])
 ```

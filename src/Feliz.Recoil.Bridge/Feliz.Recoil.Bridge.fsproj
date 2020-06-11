@@ -10,7 +10,6 @@
     <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Feliz.Recoil.Elmish\Feliz.Recoil.Elmish.fsproj" />
     <ProjectReference Include="..\Feliz.Recoil\Feliz.Recoil.fsproj" />
   </ItemGroup>
   <PropertyGroup>

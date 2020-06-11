@@ -13,7 +13,7 @@ Signature:
 ```fs
 type RecoilBridge<'Model,'Msg,'ElmishMsg> =
     { Model: RecoilValue<'Model,ReadWrite>
-      Update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>
+      Update: 'Msg -> 'Model -> 'Model
       BridgeConfig: BridgeConfig<'Msg,'Msg> }
 ```
 
@@ -103,9 +103,9 @@ module App =
 
     let update msg model =
         match msg with
-        | Bridge.Response.Howdy -> { model with Response = "Howdy!" }, Cmd.none
-        | Bridge.Response.NewCount i -> { model with Count = i }, Cmd.none
-        | Bridge.Response.RandomCharacter s -> { model with Response = s }, Cmd.none
+        | Bridge.Response.Howdy -> { model with Response = "Howdy!" }
+        | Bridge.Response.NewCount i -> { model with Count = i }
+        | Bridge.Response.RandomCharacter s -> { model with Response = s }
 
     let modelView = React.functionComponent(fun () ->
         let model = Recoil.useValue Model.atom

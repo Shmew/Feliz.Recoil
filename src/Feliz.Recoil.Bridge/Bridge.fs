@@ -10,7 +10,6 @@ module ElmishBridge =
     open Fable.SimpleJson
     open Feliz
     open Feliz.Recoil
-    open Feliz.Recoil.Elmish
     open System.ComponentModel
 
     type BridgeConfig<'Msg,'ElmishMsg> with
@@ -80,14 +79,14 @@ module ElmishBridge =
 
     type RecoilBridge<'Model,'Msg,'ElmishMsg> =
         { Model: RecoilValue<'Model,ReadWrite>
-          Update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>
+          Update: 'Msg -> 'Model -> 'Model
           BridgeConfig: BridgeConfig<'Msg,'Msg> }
 
     type Recoil with
         /// Creates a websocket bridge that will update atoms as messages are recieved from the server.
         static member inline bridge<'AtomRecord,'Model,'Msg,'ElmishMsg> (config: RecoilBridge<'Model,'Msg,'ElmishMsg>) =
             React.functionComponent(fun () ->
-                let dispatch = Recoil.useDispatch(config.Model, config.Update)
+                let dispatch = Recoil.useSetReducer(config.Model, config.Update)
 
                 React.useEffectOnce(fun () ->
                     config.BridgeConfig
