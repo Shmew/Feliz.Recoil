@@ -306,6 +306,28 @@ Signature:
 Usage: Same usage as this [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback)
 , just replace the function name.
 
+### Recoil.useReducer
+
+Applies changes to an atom using the reducer pattern, and subscribes to the atom state.
+
+Signature:
+```fs
+(model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model) -> ('Msg -> unit)
+```
+
+See the [elmish example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Elmish) for how to use.
+
+### Recoil.useSetReducer
+
+Applies changes to an atom using the reducer pattern.
+
+Signature:
+```fs
+(model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model) -> ('Msg -> unit)
+```
+
+See the [elmish example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Elmish) for how to use.
+
 ### Recoil.useSetUnvalidatedAtomValues
 
 **This API is unstable.**
