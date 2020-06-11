@@ -8,17 +8,41 @@ open Feliz.Recoil
 open Feliz.Recoil.Elmish
 open Zanaptak.TypedCssClasses
 
+let renderCount = React.functionComponent(fun () ->
+    let countRef = React.useRef 0
+    
+    let mutable currentCount = countRef.current
+
+    React.useEffect(fun () -> countRef.current <- currentCount)
+
+    currentCount <- currentCount + 1
+
+    Html.div [
+        prop.text (sprintf "Render count: %i" currentCount)
+    ])
+
+let drawBorder' = React.functionComponent(fun (input: {| children: ReactElement list|}) ->
+    Html.div [
+        prop.classes [ Bulma.Box ]
+        prop.children input.children
+    ])
+
+let inline drawBorder (children: ReactElement list) = 
+    drawBorder' {| children = children |}
+
 type Model = 
     { Count: int }
 
 module Model =
-    type Atoms = 
-        { Count: RecoilValue<int,ReadWrite> }
+    let atom =
+        atom {
+            key "Elmish/myModel"
+            def {
+                Count = 0
+            }
+        }
 
-    let [<Literal>] key = "model"
-
-    let atoms =
-        { Count = Recoil.atom(sprintf "%s/count" key, 0) }
+    let count = atom |> RecoilValue.map (fun m -> m.Count)
 
 type Msg =
     | Increment
@@ -52,21 +76,8 @@ let update (msg: Msg) (state: Model) : Model * Cmd<Msg> =
     | IncrementTwiceDelayed ->
         state, Cmd.batch [ Cmd.ofMsg IncrementDelayed; Cmd.ofMsg IncrementDelayed ]
 
-let renderCount = React.functionComponent(fun () ->
-    let countRef = React.useRef 0
-        
-    let mutable currentCount = countRef.current
-
-    React.useEffect(fun () -> countRef.current <- currentCount)
-
-    currentCount <- currentCount + 1
-
-    Html.div [
-        prop.text (sprintf "Render count: %i" currentCount)
-    ])
-
 let countComp = React.functionComponent(fun () ->
-    let count = Recoil.useValue(Model.atoms.Count)
+    let count = Recoil.useValue(Model.count)
 
     Html.div [
         prop.children [
@@ -77,17 +88,8 @@ let countComp = React.functionComponent(fun () ->
         ]
     ])
 
-let drawBorder' = React.functionComponent(fun (input: {| children: ReactElement list|}) ->
-    Html.div [
-        prop.classes [ Bulma.Box ]
-        prop.children input.children
-    ])
-
-let inline drawBorder (children: ReactElement list) = 
-    drawBorder' {| children = children |}
-
 let actionsComp = React.functionComponent(fun () ->
-    let dispatch = Recoil.useDispatch(Model.key, Model.atoms, update)
+    let dispatch = Recoil.useDispatch(Model.atom, update)
 
     Html.div [
         //renderCount()
@@ -150,13 +152,15 @@ let actionsComp = React.functionComponent(fun () ->
 let render = React.functionComponent(fun () ->
     //drawBorder [
     Recoil.root [
-        //renderCount()
-        Recoil.logger()
-        //drawBorder [
-        countComp()
-        //]
-        //drawBorder [
-        actionsComp()
-        //]
+        //Recoil.logger()
+        Html.div [
+            //renderCount()
+            //drawBorder [
+                countComp()
+            //]
+            //drawBorder [
+                actionsComp()
+            //]
+        ]
         //]
     ])

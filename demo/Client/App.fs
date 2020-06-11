@@ -13,22 +13,23 @@ module App =
     open Feliz
     open Feliz.Recoil
     open Feliz.Recoil.Bridge
-    open Feliz.Recoil.Elmish
 
     type Model = 
-        { Response: string 
-          Count: int }
+        { Count: int
+          Response: string }
 
     module Model =
-        type Atom = 
-            { Response: RecoilValue<string,ReadWrite>
-              Count: RecoilValue<int,ReadWrite> }
-
-        let [<Literal>] Key = "model"
-
-        let atoms = 
-            { Response = Recoil.atom(Key + "/response", "")
-              Count = Recoil.atom(Key + "/count", 0) }
+        let atom =
+            atom {
+                key "model"
+                def {
+                    Response = ""
+                    Count = 0
+                }
+            }
+        
+        let count = atom |> RecoilValue.map (fun m -> m.Count)
+        let response = atom |> RecoilValue.map (fun m -> m.Response)
 
     type Msg = Bridge.Response
 
@@ -39,15 +40,14 @@ module App =
         | Bridge.Response.RandomCharacter s -> { model with Response = s }, Cmd.none
 
     let modelView = React.functionComponent(fun () ->
-        let count = Recoil.useValue Model.atoms.Count
-        let rsp = Recoil.useValue Model.atoms.Response
+        let model = Recoil.useValue Model.atom
 
         Html.div [
-            prop.text (rsp + (string count))
+            prop.text (model.Response + (string model.Count))
         ])
 
     let buttons = React.functionComponent(fun () ->
-        let count = Recoil.useValue Model.atoms.Count
+        let count = Recoil.useValue Model.count
         
         React.fragment [
             Html.button [
@@ -73,8 +73,7 @@ module App =
         ])
 
     let bridge = Recoil.bridge {
-        Key = Model.Key
-        Model = Model.atoms
+        Model = Model.atom
         Update = update
         BridgeConfig =
             Bridge.endpoint (Http.buildEndpoint Endpoints.Root)

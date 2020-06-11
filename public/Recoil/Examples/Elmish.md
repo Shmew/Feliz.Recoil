@@ -2,18 +2,25 @@
 
 Shows how to imlement an elmish model with Recoil.
 
+**Using multiple instances useDispatch with an update function that has 
+commands can be potentially unsafe!**
+
+If you know how to solve this I'd love to know!
+
 ```fsharp:recoil-elmish
 type Model = 
     { Count: int }
 
 module Model =
-    type Atoms = 
-        { Count: RecoilValue<int,ReadWrite> }
+    let atom =
+        atom {
+            key "Elmish/myModel"
+            def {
+                Count = 0
+            }
+        }
 
-    let [<Literal>] key = "model"
-
-    let atoms =
-        { Count = Recoil.atom(sprintf "%s/count" key, 0) }
+    let count = atom |> RecoilValue.map (fun m -> m.Count)
 
 type Msg =
     | Increment
@@ -43,7 +50,7 @@ let update (msg: Msg) (state: Model) : Model * Cmd<Msg> =
         state, Cmd.batch [ Cmd.ofMsg IncrementDelayed; Cmd.ofMsg IncrementDelayed ]
 
 let countComp = React.functionComponent(fun () ->
-    let count = Recoil.useValue(Model.atoms.Count)
+    let count = Recoil.useValue(Model.count)
 
     Html.div [
         prop.children [
@@ -54,7 +61,7 @@ let countComp = React.functionComponent(fun () ->
     ])
 
 let actionsComp = React.functionComponent(fun () ->
-    let dispatch = Recoil.useDispatch(Model.key, Model.atoms, update)
+    let dispatch = Recoil.useDispatch(Model.atom, update)
 
     Html.div [
         Html.button [

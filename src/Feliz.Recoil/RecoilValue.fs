@@ -81,6 +81,9 @@ module RecoilValue =
         /// Infix map.
         let (<!>) f m = map f m
         
+        /// Infix flipped map.
+        let (<&>) m f = map f m
+
         /// Infix bind.
         let (>>=) f m = bind f m
         
@@ -238,6 +241,7 @@ module RecoilValue =
     
         let sequence (recoilValues: RecoilValue<'T,_> seq) =
             traverse lift recoilValues
+
 
 [<AutoOpen>]
 module RecoilValueBuilder =

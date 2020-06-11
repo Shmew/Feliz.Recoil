@@ -1,5 +1,4 @@
 var path = require('path');
-var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
@@ -25,7 +24,7 @@ var CONFIG = {
                 corejs: 3
             }]
         ],
-        plugins: isProduction ? [] : ['@babel/plugin-transform-regenerator', require.resolve('react-refresh/babel')]
+        plugins: isProduction ? [] : [require.resolve('react-refresh/babel')]
     }
 }
 
@@ -72,7 +71,8 @@ module.exports = {
                 use: {
                     loader: 'fable-loader',
                     options: {
-                        define: isProduction ? [] : ['DEBUG']
+                        define: isProduction ? [] : ['DEBUG'],
+                        babel: CONFIG.babel
                     }
                 }
             },

@@ -69,26 +69,28 @@ module ElmishBridge =
                         | Some socket -> socket.send e
                         | None -> callback ()))
 
+            React.createDisposable(fun () -> 
+                wsref.Value 
+                |> Option.iter (fun ws -> ws.close()))
+
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     module Bridge =
         let inline attach dispatch (bridgeConfig: BridgeConfig<'Msg,'ElmishMsg>) =
             bridgeConfig.AttachRecoil(dispatch)
 
-    type RecoilBridge<'AtomRecord,'Model,'Msg,'ElmishMsg> =
-        { Key: string
-          Model: 'AtomRecord
+    type RecoilBridge<'Model,'Msg,'ElmishMsg> =
+        { Model: RecoilValue<'Model,ReadWrite>
           Update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>
           BridgeConfig: BridgeConfig<'Msg,'Msg> }
 
     type Recoil with
         /// Creates a websocket bridge that will update atoms as messages are recieved from the server.
-        static member inline bridge<'AtomRecord,'Model,'Msg,'ElmishMsg> (config: RecoilBridge<'AtomRecord,'Model,'Msg,'ElmishMsg>) =
+        static member inline bridge<'AtomRecord,'Model,'Msg,'ElmishMsg> (config: RecoilBridge<'Model,'Msg,'ElmishMsg>) =
             React.functionComponent(fun () ->
-                let dispatch = Recoil.useDispatch(config.Key, config.Model, config.Update)
+                let dispatch = Recoil.useDispatch(config.Model, config.Update)
 
                 React.useEffectOnce(fun () ->
                     config.BridgeConfig
-                    |> Bridge.attach(dispatch)
-                )
+                    |> Bridge.attach(dispatch))
 
                 Html.none)

@@ -5,10 +5,8 @@ module Elmish =
     open Fable.Core
     open Fable.Core.JsInterop
     open Feliz
-    open System.ComponentModel
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    module Impl =
+    module internal Impl =
         [<Struct>]
         type RingState<'Item> =
             | Writable of wx: 'Item array * ix: int
@@ -64,52 +62,36 @@ module Elmish =
             | :? System.IDisposable as disposable -> Some disposable
             | _ -> None
 
-        [<Emit("Object.entries($0)")>]
-        let objEntries (record: 'T) : ResizeArray<string * obj> = jsNative
-        
-        [<Emit("Object.entries($0)")>]
-        let modelAtoms (record: 'T) : ResizeArray<string * RecoilValue<obj,ReadWrite>> = jsNative
+        [<Emit("typeof $0 === 'function'")>]
+        let private isFunction (x: obj): bool = jsNative
 
-        let modelAtomFamily<'AtomRecord> (selectorKey: string) =
-            selectorFamily {
-                key (sprintf "%s/_atoms_" selectorKey)
-                get (fun (model: 'AtomRecord) _ -> modelAtoms(model))
-            }
+        [<Emit("typeof $0 === 'object' && !$0[Symbol.iterator]")>]
+        let private isNonEnumerableObject (x: obj): bool = jsNative 
 
-        let modelViewFamily<'Model> (selectorKey: string) =
-            selectorFamily {
-                key (sprintf "%s/_view_" selectorKey)
-                get (fun modelAtom _ ->
-                    recoil {
-                        let! modelAtom = modelAtom
-                        let! modelSeq =
-                            modelAtom
-                            |> Seq.map (fun (field, recoilValue) ->
-                                recoilValue
-                                |> RecoilValue.map (fun v -> field, v))
-                            |> RecoilValue.Seq.sequence
-                        return unbox<'Model>(createObj !!modelSeq)
-                    })
-                set (fun (model: RecoilValue<ResizeArray<string * RecoilValue<obj,ReadWrite>>,ReadOnly>) setter (newModel: 'Model) ->
-                    objEntries newModel
-                    |> Seq.iter2(fun (_,(recoilValue: RecoilValue<obj,ReadWrite>)) (_,newValue) ->
-                        if setter.get(recoilValue) <> newValue then
-                            setter.set(recoilValue, newValue)
-                    ) (setter.get(model)))
-            }
+        let equalsButFunctions (x: 'a) (y: 'a) =
+            if obj.ReferenceEquals(x, y) then
+                true
+            elif isNonEnumerableObject x && not(isNull(box y)) then
+                let keys = JS.Constructors.Object.keys x
+                let length = keys.Count
+                let mutable i = 0
+                let mutable result = true
+                while i < length && result do
+                    let key = keys.[i]
+                    i <- i + 1
+                    let xValue = x?(key)
+                    result <- isFunction xValue || xValue = y?(key)
+                result
+            else
+                (box x) = (box y)
 
     open Impl
 
     type Recoil with
-        /// Returns an elmish dispatch function.
-        static member useDispatch<'AtomRecord,'Model,'Msg> (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) =
-            let modelView = 
-                modelAtomFamily<'AtomRecord> selectorKey model
-                |> modelViewFamily selectorKey
-
+        static member useDispatch<'Model,'Msg> (model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>) =
             let state = React.useRef(None)
-            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(modelView))
-            let setState = Recoil.useSetState(modelView)
+            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(model))
+            let setState = Recoil.useSetState(model)
             
             let ring = React.useRef(RingBuffer(10))
 
@@ -124,7 +106,7 @@ module Elmish =
                     }
                     |> Promise.start
 
-            React.useEffect(initializeState)
+            React.useEffectOnce(initializeState)
 
             let rec dispatch (msg: 'Msg) =
                 promise {
@@ -138,38 +120,36 @@ module Elmish =
                         let (state', cmd') = update msg state.current.Value
                         cmd' |> List.iter (fun sub -> sub dispatch)
                         nextMsg <- ring.current.Pop()
-                        state.current <- Some state'
-                        setState state'
+                        
+                        if not (equalsButFunctions state.current (Some state')) then
+                            state.current <- Some state'
+                            setState state'
                 }
                 |> Promise.start
-
-            let dispatch = React.useCallbackRef(dispatch)
 
             React.useEffectOnce(fun () ->
                 React.createDisposable <| fun () ->
                     token.current.Cancel()
                     token.current.Dispose())
 
-            dispatch
+            React.useCallbackRef(dispatch)
 
         /// Returns an elmish dispatch function.
-        static member useDispatch (selectorKey: string, model: 'AtomRecord, update: 'Msg -> 'Model -> 'Model) =
-            let modelView = 
-                modelAtomFamily<'AtomRecord> selectorKey model
-                |> modelViewFamily selectorKey
-
-            let setModelView = Recoil.useSetState(modelView)
-            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(modelView))
+        static member useDispatch (model: RecoilValue<'Model,ReadWrite>, update: 'Msg -> 'Model -> 'Model) =
+            let setState = Recoil.useSetState(model)
+            let getState = Recoil.useCallbackRef(fun setter -> setter.getPromise(model))
 
             let token = React.useRef(new System.Threading.CancellationTokenSource())
 
             let dispatch (msg: 'Msg) =
                 promise {
                     let! state = getState()
+                    let state' = update msg state
 
-                    if not token.current.IsCancellationRequested then
-                        update msg state
-                        |> setModelView
+                    if not token.current.IsCancellationRequested && 
+                       not (equalsButFunctions state state') then
+                        
+                        setState state'
                 } |> Promise.start
 
             React.useEffectOnce(fun () ->
@@ -180,3 +160,4 @@ module Elmish =
             let dispatch = React.useCallbackRef(dispatch)
             
             React.useCallbackRef(dispatch)
+
