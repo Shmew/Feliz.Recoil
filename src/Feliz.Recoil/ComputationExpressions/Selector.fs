@@ -80,7 +80,7 @@ module SelectorCE =
 
         [<CustomOperation("no_cache")>]
         member inline _.NoCache (state: SelectorState.IOptionImplementer<'T,'U,_>) = 
-            state.SetCache(NoCache())
+            state.SetCache(Cache.Bypass())
 
         [<CustomOperation("dangerouslyAllowMutability")>]
         member inline _.DangerouslyAllowMutability (state: SelectorState.IOptionImplementer<'T,'U,_>) = 

@@ -457,8 +457,3 @@ and Store<'T> =
 type CacheImplementation<'T,'U> =
     abstract get: 'U -> 'T option
     abstract set: 'U -> 'T -> CacheImplementation<'T,'U>
-
-type NoCache<'T,'U> () =
-    interface CacheImplementation<'T,'U> with
-        member _.get _ = None
-        member this.set _ _ = this :> CacheImplementation<'T,'U>

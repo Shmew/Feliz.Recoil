@@ -1,33 +1,10 @@
 ﻿namespace Feliz.Recoil
 
-open Fable.Core
-open Fable.Core.JsInterop
 open Feliz
 open System.ComponentModel
 
 module internal Impl =
-    [<Emit("typeof $0 === 'function'")>]
-    let private isFunction (x: obj): bool = jsNative
-
-    [<Emit("typeof $0 === 'object' && !$0[Symbol.iterator]")>]
-    let private isNonEnumerableObject (x: obj): bool = jsNative 
-
-    let equalsButFunctions (x: 'a) (y: 'a) =
-        if obj.ReferenceEquals(x, y) then
-            true
-        elif isNonEnumerableObject x && not(isNull(box y)) then
-            let keys = JS.Constructors.Object.keys x
-            let length = keys.Count
-            let mutable i = 0
-            let mutable result = true
-            while i < length && result do
-                let key = keys.[i]
-                i <- i + 1
-                let xValue = x?(key)
-                result <- isFunction xValue || xValue = y?(key)
-            result
-        else
-            (box x) = (box y)
+    open EqualityHelpers
 
     let notEqualsButFunctionsFamily<'a> =
         selectorFamily {

@@ -2,7 +2,6 @@
 module Samples.Elmish
 
 open Css
-open Elmish
 open Feliz
 open Feliz.Recoil
 open Zanaptak.TypedCssClasses
@@ -41,13 +40,7 @@ let update (msg: Msg) (state: Model) =
 let countComp = React.functionComponent(fun () ->
     let count = Recoil.useValue(Model.count)
 
-    Html.div [
-        prop.children [
-            Html.div [
-                prop.text (sprintf "Count: %i" count)
-            ]
-        ]
-    ])
+    Html.div (sprintf "Count: %i" count))
 
 let actionsComp = React.functionComponent(fun () ->
     let dispatch = Recoil.useSetReducer(Model.state, update)

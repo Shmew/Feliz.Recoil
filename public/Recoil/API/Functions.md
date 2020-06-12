@@ -211,6 +211,7 @@ to use the usual suspects:
 
 * Infix apply - `<*>`
 * Infix map - `<!>`
+* Infix flipped map - `<&>`
 * Infix bind - `>>=`
 * Infix bind (right to left) - `=<<`
 * Left-to-right Kleisli composition - `>=>`
