@@ -1,3 +1,6 @@
+### 0.14.0 - Friday, June 12th, 2020
+* Add map and bind to RecoilValue as methods.
+
 ### 0.13.0 - Thursday, June 11th, 2020
 * Convert elmish API into useReducer and useSetReducer and move into main library, removes Cmd support due to potential race-condition issues.
 
