@@ -12,9 +12,11 @@ module SelectorCE =
 
         type Key = | Value of string
 
-        type IOptionImplementer<'T,'U,'V> =
-            abstract member SetCache : CacheImplementation<'T,Loadable<'T>> -> 'V
+        type MutabilityImplementer<'V> =
             abstract member SetMutability : unit -> 'V
+
+        type ICacheImplementer<'T,'U,'V> =
+            abstract member SetCache : CacheImplementation<'T,Loadable<'T>> -> 'V
 
         [<NoEquality;NoComparison>]
         type ReadOnly<'T,'U> = 
@@ -23,13 +25,14 @@ module SelectorCE =
               Cache: CacheImplementation<'T,Loadable<'T>> option
               DangerouslyAllowMutability: bool option }
 
-            interface IOptionImplementer<'T,Loadable<'T>,ReadOnly<'T,'U>> with
+            interface ICacheImplementer<'T,Loadable<'T>,ReadOnly<'T,'U>> with
                 member this.SetCache cache =
                     { Key = this.Key
                       Get = this.Get
                       Cache = Some cache
                       DangerouslyAllowMutability = this.DangerouslyAllowMutability }
 
+            interface MutabilityImplementer<ReadOnly<'T,'U>> with
                 member this.SetMutability () =
                     { Key = this.Key
                       Get = this.Get
@@ -44,10 +47,21 @@ module SelectorCE =
               Cache: CacheImplementation<'T,Loadable<'T>> option
               DangerouslyAllowMutability: bool option }
 
-            interface IOptionImplementer<'T,Loadable<'T>,ReadWrite<'T,'U>> with
+            interface ICacheImplementer<'T,Loadable<'T>,ReadWrite<'T,'U>> with
                 member this.SetCache (cache: CacheImplementation<'T,Loadable<'T>>) =
                     { this with Cache = Some cache }
 
+            interface MutabilityImplementer<ReadWrite<'T,'U>> with
+                member this.SetMutability () =
+                    { this with DangerouslyAllowMutability = Some true }
+
+        [<NoEquality;NoComparison>]
+        type WriteOnly<'T> =
+            { Key: string
+              Set: SelectorMethods -> 'T -> unit
+              DangerouslyAllowMutability: bool option }
+
+            interface MutabilityImplementer<WriteOnly<'T>> with
                 member this.SetMutability () =
                     { this with DangerouslyAllowMutability = Some true }
 
@@ -74,16 +88,22 @@ module SelectorCE =
               Cache = state.Cache
               DangerouslyAllowMutability = None }
 
+        [<CustomOperation("set_only")>]
+        member inline _.SetOnly (SelectorState.Key.Value state, f: SelectorMethods -> 'T -> unit) : SelectorState.WriteOnly<'T> =
+            { Key = state
+              Set = f
+              DangerouslyAllowMutability = None }
+
         [<CustomOperation("cache")>]
-        member inline _.Cache (state: SelectorState.IOptionImplementer<'T,Loadable<'T>,_>, cacheImplementation: CacheImplementation<'T,Loadable<'T>>) = 
+        member inline _.Cache (state: SelectorState.ICacheImplementer<'T,Loadable<'T>,_>, cacheImplementation: CacheImplementation<'T,Loadable<'T>>) = 
             state.SetCache(cacheImplementation)
 
         [<CustomOperation("no_cache")>]
-        member inline _.NoCache (state: SelectorState.IOptionImplementer<'T,'U,_>) = 
+        member inline _.NoCache (state: SelectorState.ICacheImplementer<'T,'U,_>) = 
             state.SetCache(Cache.Bypass())
 
         [<CustomOperation("dangerouslyAllowMutability")>]
-        member inline _.DangerouslyAllowMutability (state: SelectorState.IOptionImplementer<'T,'U,_>) = 
+        member inline _.DangerouslyAllowMutability (state: SelectorState.MutabilityImplementer<_>) = 
             state.SetMutability()
 
         member inline _.Run (selector: SelectorState.ReadOnly<'T,JS.Promise<'T>>) =
@@ -135,6 +155,12 @@ module SelectorCE =
                 selector.Set, 
                 ?cacheImplementation = selector.Cache,
                 ?dangerouslyAllowMutability = selector.DangerouslyAllowMutability
+            )
+
+        member inline _.Run (selector: SelectorState.WriteOnly<'T>) =
+            Recoil.selectorWriteOnly (
+                selector.Key,
+                selector.Set
             )
 
     [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]

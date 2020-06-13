@@ -2,7 +2,7 @@
 
 [<RequireQualifiedAccess>]
 module Cache =
-    let cast (cache: #CacheImplementation<'T,'U>) = cache :> CacheImplementation<'T,'U>
+    let inline cast (cache: #CacheImplementation<'T,'U>) = cache :> CacheImplementation<'T,'U>
 
     type Bypass<'T,'U> () =
         interface CacheImplementation<'T,'U> with

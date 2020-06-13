@@ -32,7 +32,7 @@ type Recoil =
             |> createObj
         )
     /// Creates a RecoilValue with a default value the given RecoilValue.
-    static member inline atom (key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+    static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
         Bindings.Recoil.atom<'T> (
             [ "key" ==> key
               "default" ==> defaultValue
@@ -50,7 +50,7 @@ type Recoil =
     /// Converts a RecoilValue<'T,_> into a RecoilValue<Loadable<'T>,ReadOnly>.
     ///
     /// Prevents a selector from being blocked while trying to resolve a RecoilValue.
-    static member inline noWait (recoilValue: RecoilValue<'T,'Mode>) = Bindings.Recoil.noWait(recoilValue)
+    static member inline noWait (recoilValue: RecoilValue<'T,#ReadOnly>) = Bindings.Recoil.noWait(recoilValue)
 
     /// Derives state and returns a RecoilValue via the provided get function.
     static member inline selector 
@@ -156,6 +156,20 @@ type Recoil =
               "set" ==> System.Func<_,_,_>(set)
               if cacheImplementation.IsSome then
                   "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
+              if dangerouslyAllowMutability.IsSome then
+                  "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+            |> createObj
+        )
+    /// Applies state changes via the provided set function.
+    static member inline selectorWriteOnly
+        (key: string, 
+         set: SelectorMethods -> 'T -> unit, 
+         ?dangerouslyAllowMutability: bool) =
+        
+        Bindings.Recoil.selector<'T,WriteOnly> (
+            [ "key" ==> key
+              "get" ==> (fun _ -> unbox<'T>())
+              "set" ==> System.Func<_,_,_>(set)
               if dangerouslyAllowMutability.IsSome then
                   "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
             |> createObj
@@ -211,6 +225,9 @@ type Recoil =
     /// Returns a function that will reset the value of a RecoilValue to its default.
     static member inline useResetState (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useResetRecoilState<'T>(recoilValue)
+    /// Returns a function that will reset the value of a RecoilValue to its default.
+    static member inline useResetState (recoilValue: RecoilValue<'T,WriteOnly>) =
+        Bindings.Recoil.useResetRecoilState<'T>(recoilValue)
 
     /// Allows the value of the RecoilValue to be read and written.
     /// 
@@ -261,10 +278,20 @@ type Recoil =
     static member inline useSetState (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<'T -> unit>
+    /// Returns a function that allows the value of a RecoilValue to be updated, but does
+    /// not subscribe the compoment to changes to that RecoilValue.
+    static member inline useSetState (recoilValue: RecoilValue<'T,WriteOnly>) =
+        Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
+        |> unbox<'T -> unit>
 
     /// Returns a function that allows the value of a RecoilValue to be updated via
     /// a function that accepts the current value and produces the new value.
     static member inline useSetStatePrev (recoilValue: RecoilValue<'T,ReadWrite>) =
+        Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
+        |> unbox<('T -> 'T) -> unit>
+    /// Returns a function that allows the value of a RecoilValue to be updated via
+    /// a function that accepts the current value and produces the new value.
+    static member inline useSetStatePrev (recoilValue: RecoilValue<'T,WriteOnly>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<('T -> 'T) -> unit>
 
@@ -336,14 +363,14 @@ type Recoil =
     /// If the value is an error, it will throw it for the nearest React error boundary.
     /// 
     /// This will also subscribe the component for any updates in the value.
-    static member inline useValue (recoilValue: RecoilValue<'T,'Mode>) =
-        Bindings.Recoil.useRecoilValue<'T,'Mode>(recoilValue)
+    static member inline useValue (recoilValue: RecoilValue<'T,#ReadOnly>) =
+        Bindings.Recoil.useRecoilValue<'T,#ReadOnly>(recoilValue)
 
     /// Returns the Loadable of a RecoilValue.
     ///
     /// This will also subscribe the component for any updates in the value.
-    static member inline useValueLoadable (recoilValue: RecoilValue<'T,'Mode>) =
-        Bindings.Recoil.useRecoilValueLoadable<'T,'Mode>(recoilValue)
+    static member inline useValueLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) =
+        Bindings.Recoil.useRecoilValueLoadable<'T,#ReadOnly>(recoilValue)
 
 [<Erase;RequireQualifiedAccess>]
 module Recoil =
@@ -394,7 +421,7 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default RecoilValue.
-        static member inline atom (key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
@@ -405,7 +432,7 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default RecoilValue.
-        static member inline atom (key: string, defaultValue: 'P -> RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
@@ -538,6 +565,20 @@ module Recoil =
                       "cacheImplementation_UNSTABLE" ==> cacheImplementation.Value
                   if paramCacheImplementation.IsSome then
                       "cacheImplementationForParams_UNSTABLE" ==> paramCacheImplementation.Value
+                  if dangerouslyAllowMutability.IsSome then
+                      "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
+                |> createObj
+            )
+        /// Applies state changes via the provided set function.
+        static member inline selectorWriteOnly
+            (key: string, 
+             set: 'P -> SelectorMethods -> 'T -> unit,
+             ?dangerouslyAllowMutability: bool) =
+            
+            Bindings.Recoil.selectorFamily<'T,WriteOnly,'P> (
+                [ "key" ==> key
+                  "get" ==> (fun _ _ -> unbox<'T>())
+                  "set" ==> (fun p -> System.Func<_,_,_>(set p))
                   if dangerouslyAllowMutability.IsSome then
                       "dangerouslyAllowMutability" ==> dangerouslyAllowMutability.Value ]
                 |> createObj

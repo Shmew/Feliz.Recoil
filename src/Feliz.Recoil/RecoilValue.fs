@@ -5,47 +5,47 @@ open System.ComponentModel
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 module Families =
-    let mapFamily (recoilValue: RecoilValue<'T,'Mode>) =
+    let mapFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
         selectorFamily {
             key (recoilValue.key + "/__map")
             get (fun (mapping: RecoilValue<'T -> 'U,ReadOnly>) getter -> getter.get(recoilValue) |> getter.get(mapping))
         }
 
-    let bindFamily (recoilValue: RecoilValue<'T,'Mode1>) =
+    let bindFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
         selectorFamily {
             key (recoilValue.key + "/__bind")
-            get (fun (binder: RecoilValue<'T -> RecoilValue<'U,'Mode2>,ReadOnly>) getter -> getter.get(recoilValue) |> getter.get(binder))
+            get (fun (binder: RecoilValue<'T -> RecoilValue<'U,#ReadOnly>,ReadOnly>) getter -> getter.get(recoilValue) |> getter.get(binder))
         }
 
     module Async =
-        let mapFamily (recoilValue: RecoilValue<'T,'Mode>) =
+        let mapFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
             selectorFamily {
                 key (recoilValue.key + "/__map_async")
                 get (fun (mapping: RecoilValue<'T -> Async<'U>,ReadOnly>) getter -> 
                     async { return! getter.get(recoilValue) |> getter.get(mapping) })
             }
 
-        let bindFamily (recoilValue: RecoilValue<'T,'Mode1>) =
+        let bindFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
             selectorFamily {
                 key (recoilValue.key + "/__bind_async")
-                get (fun (binder: RecoilValue<'T -> Async<RecoilValue<'U,'Mode2>>,ReadOnly>) getter -> 
+                get (fun (binder: RecoilValue<'T -> Async<RecoilValue<'U,#ReadOnly>>,ReadOnly>) getter -> 
                     async {
                         return! getter.get(recoilValue) |> getter.get(binder) 
                     })
             }
 
     module Promise =
-        let mapFamily (recoilValue: RecoilValue<'T,'Mode>) =
+        let mapFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
             selectorFamily {
                 key (recoilValue.key + "/__map_promise")
                 get (fun (mapping: RecoilValue<'T -> JS.Promise<'U>,ReadOnly>) getter -> 
                     promise { return! getter.get(recoilValue) |> getter.get(mapping) })
             }
 
-        let bindFamily (recoilValue: RecoilValue<'T,'Mode1>) =
+        let bindFamily (recoilValue: RecoilValue<'T,#ReadOnly>) =
             selectorFamily {
                 key (recoilValue.key + "/__bind_promise")
-                get (fun (binder: RecoilValue<'T -> JS.Promise<RecoilValue<'U,'Mode2>>,ReadOnly>) getter -> 
+                get (fun (binder: RecoilValue<'T -> JS.Promise<RecoilValue<'U,#ReadOnly>>,ReadOnly>) getter -> 
                     promise {
                         let! res = getter.get(recoilValue) |> getter.get(binder) 
                         return res |> bindFamily |> id
@@ -57,15 +57,15 @@ module RecoilValue =
 
     let inline lift (value: 'T) = Bindings.Recoil.constSelector value
 
-    let map (mapping: 'T -> 'U) (recoilValue: RecoilValue<'T,'Mode>) =
+    let map (mapping: 'T -> 'U) (recoilValue: RecoilValue<'T,#ReadOnly>) =
         lift mapping
         |> mapFamily recoilValue
 
-    let bind (binder: 'T -> RecoilValue<'U,'Mode1>) (recoilValue: RecoilValue<'T,'Mode2>) =
+    let bind (binder: 'T -> RecoilValue<'U,#ReadOnly>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
         lift binder
         |> bindFamily recoilValue
 
-    let apply (recoilFun: RecoilValue<'T -> 'U,'Mode1>) (recoilValue: RecoilValue<'T,'Mode2>) =
+    let apply (recoilFun: RecoilValue<'T -> 'U,#ReadOnly>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
         recoilFun |> bind (fun f -> recoilValue |> map f)
 
     let applyM (recoilFun: RecoilValue<RecoilValue<'T,_> -> RecoilValue<'U,_>,_>) (recoilValue: RecoilValue<'T,_>) =
@@ -167,11 +167,11 @@ module RecoilValue =
             traverse lift recoilValues
 
     module Async =
-        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<'T,'Mode>) =
+        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
             lift (fun a -> async { return! mapping a })
             |> Async.mapFamily recoilValue
 
-        let bind (binder: 'T -> Async<RecoilValue<'U,'Mode1>>) (recoilValue: RecoilValue<'T,'Mode2>) =
+        let bind (binder: 'T -> Async<RecoilValue<'U,#ReadOnly>>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
             lift (fun a -> async { return! binder a })
             |> Async.bindFamily recoilValue
 
@@ -198,11 +198,11 @@ module RecoilValue =
             Option.bind f <!> recoilValue
 
     module Promise =
-        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<'T,'Mode>) =
+        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
             lift (fun a -> promise { return! mapping a })
             |> Promise.mapFamily recoilValue
 
-        let bind (binder: 'T -> JS.Promise<RecoilValue<'U,'Mode1>>) (recoilValue: RecoilValue<'T,'Mode2>) =
+        let bind (binder: 'T -> JS.Promise<RecoilValue<'U,#ReadOnly>>) (recoilValue: RecoilValue<'T,#ReadOnly>) =
             lift (fun a -> promise { return! binder a })
             |> Promise.bindFamily recoilValue
 
@@ -285,12 +285,3 @@ module RecoilValueBuilderMagic =
         member _.Return (value: 'T) = Bindings.Recoil.constSelector value
 
     let recoil = RecoilValueBuilder()
-
-[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
-module RecoilValueExtension =
-    type RecoilValue<'T,'ReadPerm> with
-        member inline this.map (mapper: 'T -> 'U) =
-            RecoilValue.map mapper this
-
-        member inline this.bind (binder: 'T -> RecoilValue<'U,_>) =
-            RecoilValue.bind binder this

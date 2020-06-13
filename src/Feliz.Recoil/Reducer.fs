@@ -17,10 +17,7 @@ module internal Impl =
     let reducerFamily<'Model,'Msg> =
         selectorFamily {
             key "__recoil_reducer__"
-            get (fun (_: RecoilValue<'Msg -> 'Model -> 'Model,ReadOnly>, recoilValue: RecoilValue<'Model,ReadWrite>) getter ->
-                getter.get(recoilValue)
-                |> unbox<'Msg>)
-            set (fun (update: RecoilValue<'Msg -> 'Model -> 'Model,ReadOnly>, recoilValue: RecoilValue<'Model,ReadWrite>) setter (msg: 'Msg) ->
+            set_only (fun (update: RecoilValue<'Msg -> 'Model -> 'Model,ReadOnly>, recoilValue: RecoilValue<'Model,ReadWrite>) setter (msg: 'Msg) ->
                 let state = setter.get(recoilValue)
                 let state' = state |> setter.get(update) msg
                 

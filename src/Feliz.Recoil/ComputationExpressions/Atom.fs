@@ -97,7 +97,7 @@ module AtomCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomState.ReadWrite<RecoilValue<'T,'Mode>,'T,'V>) : RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomState.ReadWrite<RecoilValue<'T,#ReadOnly>,'T,'V>) : RecoilValue<'T,ReadWrite> =
             Recoil.atom (
                 atom.Key, 
                 atom.Def, 

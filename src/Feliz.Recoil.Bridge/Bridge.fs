@@ -84,7 +84,7 @@ module ElmishBridge =
 
     type Recoil with
         /// Creates a websocket bridge that will update atoms as messages are recieved from the server.
-        static member inline bridge<'AtomRecord,'Model,'Msg,'ElmishMsg> (config: RecoilBridge<'Model,'Msg,'ElmishMsg>) =
+        static member inline bridge<'Model,'Msg,'ElmishMsg> (config: RecoilBridge<'Model,'Msg,'ElmishMsg>) =
             React.functionComponent(fun () ->
                 let dispatch = Recoil.useSetReducer(config.Model, config.Update)
 

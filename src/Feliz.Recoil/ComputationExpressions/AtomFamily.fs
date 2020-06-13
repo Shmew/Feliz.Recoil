@@ -113,7 +113,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<RecoilValue<'T,'Mode>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<RecoilValue<'T,#ReadOnly>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 
@@ -121,7 +121,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> RecoilValue<'T,'Mode>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> RecoilValue<'T,#ReadOnly>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 

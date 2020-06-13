@@ -13,8 +13,13 @@ type RecoilValueTag =
 /// Marker interface to designate read only RecoilValues.
 type ReadOnly = interface end
 
-/// Marker interface to designate mutable RecoilValues.
-type ReadWrite = interface end
+/// Marker interface to designate write only RecoilValues.
+type WriteOnly = interface end
+
+/// Marker interface to designate read and writable RecoilValues.
+type ReadWrite = 
+    inherit ReadOnly
+    inherit WriteOnly
 
 [<Erase>]
 type RecoilValue<'T,'ReadPerm> =
@@ -32,47 +37,35 @@ type DefaultValue = interface end
 type SelectorGetter =
     /// Gets the value of a RecoilValue.
     [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T,ReadOnly>) : 'T = jsNative
-    /// Gets the value of a RecoilValue.
-    [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T,ReadWrite>) : 'T = jsNative
-
-[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
-module SelectorGetterMagic =
-    type SelectorGetter with
-        [<Emit("$0.get($1)")>]
-        member _.get (recoilValue: RecoilValue<'T,_>) : 'T = jsNative
+    member _.get (recoilValue: RecoilValue<'T, #ReadOnly>) : 'T = jsNative
 
 /// Methods provided in selectors for composing new RecoilValues.
 [<Erase>]
 type SelectorMethods =
     /// Gets the value of a RecoilValue.
     [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T,ReadOnly>) : 'T = jsNative
-    /// Gets the value of a RecoilValue.
-    [<Emit("$0.get($1)")>]
-    member _.get (recoilValue: RecoilValue<'T,ReadWrite>) : 'T = jsNative
+    member _.get (recoilValue: RecoilValue<'T, #ReadOnly>) : 'T = jsNative
 
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: DefaultValue) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit = jsNative
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T -> 'T) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit = jsNative
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T -> DefaultValue) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit = jsNative
 
     /// Sets the value of a RecoilValue back to the default value.
     [<Emit("$0.reset($1)")>]
-    member _.reset (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
+    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit = jsNative
 
-[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
 module SelectorMagic =
     type SelectorMethods with
         /// Sets the value of a RecoilValue.
         [<Emit("$0.set($1, $2)")>]
-        member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T) : unit = jsNative
+        member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T) : unit = jsNative
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 [<StringEnum;RequireQualifiedAccess>]
@@ -134,6 +127,10 @@ type Loadable<'T> =
     member _.promiseOrThrow () : JS.Promise<'T> = jsNative
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<Emit("$0.contents")>]
+    member _.contents : U3<'T,exn,JS.Promise<ResolvedLoadablePromiseInfo<'T>>> = jsNative
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     [<Emit("$0.state")>]
     member _.state' : LoadableStateStr = jsNative
     /// Gets the current state and corresponding value of a Loadable.
@@ -147,10 +144,6 @@ type Loadable<'T> =
             LoadableState.HasError (unbox<exn> this.contents)
         | LoadableStateStr.HasValue ->
             LoadableState.HasValue (unbox<'T> this.contents)
-
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    [<Emit("$0.contents")>]
-    member _.contents : U3<'T,exn,JS.Promise<ResolvedLoadablePromiseInfo<'T>>> = jsNative
 
     /// Converts the Loadable to an async operation.
     member inline this.toAsync () =
@@ -175,7 +168,7 @@ type Loadable<'T> =
     [<Emit("$0.valueOrThrow()")>]
     member _.valueOrThrow () : 'T = jsNative
 
-[<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
 module LoadableMagic =
     type Loadable<'T> with
         /// Maps the value of a Loadable.
@@ -186,7 +179,7 @@ module LoadableMagic =
 type RootInitializer =
     /// Sets the initial value of a single atom to the provided value.
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, currentValue: 'T) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, currentValue: 'T) : unit = jsNative
     
     /// Sets the initial value for any number of atoms whose keys are the
     /// keys in the provided map. 
@@ -208,31 +201,31 @@ type RootInitializer =
 [<Erase>]
 type CallbackMethods =
     /// Gets the async operation of a RecoilValue.
-    member inline this.getAsync (recoilValue: RecoilValue<'T,_>) = 
+    member inline this.getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) = 
         this.getPromise(recoilValue) |> Async.AwaitPromise
 
     /// Gets the Loadable of a RecoilValue.
     [<Emit("$0.getLoadable($1)")>]
-    member _.getLoadable (recoilValue: RecoilValue<'T,_>) : Loadable<'T> = jsNative
+    member _.getLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) : Loadable<'T> = jsNative
 
     /// Gets the promise of a RecoilValue.
     [<Emit("$0.getPromise($1)")>]
-    member _.getPromise (recoilValue: RecoilValue<'T,_>) : JS.Promise<'T> = jsNative
+    member _.getPromise (recoilValue: RecoilValue<'T,#ReadOnly>) : JS.Promise<'T> = jsNative
 
     /// Sets a RecoilValue to the default value.
     [<Emit("$0.reset($1)")>]
-    member _.reset (recoilValue: RecoilValue<'T,ReadWrite>) : unit = jsNative
+    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit = jsNative
 
     /// Sets a RecoilValue using the updater function.
     [<Emit("$0.set($1, $2)")>]
-    member _.set (recoilValue: RecoilValue<'T,ReadWrite>, updater: 'T -> 'T) : unit = jsNative
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, updater: 'T -> 'T) : unit = jsNative
 
 [<AutoOpen;Erase;EditorBrowsable(EditorBrowsableState.Never)>]
 module CallbackMagic =
     type CallbackMethods with
         /// Sets a RecoilValue to the given value.
         [<Emit("$0.set($1, $2)")>]
-        member _.set (recoilValue: RecoilValue<'T,ReadWrite>, newValue: 'T) : unit = jsNative
+        member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T) : unit = jsNative
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 [<StringEnum;RequireQualifiedAccess>]
@@ -292,7 +285,7 @@ type PersistenceSettings<'T,'U> =
 [<Erase>]
 type AtomInfo =
     [<Emit("$0.persistence_UNSTABLE")>]
-    member _.persistence : PersistenceInfo = jsNative
+    member inline _.persistence : PersistenceInfo = jsNative
 
 [<Erase>]
 type TransactionObservation<'Values,'Metadata> =
@@ -338,6 +331,7 @@ type TransactionObservation<'Values,'Metadata> =
         this.transactionMetadata'
         |> Map.ofSeq
 
+[<Erase>]
 type StoreSubscriber =
     [<Emit("$0.release()")>]
     member _.release () : unit = jsNative
@@ -438,7 +432,7 @@ type StoreState<'T> =
     [<Emit("$0.suspendedComponentResolvers")>]
     member _.suspendedComponentResolvers : JS.Set<unit -> unit> = jsNative
 
-and Store<'T> =
+and [<Erase>] Store<'T> =
     [<Emit("$0.getState()")>]
     member _.getState () : StoreState<'T> = jsNative
 

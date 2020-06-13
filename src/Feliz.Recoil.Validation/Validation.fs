@@ -92,10 +92,7 @@ module Validation =
     let validationFamily<'T,'Custom when 'Custom : equality and 'T : equality> (validators: RecoilValue<('T -> Result<'T,ValidationError<'Custom>>) list,ReadOnly>) =
         selectorFamily {
             key "__recoil__forms__/__validationFamily"
-            get (fun (resultAtom: RecoilValue<ValidationState<'T,'Custom>,ReadWrite>) getter -> 
-                getter.get(resultAtom) |> ignore
-                None)
-            set (fun (resultAtom: RecoilValue<ValidationState<'T,'Custom>,ReadWrite>) setter (newValue: 'T option) ->
+            set_only (fun (resultAtom: RecoilValue<ValidationState<'T,'Custom>,ReadWrite>) setter (newValue: 'T option) ->
                 let validators = setter.get(validators)
 
                 newValue

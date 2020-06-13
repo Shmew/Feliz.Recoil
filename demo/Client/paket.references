@@ -5,5 +5,4 @@ group Client
     Feliz
     Feliz.Recoil
     Feliz.Recoil.Bridge
-    Feliz.Recoil.Elmish
     FSharp.Core

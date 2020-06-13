@@ -11,14 +11,14 @@ module RecoilOption =
     let liftNone<'T> () : RecoilValue<'T option,ReadOnly> =
         RecoilValue.lift (None)
 
-    let map (f: 'T -> 'U) (input: RecoilValue<'T option,'Mode>) =
+    let map (f: 'T -> 'U) (input: RecoilValue<'T option,#ReadOnly>) =
         recoil {
             let! res = input
 
             return Option.map f res
         }
 
-    let bind (f: 'T -> RecoilValue<'U option,ReadOnly>) (input: RecoilValue<'T option,'Mode>) =
+    let bind (f: 'T -> RecoilValue<'U option,ReadOnly>) (input: RecoilValue<'T option,#ReadOnly>) =
         recoil {
             let! res = input
             
@@ -30,7 +30,7 @@ module RecoilOption =
             return! t
         }
 
-    let apply (rrFun: RecoilValue<('T -> 'U) option,ReadOnly>) (input: RecoilValue<'T option,'Mode>) =
+    let apply (rrFun: RecoilValue<('T -> 'U) option,ReadOnly>) (input: RecoilValue<'T option,#ReadOnly>) =
         rrFun |> bind (fun f -> input |> map f)
 
     module Operators =
@@ -123,7 +123,7 @@ module RecoilOption =
             traverse lift recoilValues
 
     module Async =
-        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<'T option,'Mode>) =
+        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<'T option,#ReadOnly>) =
             let mapping a =
                 recoil {
                     return
@@ -135,7 +135,7 @@ module RecoilOption =
 
             bind mapping recoilValue
 
-        let bind (binder: 'T -> Async<RecoilValue<'U option,'Mode1>>) (recoilValue: RecoilValue<'T option,'Mode2>) =
+        let bind (binder: 'T -> Async<RecoilValue<'U option,#ReadOnly>>) (recoilValue: RecoilValue<'T option,#ReadOnly>) =
             let binder a =
                 recoil {
                     return
@@ -171,7 +171,7 @@ module RecoilOption =
             Result.bind f <!> recoilValue
 
     module Promise =
-        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<'T option,'Mode>) =
+        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<'T option,#ReadOnly>) =
             let mapping a =
                 recoil {
                     return
@@ -183,7 +183,7 @@ module RecoilOption =
 
             bind mapping recoilValue
 
-        let bind (binder: 'T -> JS.Promise<RecoilValue<'U option,'Mode1>>) (recoilValue: RecoilValue<'T option,'Mode2>) =
+        let bind (binder: 'T -> JS.Promise<RecoilValue<'U option,#ReadOnly>>) (recoilValue: RecoilValue<'T option,#ReadOnly>) =
             let binder a =
                 recoil {
                     return

@@ -56,7 +56,7 @@ Signature:
 ```fs
 type RootInitializer =
     /// Sets the initial value of a single atom to the provided value.
-    member set (recoilValue: RecoilValue<'T,ReadWrite>, currentValue: 'T) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, currentValue: 'T) : unit
     /// Sets the initial value for any number of atoms whose keys are the
     /// keys in the provided map. 
     ///

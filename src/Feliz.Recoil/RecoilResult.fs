@@ -11,20 +11,20 @@ module RecoilResult =
     let liftError (value: 'Error) =
         RecoilValue.lift (Error value)
 
-    let map (f: 'T -> 'U) (input: RecoilValue<Result<'T,'Error>,'Mode>) =
+    let map (f: 'T -> 'U) (input: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
         recoil {
             let! res = input
 
             return Result.map f res
         }
 
-    let mapError (f: 'Error -> 'U) (input: RecoilValue<Result<'T,'Error>,'Mode>) =
+    let mapError (f: 'Error -> 'U) (input: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
         recoil {
             let! res = input
             return Result.mapError f res
         }
 
-    let bind (f: 'T -> RecoilValue<Result<'U,'Error>,ReadOnly>) (input: RecoilValue<Result<'T,'Error>,'Mode>) =
+    let bind (f: 'T -> RecoilValue<Result<'U,'Error>,ReadOnly>) (input: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
         recoil {
             let! res = input
             
@@ -36,7 +36,7 @@ module RecoilResult =
             return! t
         }
 
-    let apply (rrFun: RecoilValue<Result<'T -> 'U,'Error>,ReadOnly>) (input: RecoilValue<Result<'T,'Error>,'Mode>) =
+    let apply (rrFun: RecoilValue<Result<'T -> 'U,'Error>,#ReadOnly>) (input: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
         rrFun |> bind (fun f -> input |> map f)
 
     module Operators =
@@ -129,7 +129,7 @@ module RecoilResult =
             traverse lift recoilValues
 
     module Async =
-        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<Result<'T,'Error>,'Mode>) =
+        let map (mapping: 'T -> Async<'U>) (recoilValue: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
             let mapping a =
                 recoil {
                     return
@@ -141,7 +141,7 @@ module RecoilResult =
 
             bind mapping recoilValue
 
-        let bind (binder: 'T -> Async<RecoilValue<Result<'U,'Error>,'Mode1>>) (recoilValue: RecoilValue<Result<'T,'Error>,'Mode2>) =
+        let bind (binder: 'T -> Async<RecoilValue<Result<'U,'Error>,#ReadOnly>>) (recoilValue: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
             let binder a =
                 recoil {
                     return
@@ -177,7 +177,7 @@ module RecoilResult =
             Option.bind f <!> recoilValue
 
     module Promise =
-        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<Result<'T,'Error>,'Mode>) =
+        let map (mapping: 'T -> JS.Promise<'U>) (recoilValue: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
             let mapping a =
                 recoil {
                     return
@@ -189,7 +189,7 @@ module RecoilResult =
 
             bind mapping recoilValue
 
-        let bind (binder: 'T -> JS.Promise<RecoilValue<Result<'U,'Error>,'Mode1>>) (recoilValue: RecoilValue<Result<'T,'Error>,'Mode2>) =
+        let bind (binder: 'T -> JS.Promise<RecoilValue<Result<'U,'Error>,#ReadOnly>>) (recoilValue: RecoilValue<Result<'T,'Error>,#ReadOnly>) =
             let binder a =
                 recoil {
                     return

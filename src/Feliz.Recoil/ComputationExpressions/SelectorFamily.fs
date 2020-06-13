@@ -12,10 +12,12 @@ module SelectorFamilyCE =
 
         type Key = | Value of string
 
-        type IOptionImplementer<'T,'U,'P,'Mode,'V> =
+        type MutabilityImplementer<'V> =
+            abstract member SetMutability : unit -> 'V
+
+        type ICacheImplementer<'T,'U,'P,'Mode,'V> =
             abstract member SetCache : (unit -> CacheImplementation<'T,Loadable<'T>>) -> 'V
             abstract member SetParamCache<'Mode> : (unit -> CacheImplementation<RecoilValue<'T,'Mode>,'P>) -> 'V
-            abstract member SetMutability : unit -> 'V
 
         [<NoEquality;NoComparison>]
         type ReadOnly<'T,'U,'P> = 
@@ -25,7 +27,7 @@ module SelectorFamilyCE =
               ParamCache: (unit -> CacheImplementation<RecoilValue<'T,ReadOnly>,'P>) option
               DangerouslyAllowMutability: bool option }
 
-            interface IOptionImplementer<'T,'U,'P,ReadOnly,ReadOnly<'T,'U,'P>> with
+            interface ICacheImplementer<'T,'U,'P,ReadOnly,ReadOnly<'T,'U,'P>> with
                 member this.SetCache cache =
                     { Key = this.Key
                       Get = this.Get
@@ -40,6 +42,7 @@ module SelectorFamilyCE =
                       ParamCache = Some cache
                       DangerouslyAllowMutability = this.DangerouslyAllowMutability }
 
+            interface MutabilityImplementer<ReadOnly<'T,'U,'P>> with
                 member this.SetMutability () =
                     { Key = this.Key
                       Get = this.Get
@@ -56,13 +59,24 @@ module SelectorFamilyCE =
               ParamCache: (unit -> CacheImplementation<RecoilValue<'T,ReadWrite>,'P>) option
               DangerouslyAllowMutability: bool option }
 
-            interface IOptionImplementer<'T,'U,'P,ReadWrite,ReadWrite<'T,'U,'P>> with
+            interface ICacheImplementer<'T,'U,'P,ReadWrite,ReadWrite<'T,'U,'P>> with
                 member this.SetCache (cache: unit -> CacheImplementation<'T,Loadable<'T>>) =
                     { this with Cache = Some cache }
 
                 member this.SetParamCache cache =
                     { this with ParamCache = Some cache }
 
+            interface MutabilityImplementer<ReadWrite<'T,'U,'P>> with
+                member this.SetMutability () =
+                    { this with DangerouslyAllowMutability = Some true }
+
+        [<NoEquality;NoComparison>]
+        type WriteOnly<'T,'P> =
+            { Key: string
+              Set: 'P -> SelectorMethods -> 'T -> unit
+              DangerouslyAllowMutability: bool option }
+
+            interface MutabilityImplementer<WriteOnly<'T,'P>> with
                 member this.SetMutability () =
                     { this with DangerouslyAllowMutability = Some true }
 
@@ -91,12 +105,18 @@ module SelectorFamilyCE =
               ParamCache = state.ParamCache |> Option.map (unbox<unit -> CacheImplementation<RecoilValue<'T,_>,'P>>)
               DangerouslyAllowMutability = None }
 
+        [<CustomOperation("set_only")>]
+        member inline _.SetOnly (SelectorFamilyState.Key.Value state, f: 'P -> SelectorMethods -> 'T -> unit) : SelectorFamilyState.WriteOnly<'T,'P> =
+            { Key = state
+              Set = f
+              DangerouslyAllowMutability = None }
+
         [<CustomOperation("cache")>]
-        member inline _.Cache (state: SelectorFamilyState.IOptionImplementer<'T,_,_,_,_>, (cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>)) = 
+        member inline _.Cache (state: SelectorFamilyState.ICacheImplementer<'T,_,_,_,_>, (cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>)) = 
             state.SetCache(cacheImplementation)
 
         [<CustomOperation("param_cache")>]
-        member inline _.ParamCache (state: SelectorFamilyState.IOptionImplementer<'T,_,'P,_,_>, (cacheImplementation: unit -> CacheImplementation<RecoilValue<'T,_>,'P>)) = 
+        member inline _.ParamCache (state: SelectorFamilyState.ICacheImplementer<'T,_,'P,_,_>, (cacheImplementation: unit -> CacheImplementation<RecoilValue<'T,_>,'P>)) = 
             state.SetParamCache(cacheImplementation)
 
         //[<CustomOperation("no_cache")>]
@@ -108,7 +128,7 @@ module SelectorFamilyCE =
         //    state.SetParamCache(fun () -> NoCache() :> CacheImplementation<_,_>)
 
         [<CustomOperation("dangerouslyAllowMutability")>]
-        member inline _.DangerouslyAllowMutability (state: SelectorFamilyState.IOptionImplementer<_,_,_,_,_>) = 
+        member inline _.DangerouslyAllowMutability (state: SelectorFamilyState.MutabilityImplementer<_>) = 
             state.SetMutability()
 
         member inline _.Run (selector: SelectorFamilyState.ReadOnly<'T,JS.Promise<'T>,'P>) =
@@ -165,6 +185,13 @@ module SelectorFamilyCE =
                 selector.Set, 
                 ?cacheImplementation = selector.Cache,
                 ?paramCacheImplementation = selector.ParamCache,
+                ?dangerouslyAllowMutability = selector.DangerouslyAllowMutability
+            )
+
+        member inline _.Run (selector: SelectorFamilyState.WriteOnly<'T,'P>) =
+            Recoil.Family.selectorWriteOnly (
+                selector.Key,
+                selector.Set,
                 ?dangerouslyAllowMutability = selector.DangerouslyAllowMutability
             )
 

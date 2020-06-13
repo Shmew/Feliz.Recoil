@@ -1,13 +1,14 @@
 ﻿namespace Feliz.Recoil
 
 open Browser.WebStorage
+open Fable.Core
 open Fable.Core.JsInterop
 open Feliz
 open System.ComponentModel
 
-[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
 module RecoilRoot =
-    [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never)>]
+    [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module Types =
         type IRootProperty = interface end
 
@@ -18,10 +19,11 @@ module RecoilRoot =
             abstract useLocalStorage: (Storage.Hydrator -> unit) option
             abstract useSessionStorage: (Storage.Hydrator -> unit) option
     
-    [<RequireQualifiedAccess;EditorBrowsable(EditorBrowsableState.Never)>]
+    [<RequireQualifiedAccess;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module Interop =
-        let mkRootAttr (key: string) (value: obj) = unbox<IRootProperty>(key, value)
+        let inline mkRootAttr (key: string) (value: obj) = unbox<IRootProperty>(key, value)
     
+    [<Erase>]
     type root =
         static member inline children (children: ReactElement list) = Interop.mkRootAttr  "children" children
 

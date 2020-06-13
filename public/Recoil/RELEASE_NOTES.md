@@ -1,3 +1,6 @@
+### 0.15.0 - Saturday, June 13th, 2020
+* Revert 0.14 to add WriteOnly RecoilValues.
+
 ### 0.14.0 - Friday, June 12th, 2020
 * Add map and bind to RecoilValue as methods.
 

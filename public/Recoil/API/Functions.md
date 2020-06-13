@@ -13,7 +13,7 @@ Signature:
 (key: string, defaultValue: 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
 (key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
 (key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
 ```
 
 Usage:
@@ -21,7 +21,7 @@ Usage:
 let myText = Recoil.atom("myAtomKey", "some text")
 ```
 
-### Recoil.atomFamily
+### Recoil.Family.atom
 
 Creates a RecoilValue with the default value based on the parameter given.
 
@@ -42,10 +42,10 @@ Signature:
 (key: string, defaultValue: 'P -> Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: 'P -> RecoilValue<'T,_>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
 ```
@@ -54,13 +54,13 @@ See the [atomFamily example] for usage.
 
 ### Recoil.noWait
 
-Converts a `RecoilValue<'T,_>` into a `RecoilValue<Loadable<'T>,ReadOnly>`.
+Converts a `RecoilValue<'T,#ReadOnly>` into a `RecoilValue<Loadable<'T>,ReadOnly>`.
 
 Prevents a selector from being blocked while trying to resolve a RecoilValue.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,'Mode>) -> RecoilValue<Loadable<'T>,ReadOnly>
+(recoilValue: RecoilValue<'T,#ReadOnly>) -> RecoilValue<Loadable<'T>,ReadOnly>
 ```
 
 ### Recoil.selector
@@ -113,7 +113,37 @@ let textStateTransform =
     )
 ```
 
-### Recoil.selectorFamily
+### Recoil.selector
+
+Derives state and returns a RecoilValue via the provided get function.
+
+**Keys mut be unique across the application!**
+
+When a setter is not provided the selector is *ReadOnly*. If you try to 
+use hooks like `Recoil.useState` you will get compiler errors.
+
+Signature:
+
+```fs
+(key: string, set: SelectorMethods -> 'T -> unit, ?dangerouslyAllowMutability: bool) -> RecoilValue<'U,WriteOnly>
+
+```
+
+Usage:
+```fs
+let textState = Recoil.atom("textState", "Hello world!")
+
+let vowels = [ 'a'; 'e'; 'i'; 'o'; 'u' ]
+
+let textStateSetter =
+    Recoil.selectorWriteOnly("textStateSetter", fun setter newValue ->
+        newValue
+        |> String.filter(fun v -> List.contains v vowels)
+        |> setter.set(textState)
+    )
+```
+
+### Recoil.Family.selector
 
 Derives state and returns a RecoilValue via the provided get function.
 
@@ -124,7 +154,7 @@ Signature:
  ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>, 
  ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadOnly>, 'P>, 
  ?dangerouslyAllowMutability: bool)
-    -> 'P -> RecoilValue<'T,'Mode>
+    -> 'P -> RecoilValue<'T,ReadOnly>
 
 (key: string, 
  get: 'P -> SelectorGetter -> 'U, // 'U can be: Async, Promise, or RecoilValue as well. 
@@ -132,10 +162,22 @@ Signature:
  ?cacheImplementation: unit -> CacheImplementation<'T,Loadable<'T>>,
  ?paramCacheImplementation: unit -> CacheImplementation<RecoilValue<'T,ReadWrite>, 'P>,
  ?dangerouslyAllowMutability: bool)
-    -> 'P -> RecoilValue<'T,'Mode>
+    -> 'P -> RecoilValue<'T,ReadWrite>
 ```
 
 See the [selectorFamily example] for usage.
+
+### Recoil.Family.selectorWriteOnly
+
+Creates a write-only selector.
+
+Signature:
+```fs
+(key: string, 
+ set: 'P -> SelectorMethods -> 'T -> unit, 
+ ?dangerouslyAllowMutability: bool)
+    -> 'P -> RecoilValue<'T,WriteOnly>
+```
 
 ### Recoil.waitForAll
 
@@ -146,9 +188,9 @@ available before returning a value.
 
 Signature:
 ```fs
-(recoilValues: RecoilValue<'T,'Mode> []) -> RecoilValue<'T [], 'Mode>
-(recoilValues: RecoilValue<'T,'Mode> list) -> RecoilValue<'T list, 'Mode>
-(recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) RecoilValue<ResizeArray<'T>, 'Mode>
+(recoilValues: RecoilValue<'T,#ReadOnly> []) -> RecoilValue<'T [], #ReadOnly>
+(recoilValues: RecoilValue<'T,#ReadOnly> list) -> RecoilValue<'T list, #ReadOnly>
+(recoilValues: ResizeArray<RecoilValue<'T,#ReadOnly>>) RecoilValue<ResizeArray<'T>, #ReadOnly>
 ```
 
 See the [concurrency example] for usage.
@@ -162,9 +204,9 @@ one to be available before returning results.
 
 Signature:
 ```fs
-(recoilValues: RecoilValue<'T,'Mode> []) -> RecoilValue<Loadable<'T> [], 'Mode>
-(recoilValues: RecoilValue<'T,'Mode> list) -> RecoilValue<Loadable<'T> list, 'Mode>
-(recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) RecoilValue<ResizeArray<Loadable<'T>>, 'Mode>
+(recoilValues: RecoilValue<'T,#ReadOnly> []) -> RecoilValue<Loadable<'T> [], #ReadOnly>
+(recoilValues: RecoilValue<'T,#ReadOnly> list) -> RecoilValue<Loadable<'T> list, #ReadOnly>
+(recoilValues: ResizeArray<RecoilValue<'T,#ReadOnly>>) RecoilValue<ResizeArray<Loadable<'T>>, #ReadOnly>
 ```
 
 See the [concurrency example] for usage.
@@ -182,9 +224,9 @@ no resolved loadables.
 
 Signature:
 ```fs
-(recoilValues: RecoilValue<'T,'Mode> []) -> RecoilValue<Loadable<'T> [], 'Mode>
-(recoilValues: RecoilValue<'T,'Mode> list) -> RecoilValue<Loadable<'T> list, 'Mode>
-(recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) RecoilValue<ResizeArray<Loadable<'T>>, 'Mode>
+(recoilValues: RecoilValue<'T,#ReadOnly> []) -> RecoilValue<Loadable<'T> [], #ReadOnly>
+(recoilValues: RecoilValue<'T,#ReadOnly> list) -> RecoilValue<Loadable<'T> list, #ReadOnly>
+(recoilValues: ResizeArray<RecoilValue<'T,#ReadOnly>>) RecoilValue<ResizeArray<Loadable<'T>>, #ReadOnly>
 ```
 
 See the [concurrency example] for usage.
