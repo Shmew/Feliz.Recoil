@@ -55,8 +55,9 @@ The selector computation expression has six operations:
 * `key` - Sets the key for the selector.
 * `get` - Sets the function to get a value.
 * `set` - Sets the function to set a value.
-* `cache` - Sets the `CacheImplementation<'T,'U>` interface.
-* `no_cache` - Disables caching for the selector.
+* `set_only` - Sets the function for a write only selector.
+* `cache` - Sets the `CacheImplementation<'T,'U>` interface for read only and read write selectors.
+* `no_cache` - Disables caching for the selector for read only and read write selectors.
 * `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
 
 These can be used like so:
@@ -83,8 +84,9 @@ The selectorFamily computation expression has six operations:
 * `key` - Sets the key for the selector.
 * `get` - Sets the function to get a value.
 * `set` - Sets the function to set a value.
-* `cache` - Sets the `CacheImplementation<'T,'U>` interface.
-* `param_cache` - Sets the `CacheImplementation<'T,'U>` interface for parameters.
+* `set_only` - Sets the function for a write only selector.
+* `cache` - Sets the `CacheImplementation<'T,'U>` interface for read only and read write selectors.
+* `param_cache` - Sets the `CacheImplementation<'T,'U>` interface for parameters for read only and read write selectors.
 * `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
 
 These can be used like so:

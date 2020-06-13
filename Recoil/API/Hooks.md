@@ -14,7 +14,7 @@ This will also subscribe the component for any updates in the value.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,_>) -> 'T
+(recoilValue: RecoilValue<'T,#ReadOnly>) -> 'T
 ```
 
 Usage:
@@ -37,7 +37,7 @@ This will also subscribe the component for any updates in the value.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,_>) -> 'T
+(recoilValue: RecoilValue<'T,#ReadOnly>) -> 'T
 ```
 
 Usage:
@@ -222,7 +222,7 @@ not subscribe the compoment to changes to that RecoilValue.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite> -> ('T -> unit)
+(recoilValue: RecoilValue<'T,#WriteOnly> -> ('T -> unit)
 ```
 
 Usage:
@@ -246,7 +246,7 @@ not subscribe the compoment to changes to that RecoilValue.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite> -> (('T -> 'T) -> unit)
+(recoilValue: RecoilValue<'T,#WriteOnly> -> (('T -> 'T) -> unit)
 ```
 
 Usage:
@@ -269,7 +269,7 @@ Returns a function that will reset the value of a RecoilValue to its default.
 
 Signature:
 ```fs
-(recoilValue: RecoilValue<'T,ReadWrite> -> (unit -> unit)
+(recoilValue: RecoilValue<'T,#WriteOnly> -> (unit -> unit)
 ```
 
 Usage: Usage: See the [reset example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Reset).
