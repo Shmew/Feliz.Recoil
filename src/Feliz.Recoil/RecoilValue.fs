@@ -242,7 +242,6 @@ module RecoilValue =
         let sequence (recoilValues: RecoilValue<'T,_> seq) =
             traverse lift recoilValues
 
-
 [<AutoOpen>]
 module RecoilValueBuilder =
     open System
@@ -286,3 +285,12 @@ module RecoilValueBuilderMagic =
         member _.Return (value: 'T) = Bindings.Recoil.constSelector value
 
     let recoil = RecoilValueBuilder()
+
+[<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
+module RecoilValueExtension =
+    type RecoilValue<'T,'ReadPerm> with
+        member inline this.map (mapper: 'T -> 'U) =
+            RecoilValue.map mapper this
+
+        member inline this.bind (binder: 'T -> RecoilValue<'U,_>) =
+            RecoilValue.bind binder this

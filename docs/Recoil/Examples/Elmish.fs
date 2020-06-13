@@ -18,7 +18,7 @@ module Model =
             }
         }
 
-    let count = state |> RecoilValue.map (fun m -> m.Count)
+    let count = state.map (fun m -> m.Count)
 
 type Msg =
     | Increment
