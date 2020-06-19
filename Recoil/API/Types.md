@@ -117,25 +117,60 @@ Usage:
 Recoil.selector(... fun setter -> setter.set(someAtom, Recoil.defaultValue))
 ```
 
-### RootInitializer
+### Snapshot
 
-The RootInitializer type is passed in when performing atom initialization in your
-`Recoil.root` component.
+An immutable snapshot of the global recoil state.
 
 Definition:
 ```fs
-type RootInitializer =
-    /// Sets the initial value of a single atom to the provided value.
-    member set (recoilValue: RecoilValue<'T,#WriteOnly>, currentValue: 'T) : unit
-    
-    /// Sets the initial value for any number of atoms whose keys are the
-    /// keys in the provided map. 
-    ///
-    /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
-    /// called when it is next read, and setting an atom without a configured 
-    /// validator will result in an exception.
-    member setUnvalidatedAtomValues (atomValues: Map<string,'T>) : unit
-    member setUnvalidatedAtomValues (atomValues: (string * 'T) list) : unit
+type Snapshot =
+    /// Returns a Loadable for the given recoil value.
+    member getLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) : Loadable<'T>
+
+    /// Returns a promise which will resolve to the value of the given recoil value.
+    member getPromise (recoilValue: RecoilValue<'T,#ReadOnly>) : JS.Promise<'T>
+
+    /// Returns an async which will resolve to the value of the given recoil value.
+    member getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) : Async<'T>
+
+    /// Creates a new snapshot by calling the provided mapper function.
+    member map (mapper: MutableSnapshot -> unit) : Snapshot
+    member map (mapper: MutableSnapshot -> JS.Promise<unit>) : Snapshot
+    member map (mapper: MutableSnapshot -> Async<unit>) = : Snapshot
+```
+
+### MutableSnapshot
+
+A Snapshot that can be modified.
+
+These modify the snapshot, **not the global state**.
+
+Definition:
+```fs
+type MutableSnapshot =
+    inherit Snapshot
+
+    /// Sets the value of a RecoilValue to the default state.
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit
+
+    /// Sets the value of a RecoilValue back to the default value.
+    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
+```
+
+### SnapshotObservation
+
+A simple type that holds the current snapshot as well as the previous one.
+
+Definition:
+```fs
+type SnapshotObservation =
+    /// The current snapshot.
+    member snapshot : Snapshot
+
+    /// The previous snapshot.
+    member previousSnapshot : Snapshot
 ```
 
 ### CallbackMethods
@@ -145,14 +180,11 @@ The type passed in when using the `Recoil.useCallback*` hooks.
 Definition:
 ```fs
 type CallbackMethods =
-    /// Gets the async operation of a RecoilValue.
-    member getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) : Async<'T>
+    /// The current snapshot.
+    member snapshot : Snapshot
 
-    /// Gets the Loadable of a RecoilValue.
-    member getLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) : Loadable<'T>
-
-    /// Gets the promise of a RecoilValue.
-    member getPromise (recoilValue: RecoilValue<'T,#ReadOnly>) : JS.Promise<'T>
+    /// Goes to the given snapshot.
+    member gotoSnapshot (snapshot: Snapshot) : unit
 
     /// Sets a RecoilValue to the default value.
     member reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit

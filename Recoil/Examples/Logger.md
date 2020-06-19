@@ -44,7 +44,10 @@ let inner = React.functionComponent(fun () ->
 
 let render = React.functionComponent(fun () ->
     Recoil.root [
-        Recoil.logger()
-        inner()
+        root.log true
+
+        root.children [
+            inner()
+        ]
     ])
 ```

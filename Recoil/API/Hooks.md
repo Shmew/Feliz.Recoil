@@ -280,10 +280,8 @@ Creates a callback function that allows for fetching values of RecoilValue(s).
 
 Signature:
 ```fs
+(f: CallbackMethods -> 'U, ?deps: obj []) -> (unit -> 'U)
 (f: CallbackMethods -> 'T -> 'U, ?deps: obj []) -> ('T -> 'U)
-(f: CallbackMethods -> 'T -> 'U -> 'V, ?deps: obj []) -> ('T -> 'U -> 'V)
-(f: CallbackMethods -> 'T -> 'U -> 'V -> 'W, ?deps: obj []) -> ('T -> 'U -> 'V -> 'W)
-...
 ```
 
 Usage: See the [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback).
@@ -297,10 +295,8 @@ This should *not* be used when the callback determines the result of the render.
 
 Signature:
 ```fs
-(f: (CallbackMethods -> 'T -> 'U) -> ('T -> 'U)
-(f: (CallbackMethods -> 'T -> 'U -> 'V) -> ('T -> 'U -> 'V)
-(f: (CallbackMethods -> 'T -> 'U -> 'V -> 'W) -> ('T -> 'U -> 'V -> 'W)
-...
+(f: CallbackMethods -> 'U) -> (unit -> 'U)
+(f: CallbackMethods -> 'T -> 'U) -> ('T -> 'U)
 ```
 
 Usage: Same usage as this [callback example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Callback)
@@ -328,29 +324,140 @@ Signature:
 
 See the [elmish example](https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Elmish) for how to use.
 
-### Recoil.useSetUnvalidatedAtomValues
+### Recoil.useTimeTravel
 
-**This API is unstable.**
+Returns a record of time travel actions allowing you to shift state forwards
+and backwards.
 
-Sets the initial value for any number of atoms whose keys are the
-keys in the provided key-value list. 
-
-As with useSetUnvalidatedAtomValues, the validator for each atom will be 
-called when it is next read, and setting an atom without a configured 
-validator will result in an exception.
-
-TransactionMetadata should should be a record or anonymous record mapping
-atom/selector keys to the data you want to set alongside them.
+This will shift the entire application state within the nearest recoil root component.
 
 Signature:
 ```fs
-(values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) -> unit
-(values: (string * 'Value) list, ?transactionMetadata: 'Metadata) -> unit
+/// Functions to time travel the recoil state.
+type Actions =
+    /// Travel the recoil state backwards i steps.
+    backward: int -> unit
+    
+    /// Travel the recoil state backwards until the condition is met
+    /// or you reach the beginning of the history buffer 
+    /// (or initial application state).
+    backwardUntil: (Snapshot -> Async<bool>) -> unit
+    
+    /// Travel the recoil state forwards i steps.
+    forward: int -> unit
+    
+    /// Travel the recoil state forwards until the condition is met
+    /// or you reach the present.
+    forwardUntil: (Snapshot -> Async<bool>) -> unit
+
+unit -> TimeTravel.Actions
+```
+
+Usage:
+```fs
+let textState = Recoil.atom("Basic/textState", "Hello world!")
+
+let inner = React.functionComponent(fun () ->
+    let text,setText = Recoil.useState(textState)
+
+    Html.div [
+        Html.div [
+            prop.text (sprintf "Atom current value: %s" text)
+        ]
+        Html.input [
+            prop.classes [ Bulma.Input ]
+            prop.style [ style.maxWidth (length.em 30) ]
+            prop.type'.text
+            prop.onTextChange setText
+            prop.value text
+        ]
+    ])
+
+let buttonTest = React.functionComponent(fun () ->
+    let travel = Recoil.useTimeTravel()
+
+    Html.div [
+        Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
+            prop.text "Back until TESTBACK"
+            prop.onClick <| fun _ -> 
+                travel.backwardUntil (fun snapshot -> 
+                    async { 
+                        let! text = snapshot.getAsync(textState)
+                        return text = "TESTBACK" 
+                    }
+                )
+        ]
+        Html.button [
+            prop.classes [ 
+                Bulma.Button
+                Bulma.HasBackgroundPrimary
+                Bulma.HasTextWhite 
+            ]
+            prop.text "Forward until TESTFORWARD"
+            prop.onClick <| fun _ -> 
+                travel.forwardUntil (fun snapshot -> 
+                    async {
+                        let! text = snapshot.getAsync(textState)
+                        JS.console.log(text)
+                        return text = "TESTFORWARD"
+                    }
+                )
+        ]
+    ])
+
+let render = React.functionComponent("Basic", fun () ->
+    Recoil.root [
+        root.timeTravel true
+
+        root.children [
+            inner()
+            buttonTest()
+        ]
+    ])
+```
+
+### Recoil.useGotoSnapshot
+
+Returns a callback which takes a Snapshot as a parameter and will update the 
+current <RecoilRoot> state to match this snapshot.
+
+Signature:
+```fs
+unit -> (Snapshot -> unit)
+```
+
+### Recoil.useSnapshot
+
+Synchronously returns a Snapshot object during rendering and subscribes the 
+calling component for all Recoil state changes.
+
+Signature:
+```fs
+unit -> Snapshot
+```
+
+### Recoil.useTransactionObserver
+
+**This API is unstable.**
+
+Subscribes a callback to be executed every time there is a change to Recoil 
+atom state. 
+
+Multiple updates may be batched together in a single transaction. 
+
+Signature:
+```fs
+(callback: SnapshotObservation -> unit) -> unit
 ```
 
 ### Recoil.useTransactionObservation
 
-**This API is unstable.**
+**This API is deprecated, and will be removed in a future update.**
 
 Calls the given callback after any atoms have been modified and the consequent
 component re-renders have been committed. This is intended for persisting
@@ -387,9 +494,18 @@ Signature:
 
 **This API is unstable.**
 
-Subscribes to the store.
+Sets the initial value for any number of atoms whose keys are the
+keys in the provided key-value list. 
+
+As with useSetUnvalidatedAtomValues, the validator for each atom will be 
+called when it is next read, and setting an atom without a configured 
+validator will result in an exception.
+
+TransactionMetadata should should be a record or anonymous record mapping
+atom/selector keys to the data you want to set alongside them.
 
 Signature:
 ```fs
-(callback: Store<'T> * TreeState<'T> -> 'U) -> 'U
+(values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) -> unit
+(values: (string * 'Value) list, ?transactionMetadata: 'Metadata) -> unit
 ```
