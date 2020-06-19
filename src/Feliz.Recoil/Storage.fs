@@ -10,7 +10,7 @@ module Storage =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let [<Literal>] RootKey = "__recoil__/"
 
-    type Hydrator [<EditorBrowsable(EditorBrowsableState.Never)>] (setter: RootInitializer, storage: Browser.Types.Storage) =
+    type Hydrator [<EditorBrowsable(EditorBrowsableState.Never)>] (setter: MutableSnapshot, storage: Browser.Types.Storage) =
         [<EditorBrowsable(EditorBrowsableState.Never)>]
         member _.setter = setter
 

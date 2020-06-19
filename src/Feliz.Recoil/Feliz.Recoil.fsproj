@@ -12,6 +12,7 @@
     <Compile Include="Recoil.fs" />
     <Compile Include="Logger.fs" />
     <Compile Include="Storage.fs" />
+    <Compile Include="TimeTravel.fs" />
     <Compile Include="RecoilRoot.fs" />
     <Compile Include="ComputationExpressions\AtomFamily.fs" />
     <Compile Include="ComputationExpressions\Atom.fs" />
@@ -27,7 +28,7 @@
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="recoil" Version="gte 0.0.8 lt 1" ResolutionStrategy="max" />
+      <NpmPackage Name="recoil" Version="gte 0.0.10 lt 1" ResolutionStrategy="max" />
     </NpmDependencies>
   </PropertyGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

@@ -75,7 +75,7 @@ let multComp = React.functionComponent(fun () ->
         multResultComp {| multiplier = mult |}
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("SelectorFamily", fun () ->
     Recoil.root [
         numberComp()
         multComp()

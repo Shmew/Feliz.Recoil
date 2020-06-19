@@ -51,8 +51,8 @@ let combine = React.functionComponent(fun () ->
     let setSum = 
         Recoil.useCallback(fun caller ->
             async {
-                let! one = caller.getAsync(firstCount)
-                let! two = caller.getAsync(secondCount)
+                let! one = caller.snapshot.getAsync(firstCount)
+                let! two = caller.snapshot.getAsync(secondCount)
 
                 do! Async.Sleep 500
 
@@ -78,7 +78,7 @@ let combine = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Callback", fun () ->
     Recoil.root [
         countOne()
         countTwo()

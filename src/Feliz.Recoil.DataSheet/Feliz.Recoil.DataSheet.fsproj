@@ -8,6 +8,7 @@
     <Compile Include="Css.fs" />
     <Compile Include="FormulaParser.fs" />
     <Compile Include="Recoil.fs" />
+    <Compile Include="EventListeners.fs" />
     <Compile Include="DataSheet.fs" />
     <None Include="paket.references" />
   </ItemGroup>

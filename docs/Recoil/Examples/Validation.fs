@@ -17,6 +17,7 @@ let age =
     atom {
         key "Validation/age"
         def ValidationState<int,unit>.Init
+        log
     }
 
 let firstName =
@@ -194,7 +195,7 @@ let detailPanel = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Validation", fun () ->
     Recoil.root [
         Html.div [
             prop.classes [ Bulma.Columns ]

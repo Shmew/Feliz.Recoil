@@ -14,7 +14,7 @@
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="recoil" Version="gte 0.0.8 lt 1" ResolutionStrategy="max" />
+      <NpmPackage Name="recoil" Version="gte 0.0.10 lt 1" ResolutionStrategy="max" />
     </NpmDependencies>
   </PropertyGroup>
 

@@ -86,7 +86,7 @@ let inner = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Loadable", fun () ->
     Recoil.root [
         inner()
     ])

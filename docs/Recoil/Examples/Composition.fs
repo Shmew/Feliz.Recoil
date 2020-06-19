@@ -67,7 +67,7 @@ let otherTextStateComp = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Composition", fun () ->
     Recoil.root [
         label {| name = "textState Atom:" |}
         textStateComp()

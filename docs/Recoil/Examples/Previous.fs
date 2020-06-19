@@ -37,7 +37,7 @@ let input = React.functionComponent(fun () ->
                 s
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Previous", fun () ->
     Recoil.root [
         Html.div [
             views()

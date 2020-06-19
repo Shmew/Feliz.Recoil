@@ -40,7 +40,7 @@ let otherInner = React.functionComponent(fun () ->
     ]
 )
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("MixAndMatch", fun () ->
     Recoil.root [
         inner()
         otherInner()

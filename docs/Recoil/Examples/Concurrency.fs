@@ -200,7 +200,7 @@ let pokemonDisplay = React.functionComponent(fun () ->
         )
     ))
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Concurrency", fun () ->
     Recoil.root [
         Html.div [
             prop.style [

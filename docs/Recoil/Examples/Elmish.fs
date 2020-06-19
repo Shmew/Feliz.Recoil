@@ -84,7 +84,7 @@ let actionsComp = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Elmish", fun () ->
     Recoil.root [
         Html.div [
             countComp()

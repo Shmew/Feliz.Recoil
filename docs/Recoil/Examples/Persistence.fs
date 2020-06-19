@@ -44,7 +44,7 @@ let storageComp = React.functionComponent(fun (input: {| recoilValue: RecoilValu
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Persistence", fun () ->
     Recoil.root [
         root.localStorage (fun hydrater -> hydrater.setAtom localStorageText)
         root.sessionStorage (fun hydrater -> hydrater.setAtom sessionStorageText)

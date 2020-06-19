@@ -39,7 +39,7 @@ let inner = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Reset", fun () ->
     Recoil.root [
         inner()
     ])

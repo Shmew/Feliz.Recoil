@@ -262,3 +262,15 @@ to use the usual suspects:
 [atomFamily example]:https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/AtomFamily
 [concurrency example]:https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/Concurrency
 [selectorFamily example]:https://shmew.github.io/Feliz.Recoil/#/Recoil/Examples/SelectorFamily
+
+### Snapshot Module
+
+Exposes a few helper functions for composing snapshots
+
+```fs
+map (mapper: MutableSnapshot -> unit) (snapshot: Snapshot) : Snapshot
+
+mapAsync (mapper: MutableSnapshot -> Async<unit>) (snapshot: Snapshot) : Snapshot
+        
+mapPromise (mapper: MutableSnapshot -> JS.Promise<unit>) (snapshot: Snapshot) : Snapshot
+```

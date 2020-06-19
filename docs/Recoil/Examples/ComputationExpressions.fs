@@ -65,7 +65,7 @@ let additionSelectorDisplay = React.functionComponent(fun () ->
         prop.text (sprintf "textStateAddition selector current value: %s" text)
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("ComputationExpressions", fun () ->
     Recoil.root [
         transformer()
         atomDisplay()

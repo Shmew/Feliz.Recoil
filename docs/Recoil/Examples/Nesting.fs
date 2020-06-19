@@ -156,7 +156,7 @@ let detailPanel = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Nesting", fun () ->
     Recoil.root [
         Html.div [
             prop.classes [ Bulma.Columns ]

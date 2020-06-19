@@ -17,18 +17,6 @@ type Cell =
       value: RecoilValue<int option,ReadWrite>
       expr: RecoilValue<string,ReadWrite> }
 
-[<Erase>]
-module Keys =
-    let [<Literal>] Backspace = 8
-    let [<Literal>] Tab = 9
-    let [<Literal>] Enter = 13
-    let [<Literal>] Escape = 27
-    let [<Literal>] Left = 37
-    let [<Literal>] Up = 38
-    let [<Literal>] Right = 39
-    let [<Literal>] Down = 40
-    let [<Literal>] Delete = 46
-
 module Atoms =
     module internal Cell =
         let rowFamily =

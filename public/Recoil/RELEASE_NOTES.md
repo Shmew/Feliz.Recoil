@@ -1,3 +1,7 @@
+### 0.16.0 - Friday, June 19th, 2020
+* Update for 0.0.10 recoil release
+* Added the useTimeTravel hook
+
 ### 0.15.0 - Saturday, June 13th, 2020
 * Revert 0.14 to add WriteOnly RecoilValues.
 

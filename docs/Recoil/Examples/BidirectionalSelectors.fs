@@ -45,7 +45,7 @@ let otherInner = React.functionComponent(fun () ->
     ]
 )
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("BidirectionalSelectors", fun () ->
     Recoil.root [
         inner()
         otherInner()

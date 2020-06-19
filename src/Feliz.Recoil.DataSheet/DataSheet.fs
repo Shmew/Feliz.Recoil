@@ -1,5 +1,6 @@
 ﻿namespace Feliz.Recoil.DataSheet
 
+open EventListeners
 open Fable.Core
 open Feliz
 open Feliz.Recoil
@@ -68,14 +69,11 @@ module DataSheet =
                     style.padding 0
                     style.paddingBottom 0
             ]
-            prop.onKeyDown <| fun ev ->
-                if int ev.keyCode = Keys.Enter then
-                    setCellState CellState.Inert
             prop.onClick <| fun _ ->
-                setSelected true
-                editting None
-            prop.onDoubleClick <| fun ev ->
-                ev.preventDefault()
+                if cellState = CellState.Inert then
+                    setSelected true
+                    editting None
+            prop.onDoubleClick <| fun _ ->
                 if cellState = CellState.Inert then
                     setCellState CellState.Editing
             prop.children [
@@ -85,18 +83,28 @@ module DataSheet =
             ]
         ])
 
-    let lazyCell = React.memo(fun (input: {| col: int; row: int |}) ->
+    let lazyCell = React.memo(fun (input: {| col: int; row: int; activator: IRefValue<Map<int * int, (unit -> unit)>> |}) ->
         let activated,setActivated = React.useState false
         let setSelected = 
             Recoil.useCallbackRef(fun setter -> 
                 setter.set(Selectors.Cell.sel(input.row, input.col), true)
                 setter.set(Selectors.editTracker, None))
 
-        if activated then cellComp input
+        let setActivated =
+            React.useCallbackRef(fun () -> 
+                setActivated true
+                setSelected())
+
+        React.useEffect(fun () -> 
+            input.activator.current <-
+                input.activator.current.Add((input.col, input.row), setActivated)
+        )
+
+        if activated then cellComp {| col = input.col; row = input.row |}
         else 
             Html.tableCell [
                 prop.onClick <| fun _ ->
-                    setActivated true
+                    setActivated()
                     setSelected()
                 prop.children [
                     Html.span [
@@ -109,7 +117,7 @@ module DataSheet =
             ]
         )
 
-    let rowComp = React.memo(fun (input: {| index: int; cols: int |}) ->
+    let rowComp = React.memo(fun (input: {| index: int; cols: int; activator: IRefValue<Map<int * int, (unit -> unit)>> |}) ->
         Html.tableRow [
             prop.children [
                 Html.tableCell [
@@ -117,7 +125,7 @@ module DataSheet =
                 ]
                 yield!
                     [ 0 .. (input.cols - 1) ]
-                    |> List.map (fun col -> lazyCell {| col = col; row = input.index |})
+                    |> List.map (fun col -> lazyCell {| col = col; row = input.index; activator = input.activator |})
             ]
         ])
 
@@ -162,26 +170,133 @@ module DataSheet =
     let dataSheet = React.functionComponent(fun () ->
         let rows = Recoil.useValue(Atoms.rowCount)
         let cols = Recoil.useValue(Atoms.colCount)
+        let cellActivator = React.useRef(Map.empty<int * int, (unit -> unit)>)
+        let timeTravel = Recoil.useTimeTravel()
+
+        let getSelectedIfNotEditing =
+            Recoil.useCallbackRef(fun setter ->
+                promise {
+                    let! selected = setter.snapshot.getPromise(Selectors.selectedTracker)
+                    let! editing = setter.snapshot.getPromise(Selectors.editTracker)
+
+                    return
+                        match selected, editing with
+                        | Some(sRow,sCol), Some(eRow,eCol) ->
+                            if sRow = eRow && sCol = eCol then None
+                            else Some(sRow,sCol)
+                        | selected, _ -> selected
+                }
+            )
+
+        let moveDirection =
+            Recoil.useCallbackRef(fun (setter: CallbackMethods) (bypassEditCheck: bool) (dir: KeyDirection) ->
+                promise {
+                    let! selected = 
+                        if bypassEditCheck then
+                            setter.snapshot.getPromise(Selectors.selectedTracker)
+                        else getSelectedIfNotEditing()
+
+                    selected
+                    |> Option.iter(fun (row,col) ->
+                        match dir with
+                        | KeyDirection.Down -> 
+                            let row = (row + 1) % 10
+                            cellActivator.current.TryFind(col, row) 
+                            |> Option.iter (fun f -> f())
+                        | KeyDirection.Left -> 
+                            let col = 
+                                match (col - 1) with
+                                | i when i < 0 -> (cols + i) % 10
+                                | i -> i % 10
+                            cellActivator.current.TryFind(col, row) 
+                            |> Option.iter (fun f -> f())
+                        | KeyDirection.Right -> 
+                            let col = (col + 1) % 10
+                            cellActivator.current.TryFind(col, row) 
+                            |> Option.iter (fun f -> f())
+                        | KeyDirection.Up -> 
+                            let row = 
+                                match (row - 1) with
+                                | i when i < 0 -> (rows + i) % 10
+                                | i -> i % 10
+                            cellActivator.current.TryFind(col, row) 
+                            |> Option.iter (fun f -> f())
+                    )
+                }
+                |> Promise.start
+            )
+
+        let enterOrLeaveEditor =
+            Recoil.useCallbackRef(fun setter ->
+                promise {
+                    let! selected = setter.snapshot.getPromise(Selectors.selectedTracker)
+
+                    selected
+                    |> Option.iter(fun (row, col) ->
+                        promise {
+                            let! cellState = setter.snapshot.getPromise(Selectors.Cell.state(row, col))
+
+                            if cellState = CellState.Editing then
+                                moveDirection true KeyDirection.Down
+                            else setter.set(Selectors.Cell.state(row, col), CellState.Editing)
+                        }
+                        |> Promise.start)
+                }
+            )
+
+        let deleteCell =
+            Recoil.useCallbackRef(fun setter ->
+                promise {
+                    let! selected = getSelectedIfNotEditing()
+
+                    selected
+                    |> Option.iter (fun (row, col) -> setter.set(Selectors.Cell.expr(row, col), ""))
+                }
+            )
+
+        let keyboardHandler =
+            React.useCallbackRef(fun (ev: Browser.Types.KeyboardEvent) ->
+                promise {
+                    EventListeners.KeyDirection.fromEv ev
+                    |> Option.iter (fun (bypass, dir) -> moveDirection bypass dir)
+
+                    match ev.key with
+                    | EventListeners.Keys.Enter ->
+                        do! enterOrLeaveEditor()
+                    | EventListeners.Keys.Backspace when ev.key = EventListeners.Keys.Delete ->
+                        do! deleteCell()
+                    | EventListeners.Keys.z when ev.ctrlKey ->
+                        timeTravel.backward 1
+                    | EventListeners.Keys.y when ev.ctrlKey ->
+                        timeTravel.forward 1
+                    | _ -> ()
+                }
+                |> Promise.start
+            )
+
+        React.useKeyDownListener(keyboardHandler)
 
         Html.div [
-            tableEditor()
-            Html.table [
-                prop.classes [
-                    Bulma.Table 
-                    Bulma.IsFullwidth
-                    Bulma.IsBordered
-                ]
-                prop.style [
-                    style.tableLayout.fixed'
-                ]
-                prop.children [
-                    Html.thead [
-                        dataSheetHeaders {| cols = cols |}
+            prop.children [
+                tableEditor()
+                Html.table [
+                    prop.classes [
+                        Bulma.Table 
+                        Bulma.IsFullwidth
+                        Bulma.IsBordered
                     ]
-                    Html.tableBody (
-                        [ 0 .. (rows - 1) ]
-                        |> List.map (fun row -> rowComp {| index = row; cols = cols |})
-                    )
+                    prop.style [
+                        style.tableLayout.fixed'
+                    ]
+                    prop.children [
+                        Html.thead [
+                            dataSheetHeaders {| cols = cols |}
+                        ]
+                        Html.tableBody (
+                            [ 0 .. (rows - 1) ]
+                            |> List.map (fun row -> rowComp {| index = row; cols = cols; activator = cellActivator |})
+                        )
+                    ]
                 ]
             ]
         ])

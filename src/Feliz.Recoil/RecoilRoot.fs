@@ -11,17 +11,23 @@ module RecoilRoot =
     [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module Types =
         type IRootProperty = interface end
+        type ITimeTravelProperty = interface end
+
+        type TimeTravelProps =
+            abstract maxHistory: int option
 
         type RootProps =
             abstract children: ReactElement list
             abstract logging: bool option
-            abstract initializer: (RootInitializer -> unit) option
+            abstract initializer: (MutableSnapshot -> unit) option
+            abstract timeTravel: TimeTravelProps option
             abstract useLocalStorage: (Storage.Hydrator -> unit) option
             abstract useSessionStorage: (Storage.Hydrator -> unit) option
     
-    [<RequireQualifiedAccess;EditorBrowsable(EditorBrowsableState.Never);Erase>]
+    [<Erase;RequireQualifiedAccess;EditorBrowsable(EditorBrowsableState.Never)>]
     module Interop =
         let inline mkRootAttr (key: string) (value: obj) = unbox<IRootProperty>(key, value)
+        let inline mkTimeTravelAttr (key: string) (value: obj) = unbox<ITimeTravelProperty>(key, value)
     
     [<Erase>]
     type root =
@@ -29,12 +35,14 @@ module RecoilRoot =
 
         /// Enables logging for any atoms with a set persistence type.
         ///
+        /// Similar to React.StrictMode, this will do nothing in production mode.
+        ///
         /// This will be adjusted later, see: https://github.com/facebookexperimental/Recoil/issues/277
-        static member inline log = Interop.mkRootAttr "logging" true
+        static member inline log (value: bool) = Interop.mkRootAttr "logging" value
 
         /// A function that will be called when the root is first rendered, 
         /// which can set initial values for atoms.
-        static member inline init (initializer: RootInitializer -> unit) = Interop.mkRootAttr "initializer" initializer
+        static member inline init (initializer: MutableSnapshot -> unit) = Interop.mkRootAttr "initializer" initializer
 
         /// Allows you to hydrate atoms from the your local storage, those atoms 
         /// will then be observed and the local storage will be written to on any 
@@ -45,6 +53,16 @@ module RecoilRoot =
         /// will then be observed and the session storage will be written to on any 
         /// state changes.
         static member inline sessionStorage (initializer: Storage.Hydrator -> unit) = Interop.mkRootAttr "useSessionStorage" initializer
+
+        /// Enable time traveling via the useTimeTravel hook in children.
+        static member inline timeTravel (value: bool) = Interop.mkRootAttr "timeTravel" (if value then Some (createObj !![]) else None)
+        /// Enable time traveling via the useTimeTravel hook in children.
+        static member inline timeTravel (properties: ITimeTravelProperty list) = Interop.mkRootAttr "timeTravel" (createObj !!properties)
+
+    [<Erase>]
+    type timeTravel =
+        /// Sets the max history buffer.
+        static member inline maxHistory (value: int) = Interop.mkTimeTravelAttr "maxHistory" value
 
     type Recoil with
         /// Provides the context in which atoms have values. 
@@ -77,10 +95,17 @@ module RecoilRoot =
                     if props.useSessionStorage.IsSome then
                         Storage.Hydrator(o, sessionStorage) |> props.useSessionStorage.Value
                 )
-                "children" ==> 
+                "children" ==> (
                     match props.logging, props.useLocalStorage.IsSome with
-                    | Some true, true -> Interop.reactApi.Children.toArray([ Storage.observer(); Recoil.logger() ] @ props.children)
-                    | Some true, false -> Interop.reactApi.Children.toArray(Recoil.logger()::props.children)
-                    | None, true -> Interop.reactApi.Children.toArray(Storage.observer()::props.children)
-                    | _ -> Interop.reactApi.Children.toArray(props.children)
+                    | Some true, true -> [ Storage.observer(); Logger.logger() ] @ props.children
+                    | Some true, false -> Logger.logger()::props.children
+                    | None, true -> Storage.observer()::props.children
+                    | _ -> props.children
+                    |> fun children ->
+                        match props.timeTravel with
+                        | Some props ->
+                            TimeTravel.rootWrapper {| otherChildren = children; maxHistory = props.maxHistory |}
+                            |> Interop.reactApi.Children.toArray
+                        | _ -> Interop.reactApi.Children.toArray(children)
+                )
             ])

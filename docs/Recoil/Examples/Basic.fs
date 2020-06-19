@@ -23,7 +23,7 @@ let inner = React.functionComponent(fun () ->
         ]
     ])
 
-let render = React.functionComponent(fun () ->
+let render = React.functionComponent("Basic", fun () ->
     Recoil.root [
         inner()
     ])
