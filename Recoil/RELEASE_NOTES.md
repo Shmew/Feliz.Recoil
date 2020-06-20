@@ -1,3 +1,6 @@
+### 0.16.2 - Friday, June 19th, 2020
+* Fix issue with disposal of pending time travel
+
 ### 0.16.1 - Friday, June 19th, 2020
 * Ensure pending time traveling disposes on recoil root unmount
 
