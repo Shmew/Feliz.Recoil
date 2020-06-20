@@ -141,7 +141,7 @@ module TimeTravel =
                                 |> Promise.map Some
                             else Promise.lift None
 
-                        if cts.current.IsCancellationRequested then
+                        if not cts.current.IsCancellationRequested then
                             match pastSS, presentSS, futureSS with
                             | Some pastSS, Some presentSS, Some futureSS ->
                                 if pastSS <> ss && futureSS <> ss && presentSS <> ss then
