@@ -2,6 +2,7 @@
 
 open Fable.Core
 open Feliz
+open System.Threading
 open System.ComponentModel
 
 [<RequireQualifiedAccess>]
@@ -45,7 +46,7 @@ module TimeTravel =
         | x::xs, _ -> xs, currentValue::future, x
         | _ -> past, future, currentValue
 
-    let rec internal travelForwards (count: int) (past: 'a list) (future: 'a list) (currentValue: 'a) =
+    let rec internal travelForwards (count: int) (past: 'a list) (future: 'a list) (currentValue: 'a)  =
         if count = 0 || future.IsEmpty then past, future, currentValue
         else
             travelForward past future currentValue
@@ -110,6 +111,8 @@ module TimeTravel =
         let present = React.useRef(None : Snapshot option)
         let traveling = React.useRef(false)
 
+        let cts = React.useRef(new CancellationTokenSource())
+
         let rollPast =
             React.useCallbackRef(fun (o: SnapshotObservation) ->
             match input.maxHistory with
@@ -119,58 +122,60 @@ module TimeTravel =
 
         let snapshotEquals =
             Recoil.useCallbackRef(fun setter (o: SnapshotObservation) ->
-                promise {
-                    let! ss = setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(o.snapshot)))
-                    let! pastSS = 
-                        if not past.current.IsEmpty then
-                            setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(past.current.Head)))
-                            |> Promise.map Some
-                        else Promise.lift None
-                    let! presentSS = 
-                        if present.current.IsSome then
-                            setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(present.current.Value)))
-                            |> Promise.map Some
-                        else Promise.lift None
-                    let! futureSS = 
-                        if not future.current.IsEmpty then
-                            setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(future.current.Head)))
-                            |> Promise.map Some
-                        else Promise.lift None
+                if not cts.current.IsCancellationRequested then
+                    promise {
+                        let! ss = setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(o.snapshot)))
+                        let! pastSS = 
+                            if not past.current.IsEmpty then
+                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(past.current.Head)))
+                                |> Promise.map Some
+                            else Promise.lift None
+                        let! presentSS = 
+                            if present.current.IsSome then
+                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(present.current.Value)))
+                                |> Promise.map Some
+                            else Promise.lift None
+                        let! futureSS = 
+                            if not future.current.IsEmpty then
+                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(future.current.Head)))
+                                |> Promise.map Some
+                            else Promise.lift None
 
-                    match pastSS, presentSS, futureSS with
-                    | Some pastSS, Some presentSS, Some futureSS ->
-                        if pastSS <> ss && futureSS <> ss && presentSS <> ss then
-                            #if DEBUG
-                            JS.console.info("TIME TRAVEL: Evaluated as divergence.")
-                            #endif
+                        if cts.current.IsCancellationRequested then
+                            match pastSS, presentSS, futureSS with
+                            | Some pastSS, Some presentSS, Some futureSS ->
+                                if pastSS <> ss && futureSS <> ss && presentSS <> ss then
+                                    #if DEBUG
+                                    JS.console.info("TIME TRAVEL: Evaluated as divergence.")
+                                    #endif
 
-                            present.current <- Some o.snapshot
-                            future.current <- []
-                            rollPast o
-                            traveling.current <- false
-                    | None, Some presentSS, Some futureSS ->
-                        if futureSS <> ss && presentSS <> ss then
-                            #if DEBUG
-                            JS.console.info("TIME TRAVEL: Evaluated as divergence.")
-                            #endif
+                                    present.current <- Some o.snapshot
+                                    future.current <- []
+                                    rollPast o
+                                    traveling.current <- false
+                            | None, Some presentSS, Some futureSS ->
+                                if futureSS <> ss && presentSS <> ss then
+                                    #if DEBUG
+                                    JS.console.info("TIME TRAVEL: Evaluated as divergence.")
+                                    #endif
 
-                            present.current <- Some o.snapshot
-                            future.current <- []
-                            rollPast o
-                            traveling.current <- false
-                    | _, Some presentSS, None ->
-                        if presentSS <> ss then
-                            #if DEBUG
-                            JS.console.info("TIME TRAVEL: Evaluated as divergence.")
-                            #endif
+                                    present.current <- Some o.snapshot
+                                    future.current <- []
+                                    rollPast o
+                                    traveling.current <- false
+                            | _, Some presentSS, None ->
+                                if presentSS <> ss then
+                                    #if DEBUG
+                                    JS.console.info("TIME TRAVEL: Evaluated as divergence.")
+                                    #endif
 
-                            present.current <- Some o.snapshot
-                            rollPast o
-                            future.current <- []
-                            traveling.current <- false
-                    | _ -> ()
-                }
-                |> Promise.start
+                                    present.current <- Some o.snapshot
+                                    rollPast o
+                                    future.current <- []
+                                    traveling.current <- false
+                            | _ -> ()
+                    }
+                    |> Promise.start
             )
 
         Recoil.useTransactionObserver <| fun o ->
@@ -211,7 +216,7 @@ module TimeTravel =
 
                         setter.gotoSnapshot(psnt)
                     }
-                    |> Async.StartImmediate
+                    |> fun res -> Async.StartImmediate(res, cts.current.Token)
                 )
             )
 
@@ -244,7 +249,7 @@ module TimeTravel =
 
                         setter.gotoSnapshot(psnt)
                     }
-                    |> Async.StartImmediate
+                    |> fun res -> Async.StartImmediate(res, cts.current.Token)
                 )
             )
         
@@ -254,7 +259,11 @@ module TimeTravel =
                 backwardUntil = backwardUntil
                 forward = forward
                 forwardUntil = forwardUntil 
-            })
+            }
+            
+            React.createDisposable(fun () -> 
+                cts.current.Cancel()
+                cts.current.Dispose()))
 
         Html.none)
 

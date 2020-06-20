@@ -1,3 +1,6 @@
+### 0.16.1 - Friday, June 19th, 2020
+* Ensure pending time traveling disposes on recoil root unmount
+
 ### 0.16.0 - Friday, June 19th, 2020
 * Update for 0.0.10 recoil release
 * Added the useTimeTravel hook
