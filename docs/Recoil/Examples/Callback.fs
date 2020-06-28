@@ -32,7 +32,7 @@ let countTwo = React.functionComponent(fun () ->
 
     Html.div [
         Html.div [
-            prop.text (sprintf "First count current value: %i" secondCount)
+            prop.text (sprintf "Second count current value: %i" secondCount)
         ]
         Html.button [
             prop.classes [ 
