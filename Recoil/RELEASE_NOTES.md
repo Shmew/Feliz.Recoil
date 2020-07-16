@@ -1,3 +1,6 @@
+### 0.17.0 - Thursday, July 16th, 2020
+* Unify atoms and selectors CE dangerouslyAllowMutability operation
+
 ### 0.16.3 - Thursday, July 16th, 2020
 * Resolve MSBuild compiler error in the Recoil.root component
 
