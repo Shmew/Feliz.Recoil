@@ -72,7 +72,11 @@ module RecoilRoot =
         /// Multiple roots may co-exist; atoms will have distinct values 
         /// within each root. If they are nested, the innermost root will 
         /// completely mask any outer roots.
+        #if FABLE_COMPILER
         static member inline root (children: ReactElement list) =
+        #else
+        static member root (children: ReactElement list) =
+        #endif
             Bindings.Recoil.RecoilRoot(createObj [
                 "children" ==> Interop.reactApi.Children.toArray(children)
             ])
@@ -83,7 +87,11 @@ module RecoilRoot =
         /// Multiple roots may co-exist; atoms will have distinct values 
         /// within each root. If they are nested, the innermost root will 
         /// completely mask any outer roots.
+        #if FABLE_COMPILER
         static member inline root (props: IRootProperty list) =
+        #else
+        static member root (props: IRootProperty list) =
+        #endif
             let props = unbox<RootProps>(createObj !!props)
 
             Bindings.Recoil.RecoilRoot(createObj [

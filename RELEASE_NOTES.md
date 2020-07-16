@@ -1,3 +1,6 @@
+### 0.16.3 - Thursday, July 16th, 2020
+* Resolve MSBuild compiler error in the Recoil.root component
+
 ### 0.16.2 - Friday, June 19th, 2020
 * Fix issue with disposal of pending time travel
 
