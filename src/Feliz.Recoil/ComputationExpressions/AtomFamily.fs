@@ -75,11 +75,11 @@ module AtomFamilyCE =
               DangerouslyAllowMutability = state.DangerouslyAllowMutability }
 
         [<CustomOperation("dangerouslyAllowMutability")>]
-        member _.DangerouslyAllowMutability (state: AtomFamilyState.ReadWrite<'T,'U,'V>, value: bool) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
+        member _.DangerouslyAllowMutability (state: AtomFamilyState.ReadWrite<'T,'U,'V>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
             { Key = state.Key
               Def = state.Def
               Persist = state.Persist
-              DangerouslyAllowMutability = Some value }
+              DangerouslyAllowMutability = Some true }
 
         member inline _.Run (atom: AtomFamilyState.ReadWrite<JS.Promise<'T>,'T,'V>) =
             Recoil.Family.atom (
