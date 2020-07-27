@@ -135,8 +135,8 @@ type Snapshot =
 
     /// Creates a new snapshot by calling the provided mapper function.
     member map (mapper: MutableSnapshot -> unit) : Snapshot
-    member map (mapper: MutableSnapshot -> JS.Promise<unit>) : Snapshot
-    member map (mapper: MutableSnapshot -> Async<unit>) = : Snapshot
+    member map (mapper: MutableSnapshot -> JS.Promise<unit>) : JS.Promise<Snapshot>
+    member map (mapper: MutableSnapshot -> Async<unit>) = : Async<Snapshot>
 ```
 
 ### MutableSnapshot
