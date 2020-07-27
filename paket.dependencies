@@ -10,7 +10,7 @@ group Recoil
     nuget Fable.Promise ~> 2
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Recoil.Bridge
     source https://nuget.org/api/v2
@@ -24,7 +24,7 @@ group Recoil.Bridge
 	nuget Fable.Elmish ~> 3
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Recoil.Datasheet
 	source https://nuget.org/api/v2
@@ -33,7 +33,7 @@ group Recoil.Datasheet
     nuget Fable.Core ~> 3
     nuget Fable.Promise ~> 2
     nuget Feliz ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
     nuget Zanaptak.TypedCssClasses ~> 0
 
 group Recoil.Elmish
@@ -44,7 +44,7 @@ group Recoil.Elmish
     nuget Fable.Elmish ~> 3
     nuget Fable.Promise ~> 2
     nuget Feliz ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Recoil.Validation
 	source https://nuget.org/api/v2
@@ -52,7 +52,7 @@ group Recoil.Validation
 
     nuget Fable.Core ~> 3
     nuget Feliz ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Client
     source https://nuget.org/api/v2
@@ -64,7 +64,7 @@ group Client
     nuget Feliz ~> 1
     nuget Feliz.Recoil ~> 0
     nuget Feliz.Recoil.Bridge ~> 0
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Server
     source https://nuget.org/api/v2
@@ -74,7 +74,7 @@ group Server
     nuget Fable.Elmish ~> 3
 	nuget Fake.Core.Environment ~> 5
 	nuget Fake.IO.FileSystem ~> 5
-	nuget FSharp.Core ~> 4.7 lowest_matching: true
+	nuget FSharp.Core ~> 4.7
     nuget Thoth.Json.Giraffe ~> 4
 	nuget Saturn ~> 0
 
@@ -82,7 +82,7 @@ group Shared
     source https://nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
 
 group Docs
     source https://nuget.org/api/v2
@@ -94,7 +94,7 @@ group Docs
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
     nuget Feliz.Router ~> 1
-    nuget FSharp.Core ~> 4.7 lowest_matching: true
+    nuget FSharp.Core ~> 4.7
     nuget FSharpPlus ~> 1
     nuget Zanaptak.TypedCssClasses ~> 0
 
@@ -105,13 +105,10 @@ group Tooling
 	source https://api.nuget.org/v3/index.json
 
 	nuget Fake.IO.FileSystem ~> 5
-	nuget FSharp.Core ~> 4.7 lowest_matching: true
+	nuget FSharp.Core ~> 4.7
     nuget FSharp.Json ~> 0
 	nuget FSharpLint.Core ~> 0
     nuget Yarnpkg.Yarn ~> 1
-
-	clitool dotnet-fable ~> 2
-	clitool dotnet-fake ~> 5
 
 group FakeBuild
 	source https://api.nuget.org/v3/index.json

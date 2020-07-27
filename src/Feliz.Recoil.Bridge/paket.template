@@ -1,5 +1,4 @@
 ﻿type project
-licenseExpression https://github.com/Shmew/Feliz.Recoil/blob/master/LICENSE
 authors Cody Johnson
 description
     Elmish.Bridge adapter to enable use in Feliz.Recoil.

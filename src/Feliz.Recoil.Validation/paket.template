@@ -1,5 +1,4 @@
 ﻿type project
-licenseExpression https://github.com/Shmew/Feliz.Recoil/blob/master/LICENSE
 authors Cody Johnson
 description
     Validation hook for recoil.
