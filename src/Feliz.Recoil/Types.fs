@@ -195,10 +195,11 @@ type Snapshot =
     member _.map (mapper: MutableSnapshot -> unit) : Snapshot = jsNative
     /// Creates a new snapshot by calling the provided mapper function.
     [<Emit("$0.asyncMap($1)")>]
-    member _.map (mapper: MutableSnapshot -> JS.Promise<unit>) : Snapshot = jsNative
+    member _.map (mapper: MutableSnapshot -> JS.Promise<unit>) : JS.Promise<Snapshot> = jsNative
     /// Creates a new snapshot by calling the provided mapper function.
     member inline this.map (mapper: MutableSnapshot -> Async<unit>) =
         this.map(mapper >> Async.StartAsPromise)
+        |> Async.AwaitPromise
 
 /// A Snapshot that can be modified.
 ///

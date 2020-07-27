@@ -1,3 +1,6 @@
+### 0.17.1 - Sunday, July 27th, 2020
+* Fix async snapshot map overloads.
+
 ### 0.17.0 - Thursday, July 16th, 2020
 * Unify atoms and selectors CE dangerouslyAllowMutability operation
 

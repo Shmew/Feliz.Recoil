@@ -6,8 +6,8 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyTitleAttribute("Feliz.Recoil.DataSheet")>]
 [<assembly: AssemblyProductAttribute("Feliz.Recoil")>]
 [<assembly: AssemblyDescriptionAttribute("Fable bindings in Feliz style for Facebook's experimental state management library recoil.")>]
-[<assembly: AssemblyVersionAttribute("0.17.0")>]
-[<assembly: AssemblyFileVersionAttribute("0.17.0")>]
+[<assembly: AssemblyVersionAttribute("0.17.1")>]
+[<assembly: AssemblyFileVersionAttribute("0.17.1")>]
 [<assembly: AssemblyConfigurationAttribute("Release")>]
 [<assembly: InternalsVisibleToAttribute("Feliz.Recoil.DataSheet.Tests")>]
 do ()
@@ -16,7 +16,7 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Feliz.Recoil.DataSheet"
     let [<Literal>] AssemblyProduct = "Feliz.Recoil"
     let [<Literal>] AssemblyDescription = "Fable bindings in Feliz style for Facebook's experimental state management library recoil."
-    let [<Literal>] AssemblyVersion = "0.17.0"
-    let [<Literal>] AssemblyFileVersion = "0.17.0"
+    let [<Literal>] AssemblyVersion = "0.17.1"
+    let [<Literal>] AssemblyFileVersion = "0.17.1"
     let [<Literal>] AssemblyConfiguration = "Release"
     let [<Literal>] InternalsVisibleTo = "Feliz.Recoil.DataSheet.Tests"
