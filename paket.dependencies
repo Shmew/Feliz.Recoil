@@ -17,7 +17,6 @@ group Recoil.Bridge
 	source https://api.nuget.org/v3/index.json
 
     nuget Elmish.Bridge.Client ~> 3
-    nuget Fable.Browser.Dom ~> 1
     nuget Fable.Browser.Url ~> 1
     nuget Fable.Browser.WebSocket ~> 1
 	nuget Fable.Core ~> 3
@@ -127,3 +126,4 @@ group FakeBuild
     nuget FSharp.Json ~> 0
 	nuget FSharpLint.Core ~> 0
     nuget Fantomas ~> 3
+    nuget NuGet.Packaging 5.6

@@ -197,7 +197,7 @@ module Validation =
             |> GenericValidators.compare input (ValidationError<'Custom>.Eq)
 
         static member isNone (input: 'T option) =
-            function | Some -> false | None -> true
+            function | Some _ -> false | None -> true
             |> GenericValidators.compare input (ValidationError<'Custom>.Eq)
 
         static member map (validators: ('T -> Result<'T,ValidationError<'Custom>>) list) (input: 'T option) =
