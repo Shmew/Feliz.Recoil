@@ -1,3 +1,6 @@
+### 0.17.2 - Thursday, September 2nd, 2020
+* Fix compilation issue with latest FSharp.Core
+
 ### 0.17.1 - Sunday, July 27th, 2020
 * Fix async snapshot map overloads.
 
