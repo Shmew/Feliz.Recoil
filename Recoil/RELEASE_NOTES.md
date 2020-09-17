@@ -1,3 +1,6 @@
+### 0.18.0 - Wednesday, September 16th, 2020
+* Update for recoil 0.0.12 release
+
 ### 0.17.2 - Thursday, September 2nd, 2020
 * Fix compilation issue with latest FSharp.Core
 
