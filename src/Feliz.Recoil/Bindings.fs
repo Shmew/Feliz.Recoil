@@ -35,6 +35,7 @@ module Bindings =
         static member useRecoilSnapshot () : Snapshot = import "useRecoilSnapshot" "recoil"
         static member useTransactionObservation<'Values,'Metadata> (callback: TransactionObservation<'Values,'Metadata> -> unit) : unit = import "useTransactionObservation_UNSTABLE" "recoil"
         static member useSetUnvalidatedAtomValues<'Value,'Metadata> (values: JS.Map<string,'Value>, ?transactionMetadata: 'Metadata) : unit = import "useSetUnvalidatedAtomValues_UNSTABLE" "recoil"
+        static member useRecoilBridgeAcrossReactRoots () : obj -> ReactElement = import "useRecoilBridgeAcrossReactRoots_UNSTABLE" "recoil"
         static member waitForAll (recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) : RecoilValue<ResizeArray<'T>,ReadOnly> = import "waitForAll" "recoil"
         static member waitForAny (recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) : RecoilValue<ResizeArray<Loadable<'T>>,ReadOnly> = import "waitForAny" "recoil"
         static member waitForNone (recoilValues: ResizeArray<RecoilValue<'T,'Mode>>) : RecoilValue<ResizeArray<Loadable<'T>>,ReadOnly> = import "waitForNone" "recoil"

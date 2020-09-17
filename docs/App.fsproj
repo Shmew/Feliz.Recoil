@@ -13,7 +13,6 @@
     <Compile Include="Recoil\Examples\Async.fs" />
     <Compile Include="Recoil\Examples\Callback.fs" />
     <Compile Include="Recoil\Examples\Loadable.fs" />
-    <Compile Include="Recoil\Examples\Previous.fs" />
     <Compile Include="Recoil\Examples\ComputationExpressions.fs" />
     <Compile Include="Recoil\Examples\Nesting.fs" />
     <Compile Include="Recoil\Examples\Logger.fs" />

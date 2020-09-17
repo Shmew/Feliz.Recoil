@@ -101,8 +101,12 @@ module TimeTravel =
             key = "__recoil_time_travel__", 
             get = (fun (snapshot: RecoilValue<Snapshot,ReadOnly>) (getter: SelectorGetter) -> 
                 getter.get(snapshot) 
-                |> fun res -> res.GetHashCode())
+                |> fun res -> res.getId())
         )
+
+    let inline internal getSnapshotFromId (observedSnapshot: Snapshot) (givenSnapshot: Snapshot) =
+        observedSnapshot
+        |> Snapshot.getPromise (Bindings.Recoil.constSelector givenSnapshot |> snapshotIdGen)
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let internal observer = React.functionComponent(fun (input: {| setTimeTraveler: Actions -> unit; maxHistory: int option |}) ->
@@ -124,20 +128,20 @@ module TimeTravel =
             Recoil.useCallbackRef(fun setter (o: SnapshotObservation) ->
                 if not cts.current.IsCancellationRequested then
                     promise {
-                        let! ss = setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(o.snapshot)))
-                        let! pastSS = 
+                        let! ss = getSnapshotFromId setter.snapshot o.snapshot
+                        let! pastSS =
                             if not past.current.IsEmpty then
-                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(past.current.Head)))
+                                getSnapshotFromId setter.snapshot past.current.Head
                                 |> Promise.map Some
                             else Promise.lift None
                         let! presentSS = 
                             if present.current.IsSome then
-                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(present.current.Value)))
+                                getSnapshotFromId setter.snapshot present.current.Value
                                 |> Promise.map Some
                             else Promise.lift None
                         let! futureSS = 
                             if not future.current.IsEmpty then
-                                setter.snapshot.getPromise(snapshotIdGen(Bindings.Recoil.constSelector(future.current.Head)))
+                                getSnapshotFromId setter.snapshot future.current.Head
                                 |> Promise.map Some
                             else Promise.lift None
 

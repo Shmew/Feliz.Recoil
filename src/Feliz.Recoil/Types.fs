@@ -4,11 +4,8 @@ open Fable.Core
 open Fable.Core.JsInterop
 open System.ComponentModel
 
-[<EditorBrowsable(EditorBrowsableState.Never)>]
-[<StringEnum(CaseRules.None);RequireQualifiedAccess>]
-type RecoilValueTag =
-    | Writeable
-    | Readonly
+[<Measure>]
+type SnapshotId
 
 /// Marker interface to designate read only RecoilValues.
 type ReadOnly = interface end
@@ -25,9 +22,6 @@ type ReadWrite =
 type RecoilValue<'T,'ReadPerm> =
     [<Emit("$0.key")>]
     member _.key : string = jsNative
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    [<Emit("$0.tag")>]
-    member _.tag : RecoilValueTag = jsNative
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 type DefaultValue = interface end
@@ -51,10 +45,16 @@ type SelectorMethods =
     member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit = jsNative
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: U2<'T,DefaultValue>) : unit = jsNative
+    /// Sets the value of a RecoilValue.
+    [<Emit("$0.set($1, $2)")>]
     member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit = jsNative
     /// Sets the value of a RecoilValue.
     [<Emit("$0.set($1, $2)")>]
     member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit = jsNative
+    /// Sets the value of a RecoilValue.
+    [<Emit("$0.set($1, $2)")>]
+    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> U2<'T,DefaultValue>) : unit = jsNative
 
     /// Sets the value of a RecoilValue back to the default value.
     [<Emit("$0.reset($1)")>]
@@ -182,6 +182,10 @@ type Snapshot =
     [<Emit("$0.getLoadable($1)")>]
     member _.getLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) : Loadable<'T> = jsNative
 
+    /// Returns a unique int that represents the snapshot instance.
+    [<Emit("$0.getID()")>]
+    member _.getId () : int<SnapshotId> = jsNative
+
     /// Returns a promise which will resolve to the value of the given recoil value.
     [<Emit("$0.getPromise($1)")>]
     member _.getPromise (recoilValue: RecoilValue<'T,#ReadOnly>) : JS.Promise<'T> = jsNative
@@ -232,6 +236,21 @@ module MutableSnapshotMagic =
 
 [<Erase;RequireQualifiedAccess>]
 module Snapshot =
+    /// Returns an async which will resolve to the value of the given recoil value.
+    let inline getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) (snapshot: Snapshot) = 
+        snapshot.getAsync(recoilValue)
+
+    /// Returns a unique int that represents the snapshot instance.
+    let inline getId (snapshot: Snapshot) = snapshot.getId()
+
+    /// Returns a Loadable for the given recoil value.
+    let inline getLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) (snapshot: Snapshot) = 
+        snapshot.getLoadable(recoilValue)
+
+    /// Returns a promise which will resolve to the value of the given recoil value.
+    let inline getPromise (recoilValue: RecoilValue<'T,#ReadOnly>) (snapshot: Snapshot) = 
+        snapshot.getPromise(recoilValue)
+
     /// Creates a new snapshot by calling the mapper function on the snapshot.
     let inline map (mapper: MutableSnapshot -> unit) (snapshot: Snapshot) =
         snapshot.map(mapper)

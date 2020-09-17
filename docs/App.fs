@@ -44,7 +44,6 @@ let samples =
       "recoil-async", Samples.Async.render()
       "recoil-callback", Samples.Callback.render()
       "recoil-loadable", Samples.Loadable.render()
-      "recoil-previous", Samples.Previous.render()
       "recoil-computationexpressions", Samples.ComputationExpressions.render()
       "recoil-nesting", Samples.Nesting.render()
       "recoil-logger", Samples.Logger.render()
@@ -127,7 +126,6 @@ let resolveContent (path: string list) =
         | [ Urls.Async ] -> [ "Async.md" ]
         | [ Urls.Callback ] -> [ "Callback.md" ]
         | [ Urls.Loadable ] -> [ "Loadable.md" ]
-        | [ Urls.Previous ] -> [ "Previous.md" ]
         | [ Urls.ComputationExpressions ] -> [ "ComputationExpressions.md" ]
         | [ Urls.Nesting ] -> [ "Nesting.md" ]
         | [ Urls.Logger ] -> [ "Logger.md" ]
@@ -353,7 +351,6 @@ let allItems = React.memo(fun () ->
                 menuItem "Asynchronous Selectors" [ Urls.Recoil; Urls.Examples; Urls.Async ]
                 menuItem "Callbacks" [ Urls.Recoil; Urls.Examples; Urls.Callback ]
                 menuItem "Loadables" [ Urls.Recoil; Urls.Examples; Urls.Loadable ]
-                menuItem "Previous" [ Urls.Recoil; Urls.Examples; Urls.Previous ]
                 menuItem "Computation Expressions" [ Urls.Recoil; Urls.Examples; Urls.ComputationExpressions ]
                 menuItem "Nesting" [ Urls.Recoil; Urls.Examples; Urls.Nesting ]
                 menuItem "Debug Logger" [ Urls.Recoil; Urls.Examples; Urls.Logger ]

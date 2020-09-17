@@ -43,6 +43,21 @@ type Recoil =
             |> createObj
         )
 
+    /// A component which you can use instead of Recoil.root in your nested React root to share the same 
+    /// consistent Recoil store state. 
+    ///
+    /// As with any state sharing across React roots, changes may not be perfectly synchronized in all cases.
+    #if FABLE_COMPILER
+    static member inline contextBridge (children: ReactElement list) =
+    #else
+    static member contextBridge (children: ReactElement list) =
+    #endif
+        let bridge = Bindings.Recoil.useRecoilBridgeAcrossReactRoots()
+
+        bridge(createObj [
+            "children" ==> Interop.reactApi.Children.toArray(children)
+        ])
+
     /// Used in selectors to get the RecoilValue's default value or to 
     /// set the RecoilValue to the default value.
     static member inline defaultValue = Bindings.Recoil.defaultValue.Create()

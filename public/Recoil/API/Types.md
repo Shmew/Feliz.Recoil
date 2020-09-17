@@ -6,7 +6,7 @@
 
 A `RecoilValue` is the resulting type when you create an atom or selector.
 
-It has type type restrictions with the first being the value that the atom/selector
+It has three type restrictions with the first being the value that the atom/selector
 will return after resolution (or just what can be sent when it's a write-only selector), 
 and the second designating the access permissions.
 
@@ -42,11 +42,13 @@ type SelectorMethods =
     /// Sets the value of a RecoilValue.
     member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T) : unit
     member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: U2<'T,DefaultValue>) : unit
     member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit
     member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> U2<'T,DefaultValue>) : unit
 
     /// Sets the value of a RecoilValue back to the default value.
-    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit = jsNative
+    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
 ```
 
 ### Loadable
@@ -132,6 +134,9 @@ type Snapshot =
 
     /// Returns an async which will resolve to the value of the given recoil value.
     member getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) : Async<'T>
+
+    /// Returns a unique int that represents the snapshot instance.
+    member getId () : int<SnapshotId>
 
     /// Creates a new snapshot by calling the provided mapper function.
     member map (mapper: MutableSnapshot -> unit) : Snapshot

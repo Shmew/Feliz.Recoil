@@ -12,11 +12,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Feliz.Recoil\Feliz.Recoil.fsproj" />
   </ItemGroup>
-  <PropertyGroup>
-    <NpmDependencies>
-      <NpmPackage Name="recoil" Version="gte 0.0.10 lt 1" ResolutionStrategy="max" />
-    </NpmDependencies>
-  </PropertyGroup>
-
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

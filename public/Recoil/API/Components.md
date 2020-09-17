@@ -2,6 +2,18 @@
 
 ## Components
 
+### Recoil.contextBridge
+
+A component which you can use instead of Recoil.root in your nested React root to share the same 
+consistent Recoil store state. 
+
+As with any state sharing across React roots, changes may not be perfectly synchronized in all cases.
+
+Signature:
+```fs
+(children: ReactElement list) -> ReactElement
+```
+
 ### Recoil.root
 
 Provides the context in which atoms have values. 
