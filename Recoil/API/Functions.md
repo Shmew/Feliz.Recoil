@@ -10,10 +10,17 @@ Creates a RecoilValue with the given default value.
 
 Signature:
 ```fs
-(key: string, defaultValue: 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
-(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+(key: string, defaultValue: 'T, ?effects: AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+
+(key: string, defaultValue: JS.Promise<'T>, ?effects: AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+
+(key: string, defaultValue: Async<'T>, ?effects: AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
+
+(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?effects: AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) -> RecoilValue<'T,ReadWrite>
 ```
 
 Usage:
@@ -27,30 +34,46 @@ Creates a RecoilValue with the default value based on the parameter given.
 
 Signature:
 ```fs
-(key: string, defaultValue: 'P -> 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: 'P -> 'T, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: JS.Promise<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: 'P -> JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: 'P -> JS.Promise<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: Async<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: 'P -> Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: 'P -> Async<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
-(key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
+(key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+ ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) 
     -> ('P -> RecoilValue<'T,ReadWrite>)
 
 ```
 
 See the [atomFamily example] for usage.
+
+### Recoil.isDefaultValue
+
+Checks if a value is the default value for an atom or selector.
+
+Signature:
+```fs
+(value: 'T) -> bool
+```
 
 ### Recoil.noWait
 
