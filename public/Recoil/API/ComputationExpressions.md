@@ -10,6 +10,7 @@ The atom computation expression has five operations:
 
 * `key` - The atom key.
 * `def` - The default value.
+* `effect` - Adds an AtomEffect.
 * `log` - Enables logging when using the `Recoil.logger` component.
 * `persist` - Allows modifications to atom persistence settings.
 * `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*
@@ -33,6 +34,7 @@ The atomFamily computation expression has five operations:
 
 * `key` - The atom key.
 * `def` - The default value.
+* `effect` - Adds an AtomEffect.
 * `log` - Enables logging when using the `Recoil.logger` component.
 * `persist` - Allows modifications to atom persistence settings.
 * `dangerouslyAllowMutability` - Prevents object deep freezing, *use at your own risk!*

@@ -4,13 +4,13 @@ open Feliz
 open System.ComponentModel
 
 module internal Impl =
-    open EqualityHelpers
+    open Fable.Extras
 
     let notEqualsButFunctionsFamily<'a> =
         selectorFamily {
             key "__recoil_equalsButFunctions__"
             get (fun (x: 'a, y: 'a) _ ->
-                not (equalsButFunctions x y)
+                not (JSe.is.equalsButFunctions x y)
             )
         }
 

@@ -1,6 +1,7 @@
 namespace Feliz.Recoil
 
 open Fable.Core
+open Fable.Extras
 open Fable.Core.JsInterop
 open Feliz
 open System.ComponentModel
@@ -9,10 +10,14 @@ open System.ComponentModel
 type Recoil =
     /// Creates a RecoilValue with a default value of what the 
     /// promise resolves to.
-    static member inline atom (key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+    static member inline atom (key: string, defaultValue: JS.Promise<'T>, ?effects: AtomEffect<'T,ReadWrite> list, 
+                               ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        
         Bindings.Recoil.atom<'T> (
             [ "key" ==> key
               "default" ==> defaultValue
+              if effects.IsSome && not effects.Value.IsEmpty then
+                  "effects_UNSTABLE" ==> ResizeArray effects.Value
               if persistence.IsSome then
                   "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
               if dangerouslyAllowMutability.IsSome then
@@ -21,10 +26,14 @@ type Recoil =
         )
     /// Creates a RecoilValue with a default value of what the 
     /// async returns.
-    static member inline atom (key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+    static member inline atom (key: string, defaultValue: Async<'T>, ?effects: AtomEffect<'T,ReadWrite> list, 
+                               ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
         Bindings.Recoil.atom<'T> (
             [ "key" ==> key
               "default" ==> (defaultValue |> Async.StartAsPromise)
+              if effects.IsSome && not effects.Value.IsEmpty then
+                  "effects_UNSTABLE" ==> ResizeArray effects.Value
               if persistence.IsSome then
                   "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
               if dangerouslyAllowMutability.IsSome then
@@ -32,10 +41,14 @@ type Recoil =
             |> createObj
         )
     /// Creates a RecoilValue with a default value the given RecoilValue.
-    static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+    static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?effects: AtomEffect<'T,ReadWrite> list, 
+                               ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
         Bindings.Recoil.atom<'T> (
             [ "key" ==> key
               "default" ==> defaultValue
+              if effects.IsSome && not effects.Value.IsEmpty then
+                  "effects_UNSTABLE" ==> ResizeArray effects.Value
               if persistence.IsSome then
                   "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
               if dangerouslyAllowMutability.IsSome then
@@ -61,6 +74,9 @@ type Recoil =
     /// Used in selectors to get the RecoilValue's default value or to 
     /// set the RecoilValue to the default value.
     static member inline defaultValue = Bindings.Recoil.defaultValue.Create()
+
+    /// Checks if a value is the default value for an atom or selector.
+    static member inline isDefaultValue (value: 'T) = JSe.instanceOf Bindings.Recoil.defaultValue value
 
     /// Converts a RecoilValue<'T,_> into a RecoilValue<Loadable<'T>,ReadOnly>.
     ///
@@ -368,10 +384,14 @@ module Recoil =
     [<Erase>]
     type Family =
         /// Creates an atom family with the given default of what the promise resolves to.
-        static member inline atom (key: string, defaultValue: JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: JS.Promise<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -379,10 +399,14 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default of what the promise resolves to.
-        static member inline atom (key: string, defaultValue: 'P -> JS.Promise<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'P -> JS.Promise<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -390,10 +414,14 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default of what the async returns.
-        static member inline atom (key: string, defaultValue: Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: Async<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> (defaultValue |> Async.StartAsPromise)
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                        "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -401,10 +429,14 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default of what the async returns.
-        static member inline atom (key: string, defaultValue: 'P -> Async<'T>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'P -> Async<'T>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> (defaultValue >> Async.StartAsPromise)
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                        "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -412,10 +444,14 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default RecoilValue.
-        static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: RecoilValue<'T,#ReadOnly>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -423,10 +459,14 @@ module Recoil =
                 |> createObj
             )
         /// Creates an atom family with the given default RecoilValue.
-        static member inline atom (key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'P -> RecoilValue<'T,#ReadOnly>, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -579,10 +619,14 @@ module Recoil =
 module RecoilMagic =
     type Recoil with
         /// Creates a RecoilValue with the given default value.
-        static member inline atom (key: string, defaultValue: 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'T, ?effects: AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atom<'T> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome && not effects.Value.IsEmpty then
+                      "effects_UNSTABLE" ==> ResizeArray effects.Value
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then
@@ -639,10 +683,14 @@ module RecoilMagic =
 
     type Recoil.Family with
         /// Creates an atom family with the given default value.
-        static member inline atom (key: string, defaultValue: 'P -> 'T, ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+        static member inline atom (key: string, defaultValue: 'P -> 'T, ?effects: 'P -> AtomEffect<'T,ReadWrite> list, 
+                                   ?persistence: PersistenceSettings<'T,'U>, ?dangerouslyAllowMutability: bool) =
+
             Bindings.Recoil.atomFamily<'T,'P> (
                 [ "key" ==> key
                   "default" ==> defaultValue
+                  if effects.IsSome then
+                      "effects_UNSTABLE" ==> (effects.Value >> ResizeArray)
                   if persistence.IsSome then
                       "persistence_UNSTABLE" ==> PersistenceSettings.CreateObj(persistence.Value)
                   if dangerouslyAllowMutability.IsSome then

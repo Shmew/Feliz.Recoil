@@ -16,6 +16,7 @@ module AtomCE =
         type ReadWrite<'T,'U,'V> = 
             { Key: string
               Def: 'T
+              Effects: AtomEffect<'U,ReadWrite> list
               Persist: PersistenceSettings<'U,'V> option
               DangerouslyAllowMutability: bool option }
     
@@ -28,49 +29,52 @@ module AtomCE =
             AtomState.Key.Value value
             
         [<CustomOperation("def")>]
-        member _.Default (AtomState.Key.Value state, v: 'T) : AtomState.ReadWrite<'T,_,_> = 
+        member _.Default (AtomState.Key.Value state, v: JS.Promise<'U>) : AtomState.ReadWrite<JS.Promise<'U>,'U,_> = 
             { Key = state
               Def = v
+              Effects = []
+              Persist = None
+              DangerouslyAllowMutability = None }
+        member _.Default (AtomState.Key.Value state, v: Async<'U>) : AtomState.ReadWrite<Async<'U>,'U,_> = 
+            { Key = state
+              Def = v
+              Effects = []
+              Persist = None
+              DangerouslyAllowMutability = None }
+        member _.Default (AtomState.Key.Value state, v: RecoilValue<'U,#ReadOnly>) : AtomState.ReadWrite<RecoilValue<'U,#ReadOnly>,'U,_> = 
+            { Key = state
+              Def = v
+              Effects = []
               Persist = None
               DangerouslyAllowMutability = None }
 
+        [<CustomOperation("effect")>]
+        member _.Effect (state: AtomState.ReadWrite<'T,'U,_>, f: Effector<'U,ReadWrite> -> unit) : AtomState.ReadWrite<'T,'U,_> = 
+            { state with Effects = (AtomEffect<'U,ReadWrite> f)::state.Effects }
+        member _.Effect (state: AtomState.ReadWrite<'T,'U,_>, f: Effector<'U,ReadWrite> -> System.IDisposable) : AtomState.ReadWrite<'T,'U,_> = 
+            { state with Effects = (AtomEffect<'U,ReadWrite> f)::state.Effects }
+
         [<CustomOperation("local_storage")>]
-        member _.LocalStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.LocalStorage
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.LocalStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
+            this.Effect(state, Storage.local)
 
         [<CustomOperation("session_storage")>]
-        member _.SessionStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.SessionStorage
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.SessionStorage (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
+            this.Effect(state, Storage.session)
 
         [<CustomOperation("log")>]
-        member _.Log (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.Log
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.Log (state: AtomState.ReadWrite<'T,_,_>) : AtomState.ReadWrite<'T,'U,'V> = 
+            #if DEBUG
+            this.Effect(state, Logger.effect)
+            #else
+            state
+            #endif
 
         [<CustomOperation("persist")>]
         member _.Persist (state: AtomState.ReadWrite<'T,_,_>, settings: PersistenceSettings<'U,'V>) : AtomState.ReadWrite<'T,'U,'V> = 
             { Key = state.Key
               Def = state.Def
+              Effects = state.Effects
               Persist = Some settings
               DangerouslyAllowMutability = state.DangerouslyAllowMutability }
 
@@ -78,29 +82,33 @@ module AtomCE =
         member _.DangerouslyAllowMutability (state: AtomState.ReadWrite<'T,'U,'V>) : AtomState.ReadWrite<'T,'U,'V> = 
             { Key = state.Key
               Def = state.Def
+              Effects = state.Effects
               Persist = state.Persist
               DangerouslyAllowMutability = Some true }
 
-        member inline _.Run (atom: AtomState.ReadWrite<JS.Promise<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomState.ReadWrite<JS.Promise<'U>,'U,'V>) =
             Recoil.atom (
                 atom.Key,
                 atom.Def,
+                effects = atom.Effects,
                 ?persistence = atom.Persist, 
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomState.ReadWrite<Async<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomState.ReadWrite<Async<'U>,'U,'V>) =
             Recoil.atom (
                 atom.Key, 
                 atom.Def, 
+                effects = atom.Effects,
                 ?persistence = atom.Persist, 
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomState.ReadWrite<RecoilValue<'T,#ReadOnly>,'T,'V>) : RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomState.ReadWrite<RecoilValue<'U,#ReadOnly>,'U,'V>) : RecoilValue<'U,ReadWrite> =
             Recoil.atom (
                 atom.Key, 
                 atom.Def, 
+                effects = atom.Effects,
                 ?persistence = atom.Persist, 
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
@@ -108,10 +116,18 @@ module AtomCE =
     [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module AtomBuilderMagic =
         type AtomBuilder with
+            member inline _.Default (AtomState.Key.Value state, v: 'T) : AtomState.ReadWrite<'T,'T,_> = 
+                { Key = state
+                  Def = v
+                  Effects = []
+                  Persist = None
+                  DangerouslyAllowMutability = None }
+
             member inline _.Run<'T,'V> (atom: AtomState.ReadWrite<'T,'T,'V>) =
                 Recoil.atom (
                     atom.Key, 
                     atom.Def, 
+                    effects = atom.Effects,
                     ?persistence = atom.Persist, 
                     ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
                 )

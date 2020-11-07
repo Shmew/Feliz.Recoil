@@ -13,9 +13,10 @@ module AtomFamilyCE =
         type Key = | Value of string
 
         [<NoEquality;NoComparison>]
-        type ReadWrite<'T,'U,'V> = 
+        type ReadWrite<'T,'U,'V,'P> = 
             { Key: string
               Def: 'T
+              Effects: ('P -> AtomEffect<'U,ReadWrite> list) option
               Persist: PersistenceSettings<'U,'V> option
               DangerouslyAllowMutability: bool option }
     
@@ -28,60 +29,52 @@ module AtomFamilyCE =
             AtomFamilyState.Key.Value value
             
         [<CustomOperation("def")>]
-        member _.Default (AtomFamilyState.Key.Value state, v: 'T) : AtomFamilyState.ReadWrite<'T,_,_> = 
+        member _.Default (AtomFamilyState.Key.Value state, v: 'T) : AtomFamilyState.ReadWrite<'T,_,_,_> = 
             { Key = state
               Def = v
+              Effects = None
               Persist = None
               DangerouslyAllowMutability = None }
+        
+        [<CustomOperation("effect")>]
+        member _.Effect (state: AtomFamilyState.ReadWrite<'T,'U,_,_>, f: 'P -> Effector<'U,ReadWrite> -> unit) : AtomFamilyState.ReadWrite<'T,'U,_,'P> = 
+            { state with Effects = state.Effects |> Option.map (fun xsf -> fun p ->  (AtomEffect(f p))::(xsf p)) }
+        member _.Effect (state: AtomFamilyState.ReadWrite<'T,'U,_,_>, f: 'P -> Effector<'U,ReadWrite> -> System.IDisposable) : AtomFamilyState.ReadWrite<'T,'U,_,'P> = 
+            { state with Effects = state.Effects |> Option.map (fun xsf -> fun p ->  (AtomEffect(f p))::(xsf p)) }
 
         [<CustomOperation("local_storage")>]
-        member _.LocalStorage (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.LocalStorage
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.LocalStorage (state: AtomFamilyState.ReadWrite<'T,_,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V,_> = 
+            this.Effect(state, fun _ e -> Storage.local e)
 
         [<CustomOperation("session_storage")>]
-        member _.SessionStorage (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.SessionStorage
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.SessionStorage (state: AtomFamilyState.ReadWrite<'T,_,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V,_> = 
+            this.Effect(state, fun _ e -> Storage.session e)
 
         [<CustomOperation("log")>]
-        member _.Log (state: AtomFamilyState.ReadWrite<'T,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
-            { Key = state.Key
-              Def = state.Def
-              Persist = 
-                { Type = PersistenceType.Log
-                  Backbutton = None
-                  Validator = (fun _ -> None) }
-                |> Some
-              DangerouslyAllowMutability = state.DangerouslyAllowMutability }
+        member inline this.Log (state: AtomFamilyState.ReadWrite<'T,_,_,_>) : AtomFamilyState.ReadWrite<'T,'U,'V,_> = 
+            #if DEBUG
+            this.Effect(state, fun _ e -> Logger.effect e)
+            #else
+            state
+            #endif
 
         [<CustomOperation("persist")>]
-        member _.Persist (state: AtomFamilyState.ReadWrite<'T,_,_>, settings: PersistenceSettings<'U,'V>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
+        member _.Persist (state: AtomFamilyState.ReadWrite<'T,_,_,_>, settings: PersistenceSettings<'U,'V>) : AtomFamilyState.ReadWrite<'T,'U,'V,_> = 
             { Key = state.Key
               Def = state.Def
+              Effects = state.Effects
               Persist = Some settings
               DangerouslyAllowMutability = state.DangerouslyAllowMutability }
 
         [<CustomOperation("dangerouslyAllowMutability")>]
-        member _.DangerouslyAllowMutability (state: AtomFamilyState.ReadWrite<'T,'U,'V>) : AtomFamilyState.ReadWrite<'T,'U,'V> = 
+        member _.DangerouslyAllowMutability (state: AtomFamilyState.ReadWrite<'T,'U,'V,_>) : AtomFamilyState.ReadWrite<'T,'U,'V,_> = 
             { Key = state.Key
               Def = state.Def
+              Effects = state.Effects
               Persist = state.Persist
               DangerouslyAllowMutability = Some true }
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<JS.Promise<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<JS.Promise<'U>,'U,'V,_>) =
             Recoil.Family.atom (
                 atom.Key,
                 atom.Def,
@@ -89,7 +82,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> JS.Promise<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> JS.Promise<'U>,'U,'V,'P>) =
             Recoil.Family.atom (
                 atom.Key,
                 atom.Def,
@@ -97,7 +90,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<Async<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<Async<'U>,'U,'V,_>) =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 
@@ -105,7 +98,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> Async<'T>,'T,'V>) =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> Async<'U>,'U,'V,'P>) =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 
@@ -113,7 +106,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<RecoilValue<'T,#ReadOnly>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<RecoilValue<'U,#ReadOnly>,'U,'V,_>) : 'P -> RecoilValue<'U,ReadWrite> =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 
@@ -121,7 +114,7 @@ module AtomFamilyCE =
                 ?dangerouslyAllowMutability = atom.DangerouslyAllowMutability
             )
 
-        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> RecoilValue<'T,#ReadOnly>,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
+        member inline _.Run (atom: AtomFamilyState.ReadWrite<'P -> RecoilValue<'U,#ReadOnly>,'U,'V,'P>) : 'P -> RecoilValue<'U,ReadWrite> =
             Recoil.Family.atom (
                 atom.Key, 
                 atom.Def, 
@@ -132,7 +125,7 @@ module AtomFamilyCE =
     [<AutoOpen;EditorBrowsable(EditorBrowsableState.Never);Erase>]
     module AtomFamilyBuilderMagic =
         type AtomFamilyBuilder with
-            member inline _.Run<'T,'V,'P> (atom: AtomFamilyState.ReadWrite<'P -> 'T,'T,'V>) : 'P -> RecoilValue<'T,ReadWrite> =
+            member inline _.Run<'U,'V,'P> (atom: AtomFamilyState.ReadWrite<'P -> 'U,'U,'V,'P>) : 'P -> RecoilValue<'U,ReadWrite> =
                 Recoil.Family.atom (
                     atom.Key, 
                     atom.Def, 

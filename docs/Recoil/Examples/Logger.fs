@@ -62,11 +62,11 @@ let textState =
 
 let textState = 
     Recoil.atom (
-        "textState", 
-        "Hello world!", 
-        { Type = PersistenceType.Log
-          Backbutton = None
-          Validator = (fun _ -> None) }
+        key = "Logger/textState", 
+        defaultValue = "Hello world!", 
+        effects = [ 
+            AtomEffect Logger.effect
+        ]
     )
 *)
 
@@ -87,10 +87,5 @@ let inner = React.functionComponent(fun () ->
 
 let render = React.functionComponent("Logger", fun () ->
     Recoil.root [
-        root.log true
-
-        root.children [
-            inner()
-        ]
+        inner()
     ])
-

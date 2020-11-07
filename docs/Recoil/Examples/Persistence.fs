@@ -20,6 +20,27 @@ let sessionStorageText =
         session_storage
     }
 
+(* This can also be implented like so:
+
+let localStorageText = 
+    Recoil.atom (
+        key = "Storage/localTextState", 
+        defaultValue = "Hello world!", 
+        effects = [ 
+            AtomEffect Storage.local
+        ]
+    )
+
+let sessionStorageText = 
+    Recoil.atom (
+        key = "Storage/sessionTextState", 
+        defaultValue = "Hello world!", 
+        effects = [ 
+            AtomEffect Storage.session
+        ]
+    )
+*)
+
 let label = React.functionComponent(fun (input: {| baseStr: string; recoilValue: RecoilValue<string,ReadWrite> |}) ->
     let text = Recoil.useValue(input.recoilValue)
 
@@ -46,13 +67,8 @@ let storageComp = React.functionComponent(fun (input: {| recoilValue: RecoilValu
 
 let render = React.functionComponent("Persistence", fun () ->
     Recoil.root [
-        root.localStorage (fun hydrater -> hydrater.setAtom localStorageText)
-        root.sessionStorage (fun hydrater -> hydrater.setAtom sessionStorageText)
-
-        root.children [
-            label {| baseStr = "Local storage: "; recoilValue = localStorageText |}
-            storageComp {| recoilValue = localStorageText |}
-            label {| baseStr = "Session storage: "; recoilValue = sessionStorageText |}
-            storageComp {| recoilValue = sessionStorageText |}
-        ]
+        label {| baseStr = "Local storage: "; recoilValue = localStorageText |}
+        storageComp {| recoilValue = localStorageText |}
+        label {| baseStr = "Session storage: "; recoilValue = sessionStorageText |}
+        storageComp {| recoilValue = sessionStorageText |}
     ])

@@ -34,7 +34,6 @@ This is the type that is passed in as a parameter for selectors when setting a v
 
  Definition:
 ```fs
-[<Erase>]
 type SelectorMethods =
     /// Gets the value of a RecoilValue.
     member get (recoilValue: RecoilValue<'T,#ReadOnly>) : 'T
@@ -48,7 +47,7 @@ type SelectorMethods =
     member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> U2<'T,DefaultValue>) : unit
 
     /// Sets the value of a RecoilValue back to the default value.
-    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
+    member reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
 ```
 
 ### Loadable
@@ -108,6 +107,66 @@ type Loadable<'T> =
     member valueOrThrow () : 'T
 ```
 
+### Effects
+
+Types used when working with effects that trigger from atoms.
+
+Definitions:
+```fs
+type EffectTrigger =
+    | Get
+    | Set
+
+    member isGet : bool
+    member isSet : bool
+
+/// Effect is called the first time a node is used with a <RecoilRoot>.
+type Effector<'T,'ReadPerm> =
+    /// A reference to the atom itself.
+    member node : RecoilValue<'T,'ReadPerm>
+    
+    /// The action which triggered initialization of the atom.
+    member trigger : EffectTrigger
+
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    member setSelf (value: 'T) : unit
+    member setSelf (value: DefaultValue) : unit
+    member setSelf (value: 'T -> 'T) : unit
+    member setSelf (value: 'T -> DefaultValue) : unit
+    member setSelf (value: 'T -> U2<'T,DefaultValue>) : unit
+
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    member setSelf (value: JS.Promise<'T>) : unit
+    member setSelf (value: JS.Promise<DefaultValue>) : unit
+    member setSelf (value: JS.Promise<U2<'T,DefaultValue>>) : unit
+    member setSelf (value: Async<U2<'T,DefaultValue>>) = this.setSelf(Async.StartAsPromise value) : unit
+    member setSelf (value: Async<'T>) = this.setSelf(Async.StartAsPromise value) : unit
+    member setSelf (value: Async<DefaultValue>) = this.setSelf(Async.StartAsPromise value) : unit
+    
+    /// Reset the atom.
+    member resetSelf () : unit
+
+    /// Subscribe to changes in the atom value.
+    ///
+    /// First value is the new value, with the second the previous value.
+    member onSet (handler: 'T -> 'T -> unit) : unit
+    member onSet (handler: 'T -> unit) : unit
+
+/// AtomEffect constructor.
+type AtomEffect<'T,'ReadPerm> =
+    new (f: Effector<'T,'ReadPerm> -> unit)
+    new (f: Effector<'T,'ReadPerm> -> System.IDisposable)
+    new (f: Effector<'T,'ReadPerm> -> (unit -> unit))
+```
+
 ### Recoil.defaultValue
 
 This is an empty object that when passed into a setter resets the 
@@ -156,12 +215,12 @@ type MutableSnapshot =
     inherit Snapshot
 
     /// Sets the value of a RecoilValue to the default state.
-    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit
-    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit
-    member _.set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: DefaultValue) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> 'T) : unit
+    member set (recoilValue: RecoilValue<'T,#WriteOnly>, newValue: 'T -> DefaultValue) : unit
 
     /// Sets the value of a RecoilValue back to the default value.
-    member _.reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
+    member reset (recoilValue: RecoilValue<'T,#WriteOnly>) : unit
 ```
 
 ### SnapshotObservation

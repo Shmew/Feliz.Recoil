@@ -52,6 +52,7 @@ let samples =
       "recoil-atomfamily", Samples.AtomFamily.render()
       "recoil-selectorfamily", Samples.SelectorFamily.render()
       "recoil-concurrency", Samples.Concurrency.render()
+      "recoil-effects", Samples.Effects.render()
       "recoil-excelclone", Samples.ExcelClone.render()
       "recoil-validation", Samples.Validation.render()
       "recoil-persistence", Samples.Persistence.render() ]
@@ -134,6 +135,7 @@ let resolveContent (path: string list) =
         | [ Urls.AtomFamily ] -> [ "AtomFamily.md" ]
         | [ Urls.SelectorFamily ] -> [ "SelectorFamily.md" ]
         | [ Urls.Concurrency ] -> [ "Concurrency.md" ]
+        | [ Urls.Effects ] -> [ "Effects.md" ]
         | [ Urls.ExcelClone ] -> [ "ExcelClone.md" ]
         | [ Urls.Validation ] -> [ "Validation.md" ]
         | [ Urls.Persistence ] -> [ "Persistence.md" ]
@@ -359,6 +361,7 @@ let allItems = React.memo(fun () ->
                 menuItem "Atom Family" [ Urls.Recoil; Urls.Examples; Urls.AtomFamily ]
                 menuItem "Selector Family" [ Urls.Recoil; Urls.Examples; Urls.SelectorFamily ]
                 menuItem "Concurrency" [ Urls.Recoil; Urls.Examples; Urls.Concurrency ]
+                menuItem "Effects" [ Urls.Recoil; Urls.Examples; Urls.Effects ]
                 menuItem "Excel Clone" [ Urls.Recoil; Urls.Examples; Urls.ExcelClone ]
                 menuItem "Validation" [ Urls.Recoil; Urls.Examples; Urls.Validation ]
                 menuItem "Persistence" [ Urls.Recoil; Urls.Examples; Urls.Persistence ]

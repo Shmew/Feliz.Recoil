@@ -26,6 +26,125 @@ type RecoilValue<'T,'ReadPerm> =
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 type DefaultValue = interface end
 
+[<RequireQualifiedAccess;StringEnum(CaseRules.LowerFirst)>]
+type EffectTrigger =
+    | Get
+    | Set
+
+    [<Emit("$0 === 'get'")>]
+    member this.isGet : bool = jsNative
+
+    [<Emit("$0 === 'set'")>]
+    member this.isSet : bool = jsNative
+
+/// Effect is called the first time a node is used with a <RecoilRoot>.
+type Effector<'T,'ReadPerm> =
+    /// A reference to the atom itself.
+    [<Emit("$0.node")>]
+    member _.node : RecoilValue<'T,'ReadPerm> = jsNative
+    
+    /// The action which triggered initialization of the atom.
+    [<Emit("$0.trigger")>]
+    member _.trigger : EffectTrigger = jsNative
+
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: 'T) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: DefaultValue) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: JS.Promise<'T>) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: JS.Promise<DefaultValue>) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: JS.Promise<U2<'T,DefaultValue>>) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    member inline this.setSelf (value: Async<U2<'T,DefaultValue>>) = this.setSelf(Async.StartAsPromise value)
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    member inline this.setSelf (value: Async<'T>) = this.setSelf(Async.StartAsPromise value)
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    ///
+    /// Only allowed for initialization currently!
+    member inline this.setSelf (value: Async<DefaultValue>) = this.setSelf(Async.StartAsPromise value)
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: 'T -> 'T) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: 'T -> DefaultValue) : unit = jsNative
+    /// Callbacks to set or reset the value of the atom.
+    /// 
+    /// This can be called from the atom effect function directly to initialize the
+    /// initial value of the atom, or asynchronously called later to change it.
+    [<Emit("$0.setSelf($1)")>]
+    member _.setSelf (value: 'T -> U2<'T,DefaultValue>) : unit = jsNative
+    
+    /// Reset the atom.
+    [<Emit("$0.resetSelf()")>]
+    member _.resetSelf () : unit = jsNative
+
+    /// Subscribe to changes in the atom value.
+    ///
+    /// First value is the new value, with the second the previous value.
+    [<Emit("$0.onSet($1)")>]
+    member _.onSet (handler: 'T -> 'T -> unit) : unit = jsNative
+    /// Subscribe to changes in the atom value.
+    [<Emit("$0.onSet($1)")>]
+    member _.onSet (handler: 'T -> unit) : unit = jsNative
+
+/// AtomEffect constructor.
+type AtomEffect<'T,'ReadPerm> private (o: obj) =
+    [<Emit("$0")>]
+    new (f: Effector<'T,'ReadPerm> -> unit) = AtomEffect<'T,'ReadPerm> f
+    [<Emit("$0")>]
+    new (f: Effector<'T,'ReadPerm> -> System.IDisposable) = AtomEffect<'T,'ReadPerm> f
+    [<Emit("$0")>]
+    new (f: Effector<'T,'ReadPerm> -> (unit -> unit)) = AtomEffect<'T,'ReadPerm> f
+    
 /// Methods provided in selectors for reading RecoilValues.
 [<Erase>]
 type SelectorGetter =
@@ -175,6 +294,58 @@ module LoadableMagic =
         [<Emit("$0.map($1)")>]
         member _.map (mapping: 'T -> 'U) : Loadable<'U> = jsNative
 
+[<StringEnum(CaseRules.LowerFirst)>]
+type RecoilType =
+    | Atom
+    | Selector
+
+/// RecoilValue subscriber metadata.
+[<Erase>]
+type Subscribers =
+    /// RecoilValues that subscribe to the state of the RecoilValue.
+    [<Emit("$0.nodes")>]
+    member _.nodes : seq<RecoilValue<obj,obj>> = jsNative
+
+/// Debug information for atoms and selectors.
+[<Erase>]
+type RecoilInfo<'T> =
+    /// A Loadable with the current state. 
+    ///
+    /// Unlike methods like getLoadable(), this method will 
+    /// not mutate the snapshot at all. It provides the current 
+    /// state and will not initialize new atoms/selectors, 
+    /// perform any new selector evaluations, or update any 
+    /// dependencies or subscriptions.
+    [<Emit("$0.loadable")>]
+    member _.loadable : Loadable<'T> option = jsNative
+
+    /// If the RecoilValue is initialized.
+    [<Emit("$0.isActive")>]
+    member _.isActive : bool = jsNative
+
+    /// True if this is an atom with an explicit value stored in 
+    /// the snapshot state. 
+    ///
+    /// False if this is a selector or using the default atom state.
+    [<Emit("$0.isSet")>]
+    member _.isSet : bool = jsNative
+
+    /// True if this is an atom which was modified since the last transaction.
+    [<Emit("$0.isModified")>]
+    member _.isModified : bool = jsNative
+
+    /// Either an atom or selector or None is not initialized.
+    [<Emit("$0.type")>]
+    member _.type' : RecoilType = jsNative
+
+    /// A sequence of atoms and/or selectors this node depends on.
+    [<Emit("$0.deps")>]
+    member _.deps : seq<RecoilValue<obj,obj>> = jsNative
+    
+    /// Information about what is subscribing to this RecoilValue for this snapshot.
+    [<Emit("$0.subscribers")>]
+    member _.subscribers : Subscribers = jsNative
+
 /// An immutable snapshot of the global recoil state.
 [<Erase>]
 type Snapshot =
@@ -193,6 +364,24 @@ type Snapshot =
     /// Returns an async which will resolve to the value of the given recoil value.
     member inline this.getAsync (recoilValue: RecoilValue<'T,#ReadOnly>) = 
         this.getPromise(recoilValue) |> Async.AwaitPromise
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<Emit("$0.getNodes_UNSTABLE()")>]
+    member _.getNodes' () : seq<RecoilValue<obj,obj>> = jsNative
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<Emit("$0.getNodes_UNSTABLE($1)")>]
+    member _.getNodes' (options: obj) : seq<RecoilValue<obj,obj>> = jsNative
+    
+    /// Returns the nodes within the snapshot.
+    member inline this.getNodes () : RecoilValue<obj,obj> list =
+        this.getNodes'() |> List.ofSeq
+    /// Returns the nodes within the snapshot that have been modified.
+    member inline this.getNodes (isModified: bool) : RecoilValue<obj,obj> list =
+        createObj [ "isModified" ==> isModified ] |> this.getNodes' |> List.ofSeq
+
+    /// Get information about a recoil value.
+    [<Emit("$0.getInfo_UNSTABLE($1)")>]
+    member _.getInfo (recoilValue: RecoilValue<'T,'Mode>) : RecoilInfo<'T> = jsNative
 
     /// Creates a new snapshot by calling the provided mapper function.
     [<Emit("$0.map($1)")>]
@@ -301,26 +490,17 @@ module CallbackMagic =
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 [<StringEnum;RequireQualifiedAccess>]
 type PersistenceTypeWithNone =
-    | LocalStorage
-    | Log
     | None
-    | SessionStorage
     | Url
 
 [<StringEnum;RequireQualifiedAccess>]
 type PersistenceType =
-    | LocalStorage
-    | Log
-    | SessionStorage
     | Url
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     static member inline fromTypeWIthNone (pType: PersistenceTypeWithNone) =
         match pType with
         | PersistenceTypeWithNone.None -> None
-        | PersistenceTypeWithNone.Log -> Some PersistenceType.Log
-        | PersistenceTypeWithNone.LocalStorage -> Some PersistenceType.LocalStorage
-        | PersistenceTypeWithNone.SessionStorage -> Some PersistenceType.SessionStorage
         | PersistenceTypeWithNone.Url -> Some PersistenceType.Url
 
 [<Erase>]

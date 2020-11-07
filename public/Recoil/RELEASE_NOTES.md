@@ -1,3 +1,6 @@
+### 0.11.0 - Saturday, November 7th, 2020
+* Update for recoil 0.1.2 release
+
 ### 0.18.0 - Wednesday, September 16th, 2020
 * Update for recoil 0.0.12 release
 

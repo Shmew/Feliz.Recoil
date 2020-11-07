@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Css.fs" />
@@ -21,6 +21,7 @@
     <Compile Include="Recoil\Examples\AtomFamily.fs" />
     <Compile Include="Recoil\Examples\SelectorFamily.fs" />
     <Compile Include="Recoil\Examples\Concurrency.fs" />
+    <Compile Include="Recoil\Examples\Effects.fs" />
     <Compile Include="Recoil\Examples\ExcelClone.fs" />
     <Compile Include="Recoil\Examples\Validation.fs" />
     <Compile Include="Recoil\Examples\Persistence.fs" />

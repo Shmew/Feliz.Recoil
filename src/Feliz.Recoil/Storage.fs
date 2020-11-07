@@ -2,51 +2,26 @@
 
 open Browser.WebStorage
 open Fable.SimpleJson
-open Feliz
-open System.ComponentModel
 
 [<RequireQualifiedAccess>]
 module Storage =
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let [<Literal>] RootKey = "__recoil__/"
+    let [<Literal>] private RootKey = "__recoil__/"
 
-    type Hydrator [<EditorBrowsable(EditorBrowsableState.Never)>] (setter: MutableSnapshot, storage: Browser.Types.Storage) =
-        [<EditorBrowsable(EditorBrowsableState.Never)>]
-        member _.setter = setter
+    let inline private effect<'T> (storage: Browser.Types.Storage) (e: Effector<'T,ReadWrite>) =
+        try
+            storage.getItem(RootKey + e.node.key)
+            |> Json.parseAs<'T>
+            |> e.setSelf
+        with _ -> ()
 
-        [<EditorBrowsable(EditorBrowsableState.Never)>]
-        member _.storage = storage
+        e.onSet (fun newValue -> 
+            if Recoil.isDefaultValue newValue then 
+                storage.removeItem e.node.key
+            else storage.setItem(RootKey + e.node.key, SimpleJson.stringify newValue)
+        )
 
-        member inline this.setAtom<'T> (atom: RecoilValue<'T,ReadWrite>) =
-            async {
-                try 
-                    this.storage.getItem(RootKey + atom.key)
-                    |> Json.parseAs<'T>
-                    |> fun res -> this.setter.set(atom, res)
-                with _ -> ()
-            } |> Async.StartImmediate
-
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let observer = React.functionComponent(fun () ->
-        Recoil.useTransactionObservation <| fun o ->
-            async {
-                o.modifiedAtoms
-                |> Set.iter (fun (name, _) ->
-                    o.atomInfo.TryFind(name)
-                    |> Option.iter (fun atomInfo ->
-                        match atomInfo.persistence.type' with
-                        | Some PersistenceType.LocalStorage -> Some localStorage
-                        | Some PersistenceType.SessionStorage -> Some sessionStorage
-                        | _ -> None
-                        |> Option.iter (fun storage ->
-                            o.atomValues.TryFind(name)
-                            |> Option.iter (fun value ->
-                                storage.setItem(RootKey + name, SimpleJson.stringify(value))
-                            )
-                        )
-                    )
-                )
-            }
-            |> Async.StartImmediate
-
-        Html.none)
+    /// Local storage AtomEffect
+    let inline local (e: Effector<'T,ReadWrite>) = effect<'T> localStorage e
+    
+    /// Session storage AtomEffect
+    let inline session (e: Effector<'T,ReadWrite>) = effect<'T> sessionStorage e

@@ -1,4 +1,4 @@
-version 5.247.4
+version 5.251.0
 
 framework: auto-detect
 
@@ -7,6 +7,7 @@ group Recoil
 	source https://api.nuget.org/v3/index.json
 
     nuget Fable.Core ~> 3
+    nuget Fable.Extras ~> 0
     nuget Fable.Promise ~> 2
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 1
