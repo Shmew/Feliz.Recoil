@@ -137,10 +137,10 @@ type Effector<'T,'ReadPerm> =
     member _.onSet (handler: 'T -> unit) : unit = jsNative
 
 /// AtomEffect constructor.
-type AtomEffect<'T,'ReadPerm> private (o: obj) =
+type AtomEffect<'T,'ReadPerm> [<Emit("$0")>] private (o: obj) =
     [<Emit("$0")>]
     new (f: Effector<'T,'ReadPerm> -> unit) = AtomEffect<'T,'ReadPerm> f
-    [<Emit("$0")>]
+    [<Emit("$0.Dispose")>]
     new (f: Effector<'T,'ReadPerm> -> System.IDisposable) = AtomEffect<'T,'ReadPerm> f
     [<Emit("$0")>]
     new (f: Effector<'T,'ReadPerm> -> (unit -> unit)) = AtomEffect<'T,'ReadPerm> f

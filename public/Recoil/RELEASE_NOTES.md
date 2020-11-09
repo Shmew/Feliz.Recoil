@@ -1,3 +1,6 @@
+### 0.19.1 - Monday, November 9th, 2020
+* Fix IDisposable when used with AtomEffects
+
 ### 0.19.0 - Saturday, November 7th, 2020
 * Update for recoil 0.1.2 release
 
