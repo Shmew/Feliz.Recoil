@@ -1,3 +1,6 @@
+### 0.19.2 - Wednesday, November 18th, 2020
+* Support FSharp.Core 5.0
+
 ### 0.19.1 - Monday, November 9th, 2020
 * Fix IDisposable when used with AtomEffects
 
