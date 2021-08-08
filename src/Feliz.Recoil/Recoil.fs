@@ -207,6 +207,7 @@ type Recoil =
         )
 
     /// Creates a callback function that allows for fetching values of RecoilValue(s).
+    [<Hook>]
     static member inline useCallback (f: CallbackMethods -> 'T -> 'U, ?deps: obj []) =
         Bindings.Recoil.useRecoilCallback<'T -> 'U>(f, ?deps = (deps |> Option.map ResizeArray))
 
@@ -214,14 +215,18 @@ type Recoil =
     /// but will always stay up-to-date with the required depencencies and reduce re-renders.
     ///
     /// This should *not* be used when the callback determines the result of the render.
+    [<Hook>]
     static member inline useCallbackRef (f: CallbackMethods -> 'T -> 'U) =
         Bindings.Recoil.useRecoilCallback<'T -> 'U>(f)
         |> React.useCallbackRef
 
     /// Returns a function that will reset the value of a RecoilValue to its default.
+    [<Hook>]
     static member inline useResetState (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useResetRecoilState<'T>(recoilValue)
+    
     /// Returns a function that will reset the value of a RecoilValue to its default.
+    [<Hook>]
     static member inline useResetState (recoilValue: RecoilValue<'T,WriteOnly>) =
         Bindings.Recoil.useResetRecoilState<'T>(recoilValue)
 
@@ -232,6 +237,7 @@ type Recoil =
     /// If the RecoilValue is pending, this will suspend the compoment and initiate the
     /// retrieval of the value. If evaluating the RecoilValue resulted in an error, this will
     /// throw the error so that the nearest React error boundary can catch it.
+    [<Hook>]
     static member inline useState (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilState<'T>(recoilValue)
         |> unbox<'T * ('T -> unit)>
@@ -242,6 +248,7 @@ type Recoil =
     /// 
     /// Returns a Loadable which can indicate whether the RecoilValue is available, pending, or
     /// unavailable due to an error.
+    [<Hook>]
     static member inline useStateLoadable (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilStateLoadable<'T>(recoilValue)
         |> unbox<Loadable<'T> * ('T -> unit)>
@@ -255,6 +262,7 @@ type Recoil =
     ///
     /// The setter function takes a function that takes the current value and returns 
     /// the new one.
+    [<Hook>]
     static member inline useStateLoadablePrev (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilStateLoadable<'T>(recoilValue)
         |> unbox<Loadable<'T> * (('T -> 'T) -> unit)>
@@ -265,28 +273,35 @@ type Recoil =
     /// 
     /// The setter function takes a function that takes the current value and returns 
     /// the new one.
+    [<Hook>]
     static member inline useStatePrev (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useRecoilState<'T>(recoilValue)
         |> unbox<'T * (('T -> 'T) -> unit)>
 
     /// Returns a function that allows the value of a RecoilValue to be updated, but does
     /// not subscribe the compoment to changes to that RecoilValue.
+    [<Hook>]
     static member inline useSetState (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<'T -> unit>
+    
     /// Returns a function that allows the value of a RecoilValue to be updated, but does
     /// not subscribe the compoment to changes to that RecoilValue.
+    [<Hook>]
     static member inline useSetState (recoilValue: RecoilValue<'T,WriteOnly>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<'T -> unit>
 
     /// Returns a function that allows the value of a RecoilValue to be updated via
     /// a function that accepts the current value and produces the new value.
+    [<Hook>]
     static member inline useSetStatePrev (recoilValue: RecoilValue<'T,ReadWrite>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<('T -> 'T) -> unit>
+    
     /// Returns a function that allows the value of a RecoilValue to be updated via
     /// a function that accepts the current value and produces the new value.
+    [<Hook>]
     static member inline useSetStatePrev (recoilValue: RecoilValue<'T,WriteOnly>) =
         Bindings.Recoil.useSetRecoilState<'T>(recoilValue)
         |> unbox<('T -> 'T) -> unit>
@@ -295,15 +310,18 @@ type Recoil =
     /// atom state. 
     ///
     /// Multiple updates may be batched together in a single transaction. 
+    [<Hook>]
     static member inline useTransactionObserver (callback: SnapshotObservation -> unit) =
         Bindings.Recoil.useRecoilTransactionObserver(unbox callback)
 
     /// Returns a callback which takes a Snapshot as a parameter and will update the 
     /// current <RecoilRoot> state to match this snapshot.
+    [<Hook>]
     static member inline useGotoSnapshot () = Bindings.Recoil.useGotoRecoilSnapshot()
 
     /// Synchronously returns a Snapshot object during rendering and subscribes the 
     /// calling component for all Recoil state changes.
+    [<Hook>]
     static member inline useSnapshot () = Bindings.Recoil.useRecoilSnapshot()
 
     /// Sets the initial value for any number of atoms whose keys are the
@@ -315,6 +333,7 @@ type Recoil =
     ///
     /// TransactionMetadata should should be a record or anonymous record mapping
     /// atom/selector keys to the data you want to set alongside them.
+    [<Hook>]
     static member inline useSetUnvalidatedAtomValues (values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) =
         Bindings.Recoil.useSetUnvalidatedAtomValues (
             values |> Map.toJS, 
@@ -329,6 +348,7 @@ type Recoil =
     ///
     /// TransactionMetadata should should be a record or anonymous record mapping
     /// atom/selector keys to the data you want to set alongside them.
+    [<Hook>]
     static member inline useSetUnvalidatedAtomValues (values: (string * 'Value) list, ?transactionMetadata: 'Metadata) =
         Bindings.Recoil.useSetUnvalidatedAtomValues (
             JS.Constructors.Map.Create(values), 
@@ -360,6 +380,7 @@ type Recoil =
     /// Arbitrary information that was added via the useSetUnvalidatedAtomValues hook. 
     /// 
     /// Useful for ignoring the useSetUnvalidatedAtomValues transaction, to avoid loops.
+    [<Hook>]
     static member inline useTransactionObservation (callback: TransactionObservation<'Values,'Metadata> -> unit) =
         Bindings.Recoil.useTransactionObservation(callback)
 
@@ -370,12 +391,14 @@ type Recoil =
     /// If the value is an error, it will throw it for the nearest React error boundary.
     /// 
     /// This will also subscribe the component for any updates in the value.
+    [<Hook>]
     static member inline useValue (recoilValue: RecoilValue<'T,#ReadOnly>) =
         Bindings.Recoil.useRecoilValue<'T,#ReadOnly>(recoilValue)
 
     /// Returns the Loadable of a RecoilValue.
     ///
     /// This will also subscribe the component for any updates in the value.
+    [<Hook>]
     static member inline useValueLoadable (recoilValue: RecoilValue<'T,#ReadOnly>) =
         Bindings.Recoil.useRecoilValueLoadable<'T,#ReadOnly>(recoilValue)
 
