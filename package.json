@@ -19,8 +19,8 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "react": "^16",
-    "react-dom": "^16",
+    "react": "^18",
+    "react-dom": "^18",
     "react-highlight": "^0",
     "react-markdown": "^4",
     "recoil": "^0",

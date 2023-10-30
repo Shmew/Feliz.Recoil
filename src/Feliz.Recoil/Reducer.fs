@@ -4,7 +4,6 @@ open Feliz
 open System.ComponentModel
 
 module internal Impl =
-    open Fable.Extras
 
     let notEqualsButFunctionsFamily<'a> =
         selectorFamily {

@@ -1,7 +1,6 @@
 namespace Feliz.Recoil
 
 open Fable.Core
-open Fable.Extras
 open Fable.Core.JsInterop
 open Feliz
 open System.ComponentModel

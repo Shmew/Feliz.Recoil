@@ -28,7 +28,7 @@
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="recoil" Version="gte 0.1.2 lt 1" ResolutionStrategy="max" />
+      <NpmPackage Name="recoil" Version="gte 0.7.7 lt 1" ResolutionStrategy="max" />
     </NpmDependencies>
   </PropertyGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
