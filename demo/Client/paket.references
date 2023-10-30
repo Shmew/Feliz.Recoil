@@ -3,6 +3,6 @@ group Client
     Fable.Elmish
     Fable.SimpleJson
     Feliz
-    Feliz.Recoil
-    Feliz.Recoil.Bridge
+    #Feliz.Recoil
+    #Feliz.Recoil.Bridge
     FSharp.Core
