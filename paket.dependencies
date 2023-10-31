@@ -117,19 +117,20 @@ group Tooling
 group FakeBuild
 	source https://api.nuget.org/v3/index.json
 
-	nuget Fake.Core.Target ~> 5
-	nuget Fake.Core.ReleaseNotes ~> 5
-	nuget Fake.DotNet.AssemblyInfoFile ~> 5
-	nuget Fake.DotNet.Cli ~> 5
-	nuget Fake.DotNet.FSFormatting ~> 5
-	nuget Fake.DotNet.MSBuild ~> 5
-	nuget Fake.DotNet.Paket ~> 5
-	nuget Fake.IO.FileSystem ~> 5
-    nuget Fake.JavaScript.Yarn ~> 5
-	nuget Fake.JavaScript.Npm ~> 5
-	nuget Fake.Tools.Git ~> 5
-    nuget FSharp.Core ~> 4.7
-    nuget FSharp.Json ~> 0
-	nuget FSharpLint.Core ~> 0
-    nuget Fantomas ~> 3
-    nuget NuGet.Packaging 5.6
+	nuget Fake.Core.Target ~> 6
+	nuget Fake.Core.ReleaseNotes ~> 6
+	nuget Fake.DotNet.AssemblyInfoFile ~> 6
+	nuget Fake.DotNet.Cli ~> 6
+	nuget Fake.DotNet.FSFormatting ~> 6
+	nuget Fake.DotNet.MSBuild ~> 6
+	nuget Fake.DotNet.Paket ~> 6
+	nuget Fake.IO.FileSystem ~> 6
+    nuget Fake.JavaScript.Yarn ~> 6
+	nuget Fake.JavaScript.Npm ~> 6
+	nuget Fake.Tools.Git ~> 6
+    nuget FSharp.Core
+    nuget FSharp.Json
+	nuget FSharpLint.Core
+    nuget Fantomas
+    nuget NuGet.Packaging
+    nuget MSBuild.StructuredLogger
