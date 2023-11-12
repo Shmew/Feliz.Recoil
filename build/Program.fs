@@ -317,14 +317,14 @@ let lint() = ()
 // --------------------------------------------------------------------------------------
 // Run the unit test binaries
 
-let runTests() = ()
-    // !! ("tests/**/bin" @@ configuration() @@ "**" @@ "*Tests.exe")
-    // |> Seq.iter (fun f ->
-    //     CreateProcess.fromCommand(setCmd f [])
-    //     |> CreateProcess.withTimeout (TimeSpan.MaxValue)
-    //     |> CreateProcess.ensureExitCodeWithMessage "Tests failed."
-    //     |> Proc.run
-    //     |> ignore)
+let runTests() =
+    !! ("tests/**/bin" @@ configuration() @@ "**" @@ "*Tests.exe")
+    |> Seq.iter (fun f ->
+        CreateProcess.fromCommand(setCmd f [])
+        |> CreateProcess.withTimeout (TimeSpan.MaxValue)
+        |> CreateProcess.ensureExitCodeWithMessage "Tests failed."
+        |> Proc.run
+        |> ignore)
 
 // --------------------------------------------------------------------------------------
 // Generate Paket load scripts
