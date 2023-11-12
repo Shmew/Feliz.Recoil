@@ -158,7 +158,6 @@ let contentSelector =
         key "contentSelector"
         get (fun getter -> getter.get(contentPath))
         set (fun setter (newValue: string list) ->
-            printfn "Setting new value: %A" newValue
             setter.set(currentPathSelector, newValue)
 
             resolveContent newValue
@@ -411,10 +410,6 @@ let main = React.memo(fun () ->
 let Application() =
     let setPath = Recoil.useSetState(contentSelector)
 
-    let onUrlChanged (args : string list )= 
-        printfn "url changed: %A" args
-        Router.onUrlChange RouteMode.Hash setPath args
-
     let application =
         Html.div [
             prop.style [ 
@@ -425,7 +420,7 @@ let Application() =
 
     let buildRouter() = 
         React.router [
-            router.onUrlChanged onUrlChanged
+            router.onUrlChanged (Router.onUrlChange RouteMode.Hash setPath)
             router.children [application]
         ]
 

@@ -108,11 +108,6 @@ let inner = React.functionComponent(fun () ->
         ]
     ])
 
-// let render = React.functionComponent("Async", fun () ->
-//     Recoil.root [
-//         inner()
-//     ])
-
 [<ReactComponent>]
 let Render() =
     Recoil.root [ inner () ]
