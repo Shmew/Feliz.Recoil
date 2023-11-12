@@ -114,6 +114,6 @@ let inner = React.functionComponent(fun () ->
 //     ])
 
 [<ReactComponent>]
-let render() =
+let Render() =
     Recoil.root [ inner () ]
 

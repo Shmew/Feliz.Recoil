@@ -305,34 +305,34 @@ type Recoil =
     /// calling component for all Recoil state changes.
     static member inline useSnapshot () = Bindings.Recoil.useRecoilSnapshot()
 
-    /// Sets the initial value for any number of atoms whose keys are the
-    /// keys in the provided map. 
-    ///
-    /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
-    /// called when it is next read, and setting an atom without a configured 
-    /// validator will result in an exception.
-    ///
-    /// TransactionMetadata should should be a record or anonymous record mapping
-    /// atom/selector keys to the data you want to set alongside them.
-    static member inline useSetUnvalidatedAtomValues (values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) =
-        Bindings.Recoil.useSetUnvalidatedAtomValues (
-            values |> Map.toJS, 
-            ?transactionMetadata = (transactionMetadata |> Option.map toPlainJsObj)
-        )
-    /// Sets the initial value for any number of atoms whose keys are the
-    /// keys in the provided key-value list. 
-    ///
-    /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
-    /// called when it is next read, and setting an atom without a configured 
-    /// validator will result in an exception.
-    ///
-    /// TransactionMetadata should should be a record or anonymous record mapping
-    /// atom/selector keys to the data you want to set alongside them.
-    static member inline useSetUnvalidatedAtomValues (values: (string * 'Value) list, ?transactionMetadata: 'Metadata) =
-        Bindings.Recoil.useSetUnvalidatedAtomValues (
-            JS.Constructors.Map.Create(values), 
-            ?transactionMetadata = (transactionMetadata |> Option.map toPlainJsObj)
-        )
+    // /// Sets the initial value for any number of atoms whose keys are the
+    // /// keys in the provided map. 
+    // ///
+    // /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
+    // /// called when it is next read, and setting an atom without a configured 
+    // /// validator will result in an exception.
+    // ///
+    // /// TransactionMetadata should should be a record or anonymous record mapping
+    // /// atom/selector keys to the data you want to set alongside them.
+    // static member inline useSetUnvalidatedAtomValues (values: Map<string, 'Value>, ?transactionMetadata: 'Metadata) =
+    //     Bindings.Recoil.useSetUnvalidatedAtomValues (
+    //         values |> Map.toJS, 
+    //         ?transactionMetadata = (transactionMetadata |> Option.map toPlainJsObj)
+    //     )
+    // /// Sets the initial value for any number of atoms whose keys are the
+    // /// keys in the provided key-value list. 
+    // ///
+    // /// As with useSetUnvalidatedAtomValues, the validator for each atom will be 
+    // /// called when it is next read, and setting an atom without a configured 
+    // /// validator will result in an exception.
+    // ///
+    // /// TransactionMetadata should should be a record or anonymous record mapping
+    // /// atom/selector keys to the data you want to set alongside them.
+    // static member inline useSetUnvalidatedAtomValues (values: (string * 'Value) list, ?transactionMetadata: 'Metadata) =
+    //     Bindings.Recoil.useSetUnvalidatedAtomValues (
+    //         JS.Constructors.Map.Create(values), 
+    //         ?transactionMetadata = (transactionMetadata |> Option.map toPlainJsObj)
+    //     )
 
     /// Calls the given callback after any atoms have been modified and the consequent
     /// component re-renders have been committed. This is intended for persisting

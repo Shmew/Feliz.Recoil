@@ -45,7 +45,7 @@ let samples =
       "recoil-mixandmatch", Samples.MixAndMatch.render()
       "recoil-bidirectionalselectors", Samples.BidirectionalSelectors.render()
       "recoil-reset", Samples.Reset.render()
-      "recoil-async", Samples.Async.render()
+      "recoil-async", Samples.Async.Render()
       "recoil-callback", Samples.Callback.render()
       "recoil-loadable", Samples.Loadable.render()
       "recoil-computationexpressions", Samples.ComputationExpressions.render()
@@ -53,7 +53,7 @@ let samples =
       "recoil-logger", Samples.Logger.render()
       "recoil-elmish", Samples.Elmish.render()
       "recoil-composition", Samples.Composition.render() 
-      "recoil-atomfamily", Samples.AtomFamily.render()
+      "recoil-atomfamily", Samples.AtomFamily.Render()
       "recoil-selectorfamily", Samples.SelectorFamily.render()
       "recoil-concurrency", Samples.Concurrency.render()
       "recoil-effects", Samples.Effects.render()
@@ -160,6 +160,7 @@ let contentSelector =
         key "contentSelector"
         get (fun getter -> getter.get(contentPath))
         set (fun setter (newValue: string list) ->
+            printfn "Setting new value: %A" newValue
             setter.set(currentPathSelector, newValue)
 
             resolveContent newValue
@@ -210,10 +211,9 @@ let renderMarkdown = React.functionComponent(fun (input: {| content: string |}) 
                 ]
 
             Markdown.markdown [
-                markdown.source input.content
-                markdown.escapeHtml false
-                markdown.renderers [
-                    markdown.renderers.code codeBlockRenderer
+                markdown.children input.content
+                markdown.components [
+                    markdown.components.code codeBlockRenderer
                 ]
             ]
         ]
@@ -409,10 +409,37 @@ let main = React.memo(fun () ->
         ]
     ])
 
-let appRender() = React.useMemo(fun () ->
+let appRender() = React.useMemo(
+    (fun () ->
+        let setPath = Recoil.useSetState(contentSelector)
+
+        let onUrlChanged = Router.onUrlChange RouteMode.Path setPath
+
+        let application =
+            Html.div [
+                prop.style [ 
+                    style.padding 30
+                ]
+                prop.children [ main() ]
+            ]
+
+        let buildRouter() = 
+            React.router [
+                router.onUrlChanged onUrlChanged
+                router.children [application]
+            ]
+
+        buildRouter()
+    ), [|  |]
+)
+
+[<ReactComponent>]
+let Application() =
     let setPath = Recoil.useSetState(contentSelector)
 
-    let onUrlChanged = Router.onUrlChange RouteMode.Path setPath
+    let onUrlChanged (args : string list )= 
+        printfn "url changed: %A" args
+        Router.onUrlChange RouteMode.Hash setPath args
 
     let application =
         Html.div [
@@ -429,17 +456,14 @@ let appRender() = React.useMemo(fun () ->
         ]
 
     buildRouter()
-)
+    
 
-let appMain : ReactElement = React.useMemo(fun () ->
-    Recoil.root [
-        appRender()
-    ])
+[<ReactComponent>]
+let ApplicationRoot() =
+    Recoil.root [ Application() ]
 
 let element = document.getElementById "root"
 
-
-//ReactDOM.render(appMain(), element)
-ReactDOM.createRoot(element).render(appMain)
+ReactDOM.createRoot(element).render(ApplicationRoot())
 
 

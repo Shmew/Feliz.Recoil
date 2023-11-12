@@ -87,7 +87,7 @@ let addAtom = React.functionComponent(fun () ->
 //     ])
 
 [<ReactComponent>]
-let render() =
+let Render() =
     Recoil.root [
         addAtom()
         atomList()
