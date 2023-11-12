@@ -3,6 +3,7 @@ module App
 open Browser.Dom
 open Css
 open Elmish
+open Fable.React
 open Feliz
 open Feliz.Markdown
 open Feliz.Recoil
@@ -14,26 +15,29 @@ type Highlight =
     static member inline highlight (properties: IReactProperty list) =
         Interop.reactApi.createElement(importDefault "react-highlight", createObj !!properties)
 
-let currentPath = 
-    atom { 
+let currentPath: RecoilValue<string list,ReadWrite> = 
+    let value : string list = Router.currentUrl()
+    atom {
         key "currentPath"
-        def (Router.currentUrl())
+        def value
     }
 
-let currentTab = 
-    atom { 
+let currentTab: RecoilValue<string list,ReadWrite> = 
+    let value: string list = Router.currentUrl()
+    atom {
         key "currentTab"
-        def (Router.currentUrl())
+        def value
     }
 
 let currentPathSelector =
+    let setterFunc = 
+        fun (setter : SelectorMethods) (segments: string list) ->
+            setter.set(currentTab, segments)
+            setter.set(currentPath, segments) 
     selector {
         key "currentPathSelector"
         get (fun getter -> getter.get(currentPath))
-        set (fun setter (segments: string list) ->
-            setter.set(currentTab, segments)
-            setter.set(currentPath, segments) 
-        )
+        set setterFunc
     }
 
 let samples = 
@@ -66,8 +70,8 @@ let githubPath (rawPath: string) =
 /// Renders a code block from markdown using react-highlight.
 /// Injects sample React components when the code block has language of the format <language>:<sample-name>
 let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markdown.ICodeProperties |}) ->
-    if input.codeProps.language <> null && input.codeProps.language.Contains ":" then
-        let languageParts = input.codeProps.language.Split(':')
+    if input.codeProps.className <> null && input.codeProps.className.Contains ":" then
+        let languageParts = input.codeProps.className.Split(':')
         let sampleName = languageParts.[1]
         let sampleApp =
             samples
@@ -81,13 +85,15 @@ let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markd
             sampleApp
             Highlight.highlight [
                 prop.className "fsharp"
-                prop.text(input.codeProps.value)
+                //prop.text input.codeProps.value
+                prop.children input.codeProps.children
             ]
         ]
     else
         Highlight.highlight [
             prop.className "fsharp"
-            prop.text(input.codeProps.value)
+            //prop.text input.codeProps.value
+            prop.children input.codeProps.children
         ])
 
 let codeBlockRenderer (codeProps: Markdown.ICodeProperties) = codeBlockRenderer' {| codeProps = codeProps |}
@@ -403,8 +409,10 @@ let main = React.memo(fun () ->
         ]
     ])
 
-let render' = React.memo(fun () ->
+let appRender() = React.useMemo(fun () ->
     let setPath = Recoil.useSetState(contentSelector)
+
+    let onUrlChanged = Router.onUrlChange RouteMode.Path setPath
 
     let application =
         Html.div [
@@ -414,14 +422,24 @@ let render' = React.memo(fun () ->
             prop.children [ main() ]
         ]
 
-    Router.router [
-        Router.onUrlChanged setPath
-        Router.application application
-    ])
+    let buildRouter() = 
+        React.router [
+            router.onUrlChanged onUrlChanged
+            router.children [application]
+        ]
 
-let appMain = React.memo(fun () ->
+    buildRouter()
+)
+
+let appMain : ReactElement = React.useMemo(fun () ->
     Recoil.root [
-        render'()
+        appRender()
     ])
 
-ReactDOM.render(appMain(), document.getElementById "root")
+let element = document.getElementById "root"
+
+
+//ReactDOM.render(appMain(), element)
+ReactDOM.createRoot(element).render(appMain)
+
+

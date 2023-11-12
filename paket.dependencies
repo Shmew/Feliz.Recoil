@@ -68,6 +68,7 @@ group Client
     #nuget Feliz.Recoil ~> 0
     #nuget Feliz.Recoil.Bridge ~> 0
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
+    nuget Elmish.Bridge.Client
 
 group Server
     source https://nuget.org/api/v2
@@ -93,11 +94,12 @@ group Docs
 	source https://api.nuget.org/v3/index.json
 
     nuget Fable.Core ~> 4
-    nuget Fable.Promise ~> 3
-    nuget Fable.SimpleHttp ~> 3
-    nuget Fable.SimpleJson ~> 3
+    nuget Fable.React
+    nuget Fable.Promise
+    nuget Fable.SimpleHttp
+    nuget Fable.SimpleJson
     nuget Feliz ~> 2
-    nuget Feliz.Router ~> 1
+    nuget Feliz.Router
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
     nuget FSharpPlus ~> 1
     nuget Zanaptak.TypedCssClasses ~> 0
@@ -122,7 +124,7 @@ group FakeBuild
 	nuget Fake.DotNet.AssemblyInfoFile ~> 6
 	nuget Fake.DotNet.Cli ~> 6
 	nuget Fake.DotNet.FSFormatting ~> 6
-	nuget Fake.DotNet.MSBuild ~> 6
+	# nuget Fake.DotNet.MSBuild ~> 6
 	nuget Fake.DotNet.Paket ~> 6
 	nuget Fake.IO.FileSystem ~> 6
     nuget Fake.JavaScript.Yarn ~> 6
@@ -131,6 +133,6 @@ group FakeBuild
     nuget FSharp.Core
     nuget FSharp.Json
 	nuget FSharpLint.Core
-    nuget Fantomas
+    # nuget Fantomas
     nuget NuGet.Packaging
-    nuget MSBuild.StructuredLogger
+    # nuget MSBuild.StructuredLogger

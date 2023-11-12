@@ -6,3 +6,4 @@ group Client
     #Feliz.Recoil
     #Feliz.Recoil.Bridge
     FSharp.Core
+    Elmish.Bridge.Client
