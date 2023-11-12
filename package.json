@@ -15,9 +15,9 @@
   "scripts": {
     "build": "webpack -p",
     "compile-demo-raw": "fable-splitter",
+    "docs": "dotnet fable watch ./docs/App.fsproj -o ./public  --run vite serve ./public",
     "publish-docs": "yarn build && node publish.js",
-    "start": "webpack-dev-server",
-    "docs": "dotnet fable watch ./docs/App.fsproj -o ./public  --run vite serve ./public"
+    "start": "webpack-dev-server"
   },
   "dependencies": {
     "react": "^18",

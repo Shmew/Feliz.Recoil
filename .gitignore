@@ -27,7 +27,6 @@ public/**/*.js
 x64/
 x86/
 bld/
-build/
 [Dd]ist/
 .fable/
 [Bb]in/
