@@ -85,14 +85,12 @@ let codeBlockRenderer' = React.functionComponent(fun (input: {| codeProps: Markd
             sampleApp
             Highlight.highlight [
                 prop.className "fsharp"
-                //prop.text input.codeProps.value
                 prop.children input.codeProps.children
             ]
         ]
     else
         Highlight.highlight [
             prop.className "fsharp"
-            //prop.text input.codeProps.value
             prop.children input.codeProps.children
         ])
 
@@ -408,30 +406,6 @@ let main = React.memo(fun () ->
             ]
         ]
     ])
-
-let appRender() = React.useMemo(
-    (fun () ->
-        let setPath = Recoil.useSetState(contentSelector)
-
-        let onUrlChanged = Router.onUrlChange RouteMode.Path setPath
-
-        let application =
-            Html.div [
-                prop.style [ 
-                    style.padding 30
-                ]
-                prop.children [ main() ]
-            ]
-
-        let buildRouter() = 
-            React.router [
-                router.onUrlChanged onUrlChanged
-                router.children [application]
-            ]
-
-        buildRouter()
-    ), [|  |]
-)
 
 [<ReactComponent>]
 let Application() =

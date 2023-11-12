@@ -7,7 +7,6 @@ group Recoil
 	source https://api.nuget.org/v3/index.json
 
     nuget Fable.Core ~> 4
-    #nuget Fable.Extras ~> 0
     nuget Fable.Promise ~> 3
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 2
@@ -65,8 +64,6 @@ group Client
     nuget Fable.Promise ~> 3
     nuget Fable.SimpleJson ~> 3
     nuget Feliz ~> 2
-    #nuget Feliz.Recoil ~> 0
-    #nuget Feliz.Recoil.Bridge ~> 0
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
     nuget Elmish.Bridge.Client
 
@@ -124,7 +121,6 @@ group FakeBuild
 	nuget Fake.DotNet.AssemblyInfoFile ~> 6
 	nuget Fake.DotNet.Cli ~> 6
 	nuget Fake.DotNet.FSFormatting ~> 6
-	# nuget Fake.DotNet.MSBuild ~> 6
 	nuget Fake.DotNet.Paket ~> 6
 	nuget Fake.IO.FileSystem ~> 6
     nuget Fake.JavaScript.Yarn ~> 6
@@ -135,4 +131,3 @@ group FakeBuild
 	nuget FSharpLint.Core
     # nuget Fantomas
     nuget NuGet.Packaging
-    # nuget MSBuild.StructuredLogger

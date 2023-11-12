@@ -4,7 +4,6 @@ group FakeBuild
     Fake.DotNet.AssemblyInfoFile
     Fake.DotNet.Cli
     Fake.DotNet.FSFormatting
-    # Fake.DotNet.MSBuild
     Fake.DotNet.Paket
     Fake.IO.FileSystem
     Fake.JavaScript.Yarn
