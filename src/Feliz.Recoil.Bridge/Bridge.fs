@@ -33,18 +33,19 @@ module ElmishBridge =
                     url.protocol <- url.protocol.Replace("http", "ws")
                     url
 
-            let wsref : WebSocket option ref = ref None
+            let wsref : (WebSocket option * bool) ref = ref (None, false)
 
             let rec websocket timeout server =
-                match !wsref with
-                | Some _ -> ()
-                | None ->
+                match wsref.Value with
+                | Some _, _ 
+                | None, true -> ()
+                | None, false ->
                     let socket = WebSocket.Create server
 
-                    wsref := Some socket
+                    wsref.Value <- Some socket, false
 
                     socket.onclose <- fun _ ->
-                        wsref := None
+                        wsref.Value <- None, false
 
                         this.whenDown |> Option.iter dispatch
 
@@ -59,17 +60,27 @@ module ElmishBridge =
 
             websocket (this.retryTime * 1000) (url.href.TrimEnd '#')
 
-            Helpers.mappings <-
-                Helpers.mappings
-                |> Map.add this.name
+            Helpers.mappings.Value <-
+                let value =
                     (this.customSerializers,
-                     (fun e callback ->
-                        match !wsref with
-                        | Some socket -> socket.send e
-                        | None -> callback ()))
+                        wsref,
+                        (fun e callback ->
+                            match wsref.Value with
+                            | Some socket, _ -> socket.send e
+                            | None, _ -> callback ()
+                        )
+                    )
+
+                Helpers.mappings.Value
+                |> Option.defaultValue Map.empty
+                |> Map.add this.name value
+                |> Some
+                    
+                
 
             React.createDisposable(fun () -> 
                 wsref.Value 
+                |> fst
                 |> Option.iter (fun ws -> ws.close()))
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]

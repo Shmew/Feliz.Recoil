@@ -80,8 +80,9 @@ let addAtom = React.functionComponent(fun () ->
             |> addNewAtom
     ])
 
-let render = React.functionComponent("AtomFamily", fun () ->
+[<ReactComponent>]
+let Render() =
     Recoil.root [
         addAtom()
         atomList()
-    ])
+    ]

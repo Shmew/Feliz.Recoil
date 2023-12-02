@@ -15,14 +15,15 @@
   "scripts": {
     "build": "webpack -p",
     "compile-demo-raw": "fable-splitter",
+    "docs": "dotnet fable watch ./docs/App.fsproj -o ./public  --run vite serve ./public",
     "publish-docs": "yarn build && node publish.js",
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "react": "^16",
-    "react-dom": "^16",
+    "react": "^18",
+    "react-dom": "^18",
     "react-highlight": "^0",
-    "react-markdown": "^4",
+    "react-markdown": "^9",
     "recoil": "^0",
     "source-map-support": "^0"
   },
@@ -30,6 +31,7 @@
     "@babel/core": "^7",
     "@babel/preset-env": "^7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0",
+    "@types/react": "^18.2.37",
     "babel-loader": "^8",
     "core-js": "^3",
     "fable-compiler": "^2",
@@ -42,6 +44,7 @@
     "react-refresh": "^0",
     "remotedev": "^0",
     "resolve-url-loader": "^3",
+    "vite": "^4",
     "webpack": "^4",
     "webpack-cli": "^3",
     "webpack-dev-server": "^3"

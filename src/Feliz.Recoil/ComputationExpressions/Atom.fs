@@ -1,6 +1,7 @@
 ﻿namespace Feliz.Recoil
 
 open Fable.Core
+open Fable.Core.JS
 open System.ComponentModel
 
 [<AutoOpen>]

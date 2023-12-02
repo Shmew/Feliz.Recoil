@@ -4,7 +4,7 @@
 
 ### RecoilValue
 
-A `RecoilValue` is the resulting type when you create an atom or selector.
+A RecoilValue is the resulting type when you create an atom or selector.
 
 It has three type restrictions with the first being the value that the atom/selector
 will return after resolution (or just what can be sent when it's a write-only selector), 
@@ -52,7 +52,7 @@ type SelectorMethods =
 
 ### Loadable
 
-A `Loadable` is essentially a discriminated union (or as close as JS can manage) 
+A Loadable is essentially a discriminated union (or as close as JS can manage) 
 that represents the different states that a RecoilValue can be in.
 
  Definition:
@@ -239,7 +239,7 @@ type SnapshotObservation =
 
 ### CallbackMethods
 
-The type passed in when using the `Recoil.useCallback*` hooks.
+The type passed in when using the "Recoil.useCallback*" hooks.
 
 Definition:
 ```fs

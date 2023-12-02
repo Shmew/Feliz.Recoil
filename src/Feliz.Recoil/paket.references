@@ -1,6 +1,5 @@
 ﻿group Recoil
     Fable.Core
-    Fable.Extras
     Fable.Promise
     Fable.SimpleJson
     Feliz

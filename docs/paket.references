@@ -3,6 +3,7 @@ group Docs
     Fable.Promise
     Fable.SimpleHttp
     Fable.SimpleJson
+    Fable.React
     Feliz
     Feliz.Router
     FSharp.Core
