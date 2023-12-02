@@ -389,7 +389,7 @@ let killProcess() =
     Process.killAllByName "Node.js"
 
 let start() =
-    let buildApp = async { Yarn.exec "start" id }
+    let buildApp = async { Yarn.exec "docs" id }
     let launchBrowser =
         let url = "http://localhost:8080"
         async {
